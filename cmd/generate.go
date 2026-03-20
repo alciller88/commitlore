@@ -7,6 +7,8 @@ import (
 	"github.com/alciller88/commitlore/internal/changelog"
 	"github.com/alciller88/commitlore/internal/git"
 	"github.com/alciller88/commitlore/internal/narrative"
+	"github.com/alciller88/commitlore/internal/renderer"
+	"github.com/alciller88/commitlore/internal/styles"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +43,7 @@ func newGenerateCmd() *cobra.Command {
 	return cmd
 }
 
-func runGenerate(repoPath, since, until, style, format, output string) error {
+func runGenerate(repoPath, since, until, styleName, format, output string) error {
 	opts, err := buildLogOptions("", since, until, 0)
 	if err != nil {
 		return err
@@ -58,7 +60,7 @@ func runGenerate(repoPath, since, until, style, format, output string) error {
 	}
 
 	cl := changelog.GroupCommits(commits)
-	return renderAndOutput(cl, style, format, output)
+	return generateOutput(cl, styleName, format, output)
 }
 
 func fetchCommits(repoPath string, opts git.LogOptions) ([]git.Commit, error) {
@@ -69,13 +71,18 @@ func fetchCommits(repoPath string, opts git.LogOptions) ([]git.Commit, error) {
 	return repo.Log(opts)
 }
 
-func renderAndOutput(cl changelog.Changelog, style, format, output string) error {
-	renderOpts := narrative.RenderOptions{
-		Style:  style,
-		Format: narrative.Format(format),
+func generateOutput(cl changelog.Changelog, styleName, format, output string) error {
+	style, err := styles.Load(styleName)
+	if err != nil {
+		return err
 	}
 
-	rendered, err := narrative.Render(cl, renderOpts)
+	text, err := narrative.Generate(cl, style)
+	if err != nil {
+		return err
+	}
+
+	rendered, err := renderer.Render(text, cl, renderer.Format(format))
 	if err != nil {
 		return err
 	}
