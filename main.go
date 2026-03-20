@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/alciller88/commitlore/cmd"
 
 func main() {
-	fmt.Println("shiplog — Your repo has a story. shiplog tells it.")
+	cmd.Execute()
 }
