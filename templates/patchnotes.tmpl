@@ -1,0 +1,10 @@
+========================================
+  PATCH NOTES
+========================================
+{{range .Groups}}
+>> {{.Label | upper}} <<
+{{range .Commits}}
+  * {{.Message}} [{{.Author}}]
+{{- end}}
+{{end}}
+--- End of patch notes ---

@@ -1,0 +1,11 @@
+===== THE CHRONICLES OF THIS REPOSITORY =====
+
+Hear ye! The scribes have recorded the following deeds:
+{{range .Groups}}
+--- {{.Label | upper}}: A Chapter Unfolds ---
+{{range .Commits}}
+  In the annals of history, {{.Author}} did inscribe:
+    "{{.Message}}" ({{.Date | date}})
+{{- end}}
+{{end}}
+And so the saga continues...
