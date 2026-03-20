@@ -1,0 +1,14 @@
+name: patchnotes
+version: 1.0.0
+description: "Video game patch notes style"
+author: "commitlore"
+llm_prompt: |
+  Write the changelog as if it were video game patch notes.
+  Use terms like "fixed", "nerfed", "buffed", "added to the game".
+  Be epic but concise.
+templates:
+  header: "========================================\n  PATCH NOTES\n========================================"
+  feature: "  * {{.Message}} [{{.Author}}]"
+  fix: "  * {{.Message}} [{{.Author}}]"
+  breaking: "  * {{.Message}} [{{.Author}}]"
+  footer: "--- End of patch notes ---"

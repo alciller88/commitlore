@@ -1,4 +1,4 @@
-package narrative
+package renderer
 
 import (
 	"github.com/alciller88/commitlore/internal/changelog"

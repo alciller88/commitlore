@@ -1,0 +1,13 @@
+name: ironic
+version: 1.0.0
+description: "Dry humor changelog style"
+author: "commitlore"
+llm_prompt: |
+  Write the changelog with dry, sarcastic humor.
+  Be witty and dismissive, but still informative.
+templates:
+  header: "Oh look, more changes. How delightful."
+  feature: "  - {{.Message}} — courtesy of {{.Author}}, who clearly had nothing better to do"
+  fix: "  - {{.Message}} — courtesy of {{.Author}}, who clearly had nothing better to do"
+  breaking: "  - {{.Message}} — courtesy of {{.Author}}, who clearly had nothing better to do"
+  footer: "That's it. You're welcome."

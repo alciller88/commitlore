@@ -85,11 +85,11 @@ shiplog/
 │   ├── renderer/
 │   ├── llm/
 │   └── styles/
+│       └── builtin/   # Estilos built-in embebidos (.shipstyle)
 ├── app/               # App Wails
 │   ├── frontend/      # Svelte
 │   └── app.go         # Bindings Go ↔ frontend
-├── styles/            # Estilos built-in (.shipstyle)
-└── templates/         # Plantillas HTML/texto por formato
+└── styles/            # Estilos del usuario (.shipstyle)
 Regla de dependencias:
 
 internal/ no importa nada de cmd/ ni de app/.
@@ -129,6 +129,8 @@ No debe pedir al usuario que haga merges, PRs ni pushes manualmente.
    git checkout -b feat/<nombre-fase>
 
 2. Implementar la fase en commits pequeños y atómicos (Conventional Commits).
+
+2.5. Actualizar CHANGELOG.md: añadir los cambios de la fase a la sección [Unreleased] antes de abrir el PR.
 
 3. Antes de abrir PR, verificar que pasa todo:
    golangci-lint run ./...
