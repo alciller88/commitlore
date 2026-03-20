@@ -13,7 +13,7 @@ sistema de estilos modular (archivos .shipstyle).
 Consultar SPEC.md para la especificación completa.
 
 2. Estado actual
-CampoValorFase actualFase 2 — CompletadaÚltima ramadevVersiónv0.0.0Tests pasandoSí (12 tests, 97% cobertura en internal/git)Lint limpioSí
+CampoValorFase actualFase 3 — CompletadaÚltima ramadevVersiónv0.0.0Tests pasandoSí (39 tests: 12 internal/git 97%, 27 internal/changelog 97.7%)Lint limpioSí
 
 Actualizar esta tabla al iniciar y completar cada fase.
 
@@ -178,6 +178,6 @@ Cuando el humano quiera hacerlo, ejecutará:
 
 
 10. Historial de fases completadas
-FaseDescripciónFechaRamaFase 1Setup del proyecto, estructura base, CI pipeline, ramas2026-03-20devFase 2internal/git — acceso a repos locales + comando history2026-03-20feat/phase-2-history
+FaseDescripciónFechaRamaFase 1Setup del proyecto, estructura base, CI pipeline, ramas2026-03-20devFase 2internal/git — acceso a repos locales + comando history2026-03-20feat/phase-2-historyFase 3internal/changelog — parsing de commits + comando contributors2026-03-20feat/phase-3-contributors
 
 Añadir una fila aquí al completar cada fase.
