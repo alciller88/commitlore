@@ -13,7 +13,7 @@ sistema de estilos modular (archivos .shipstyle).
 Consultar SPEC.md para la especificación completa.
 
 2. Estado actual
-CampoValorFase actualFase 2 — CompletadaÚltima ramafeat/phase-2-historyVersiónv0.0.0Tests pasandoSí (12 tests, 97% cobertura en internal/git)Lint limpioSí
+CampoValorFase actualFase 2 — CompletadaÚltima ramadevVersiónv0.0.0Tests pasandoSí (12 tests, 97% cobertura en internal/git)Lint limpioSí
 
 Actualizar esta tabla al iniciar y completar cada fase.
 
@@ -115,7 +115,69 @@ Actualiza este documento si el estado del proyecto cambia.
 Ante la duda, pregunta. Es mejor pedir aclaración que implementar algo incorrecto.
 
 
-9. Historial de fases completadas
+9. Flujo de trabajo Git — instrucciones para agentes
+
+El agente es responsable del ciclo completo de Git al finalizar cualquier tarea.
+No debe pedir al usuario que haga merges, PRs ni pushes manualmente.
+
+### Flujo obligatorio por fase
+
+1. Crear rama desde dev:
+   git checkout dev
+   git pull origin dev
+   git checkout -b feat/<nombre-fase>
+
+2. Implementar la fase en commits pequeños y atómicos (Conventional Commits).
+
+3. Antes de abrir PR, verificar que pasa todo:
+   golangci-lint run ./...
+   go test ./... -count=1
+
+4. Push de la rama:
+   git push -u origin feat/<nombre-fase>
+
+5. Abrir PR de feat/<nombre-fase> → dev usando gh CLI:
+   gh pr create \
+     --base dev \
+     --head feat/<nombre-fase> \
+     --title "feat: <descripción de la fase>" \
+     --body "<resumen de cambios, qué se ha implementado, qué tests cubren>"
+
+6. Esperar a que el CI pase:
+   gh pr checks --watch
+
+7. Si el CI pasa, mergear el PR:
+   gh pr merge --squash --delete-branch
+
+8. Volver a dev y sincronizar:
+   git checkout dev
+   git pull origin dev
+
+9. Actualizar CONTEXT.md:
+   - "Fase actual" → siguiente fase o "completada"
+   - Añadir fila en "Historial de fases completadas"
+
+10. Commitear y pushear el CONTEXT.md actualizado:
+    git add CONTEXT.md
+    git commit -m "chore: update CONTEXT.md — phase <N> completed"
+    git push origin dev
+
+### Reglas estrictas
+
+- NUNCA abrir PR directamente a main. Siempre feat/* → dev.
+- NUNCA mergear si el CI no ha pasado.
+- NUNCA mergear dev → main manualmente. Eso lo hace el humano cuando decide que la fase está estable.
+- go test debe ejecutarse sin -race en Windows (CGO no disponible). La CI en Ubuntu lo ejecutará con -race.
+- gh CLI está instalado y autenticado. Usarlo siempre para PRs y checks.
+
+### Merge dev → main
+
+Solo el humano decide cuándo mergear dev → main. El agente nunca lo hace.
+Cuando el humano quiera hacerlo, ejecutará:
+   gh pr create --base main --head dev --title "release: <version>" --body "<resumen>"
+
+
+10. Historial de fases completadas
 FaseDescripciónFechaRamaFase 1Setup del proyecto, estructura base, CI pipeline, ramas2026-03-20devFase 2internal/git — acceso a repos locales + comando history2026-03-20feat/phase-2-history
 
 Añadir una fila aquí al completar cada fase.
