@@ -3,12 +3,14 @@ version: 1.0.0
 description: "Grand narrative chronicle style"
 author: "commitlore"
 llm_prompt: |
-  Write the changelog as an epic narrative chronicle.
-  Use grandiose language and dramatic flair.
-  Make every change sound legendary.
+  Write the changelog as an epic narrative chronicle, as if recounting
+  the legendary deeds of heroes in a fantasy saga. Every commit is a
+  quest fulfilled. Every bug fix is a dragon slain. Use grandiose,
+  archaic language. Address the reader as if reading from an ancient
+  scroll. End with a prophetic teaser of what is to come.
 templates:
-  header: "===== THE CHRONICLES OF THIS REPOSITORY ====="
-  feature: "  In the annals of history, {{.Author}} did inscribe:\n    \"{{.Message}}\" ({{.Date}})"
-  fix: "  In the annals of history, {{.Author}} did inscribe:\n    \"{{.Message}}\" ({{.Date}})"
-  breaking: "  In the annals of history, {{.Author}} did inscribe:\n    \"{{.Message}}\" ({{.Date}})"
-  footer: "And so the saga continues..."
+  header: "📜 THE CHRONICLES OF THIS REPOSITORY"
+  feature: "  And so it came to pass — {{.Author}} forged: {{.Message}}"
+  fix: "  The ancient bug was vanquished by {{.Author}}: {{.Message}}"
+  breaking: "  ⚡ The old ways were shattered: {{.Message}}"
+  footer: "Thus ends another chapter in the saga."
