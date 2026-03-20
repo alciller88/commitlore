@@ -1,0 +1,235 @@
+SPEC.md — shiplog
+
+Fuente de verdad del proyecto. Cualquier cambio en funcionalidad debe
+reflejarse aquí antes de implementarse. No se implementa nada que no
+esté especificado en este documento.
+
+
+1. Visión
+shiplog es una herramienta multiplataforma (CLI + app de escritorio) escrita
+en Go que analiza repositorios git —locales y de GitHub— y genera changelogs,
+narrativas e informes sobre la historia del código, con tono y formato
+configurables mediante un sistema de estilos modular.
+Tagline: Your repo has a story. shiplog tells it.
+
+2. Principios de diseño
+
+Sin dependencias obligatorias — funciona offline, sin API key, sin cuenta.
+LLM opcional — si el usuario configura una API key, el output mejora; sin ella, funciona igualmente mediante plantillas.
+Multiplataforma — binario nativo CLI y app de escritorio para Linux, macOS y Windows.
+Composable — múltiples formatos de output para integrarse en pipelines existentes.
+Estilos modulares — los tonos no están hardcodeados; son archivos cargables, exportables e importables.
+Explícito sobre mágico — toda configuración es visible vía flags o UI.
+Código sostenible — funciones pequeñas, responsabilidad única, sin atajos.
+
+
+3. Stack técnico
+Backend / CLI
+CapaTecnologíaLenguajeGo 1.22+CLI frameworkCobraConfig/flagsViperGitHub APIgo-githubGit localgo-gitPDFgofpdfHTMLhtml/template (stdlib)LLM (opcional)Anthropic API / OpenAI API (configurable)Lintergolangci-lintTeststesting (stdlib) + testify
+App de escritorio
+CapaTecnologíaFrameworkWails v2FrontendSvelte + TypeScriptEstilosTailwind CSS + shadcn-svelte (base componentes)BuildWails CLI (binarios nativos por plataforma)
+
+El backend de la app de escritorio reutiliza íntegramente los paquetes
+de internal/. No hay lógica duplicada.
+
+
+4. Fuentes de datos (v1)
+
+Repositorio git local — via go-git, sin autenticación.
+GitHub — via API REST. Token opcional (sin token: solo repos públicos).
+
+
+GitLab y otros proveedores quedan fuera de scope en v1.
+
+
+5. Comandos CLI
+Todos los comandos comparten los flags globales siguientes.
+Flags globales
+FlagValoresDefaultDescripción--formatterminal, md, json, html, pdfterminalFormato del output--stylenombre de estilo cargadoformalTono del texto generado--outputruta de archivostdoutArchivo de destino--llmanthropic, openai, nonenoneLLM a usar para enriquecer el output
+
+5.1 shiplog generate
+Genera un changelog a partir de commits y/o PRs.
+shiplog generate [flags]
+FlagDescripción--sinceDesde tag, commit SHA o fecha (e.g. v1.2.0, 2024-01-01)--untilHasta tag o commit SHA (default: HEAD)--repoRuta local o URL de GitHub (owner/repo)--include-prsIncluye información de PRs (requiere token GitHub)
+
+5.2 shiplog story
+Genera una narrativa completa de la historia del repositorio.
+shiplog story [flags]
+FlagDescripción--repoRuta local o URL de GitHub (owner/repo)--fromCommit o tag de inicio (default: primer commit)
+
+5.3 shiplog history
+Explora commits filtrados por autor, fecha o rango.
+shiplog history [flags]
+FlagDescripción--repoRuta local o URL de GitHub--authorFiltra por autor (nombre o email)--sinceDesde fecha o tag--untilHasta fecha o tag--limitNúmero máximo de commits (default: 50)
+
+5.4 shiplog contributors
+Mapa de quién ha tocado qué partes del código.
+shiplog contributors [flags]
+FlagDescripción--repoRuta local o URL de GitHub--sincePeríodo de análisis--topNúmero de contributors a mostrar (default: 10)
+
+5.5 shiplog style
+Gestión del sistema de estilos modular.
+shiplog style <subcommand> [flags]
+SubcomandoDescripciónlistLista los estilos disponibles (built-in + instalados)showMuestra la definición de un estilocreateCrea un nuevo estilo (wizard interactivo o flags)importImporta un estilo desde URL o ruta localexportExporta un estilo a archivo .shipstyledeleteElimina un estilo instalado (no elimina built-ins)
+
+6. Sistema de estilos modular
+Los estilos son archivos .shipstyle en formato YAML que definen el tono
+y las plantillas de texto. Se almacenan en ~/.config/shiplog/styles/.
+Estructura de un archivo .shipstyle
+yamlname: patchnotes
+version: 1.0.0
+description: "Estilo patch notes de videojuego"
+author: "shiplog"
+llm_prompt: |
+  Escribe el changelog como si fuera las patch notes de un videojuego.
+  Usa términos como "fixed", "nerfed", "buffed", "added to the game".
+  Sé épico pero conciso.
+templates:
+  header: "⚔️  PATCH {{.Version}} — {{.Title}}"
+  feature: "  ✨ Unlocked: {{.Message}}"
+  fix: "  🛡️  Patched: {{.Message}}"
+  breaking: "  💀 Removed from the game: {{.Message}}"
+  footer: "  — End of patch notes —"
+Estilos built-in (v1)
+
+formal — técnico y profesional
+patchnotes — estilo videojuego
+ironic — humor seco
+epic — narrativo y grandilocuente
+
+Comportamiento
+
+Sin LLM: se usan los campos templates del .shipstyle.
+Con LLM: se usa el campo llm_prompt para instruir al modelo; templates como fallback.
+Los estilos built-in no son modificables ni eliminables.
+
+
+7. Formatos de output
+FormatoDescripciónterminalTexto con color ANSI directo a stdoutmdMarkdown estándar, compatible con GitHubjsonEstructura de datos completa, apta para pipelineshtmlInforme HTML autocontenido con estilos inlinepdfInforme PDF generado desde la plantilla HTML
+
+8. LLM opcional
+
+La herramienta funciona completamente sin LLM usando plantillas del estilo activo.
+Variables de entorno: SHIPLOG_LLM_PROVIDER y SHIPLOG_LLM_API_KEY.
+El flag --llm sobreescribe la variable de entorno por comando.
+Proveedores soportados en v1: anthropic, openai.
+
+
+9. App de escritorio (Wails)
+La app comparte toda la lógica de internal/. Solo añade una capa de UI encima.
+Pantallas principales (v1)
+
+Dashboard — resumen del repo activo: última actividad, contributors, tags.
+Generate — formulario para configurar y generar un changelog.
+Story — visualización narrativa de la historia del repo.
+History — explorador de commits con filtros.
+Contributors — mapa visual de contribuciones.
+Styles — gestor visual: crear, importar, exportar, previsualizar estilos.
+
+Identidad visual
+
+Paleta oscura por defecto, con opción de tema claro.
+Tipografía monoespaciada para outputs; sans-serif para navegación.
+Estilo propio construido sobre shadcn-svelte como base de componentes.
+Sin dependencia de librerías de UI genéricas (no Material, no Bootstrap).
+
+
+10. Estructura del proyecto
+shiplog/
+├── cmd/                      # Comandos Cobra
+│   ├── generate.go
+│   ├── story.go
+│   ├── history.go
+│   ├── contributors.go
+│   └── style/
+│       ├── list.go
+│       ├── create.go
+│       ├── import.go
+│       ├── export.go
+│       └── delete.go
+├── internal/
+│   ├── git/                  # Acceso a repos locales (go-git)
+│   ├── github/               # Acceso a GitHub API
+│   ├── changelog/            # Parsing y agrupación de commits
+│   ├── narrative/            # Generación de texto
+│   ├── renderer/             # Renderizado (terminal, md, json, html, pdf)
+│   ├── llm/                  # Adaptadores LLM (Anthropic, OpenAI)
+│   └── styles/               # Carga, validación y gestión de .shipstyle
+├── app/                      # App Wails
+│   ├── frontend/             # Svelte + Tailwind + shadcn-svelte
+│   └── app.go                # Bindings Wails → internal/
+├── styles/                   # Estilos built-in (.shipstyle)
+├── templates/                # Plantillas HTML/texto
+├── .github/
+│   └── workflows/
+│       ├── ci.yml            # Lint + tests en push/PR
+│       └── release.yml       # Binarios multiplataforma en tag v*
+├── CHANGELOG.md
+├── SPEC.md
+├── CONTEXT.md
+├── main.go
+└── README.md
+
+Regla: ningún paquete en internal/ importa de cmd/ ni de app/.
+El flujo de dependencias es siempre hacia adentro.
+
+
+11. Reglas de código
+
+Funciones de máximo 40 líneas. Si crece, se extrae.
+Una responsabilidad por función/struct.
+Sin comentarios obvios — los comentarios explican el porqué, no el qué.
+Errores explícitos — nunca ignorar un error con _.
+Tests unitarios obligatorios para todo el código en internal/.
+Cobertura mínima objetivo: 70% por paquete.
+Antes de cada PR: golangci-lint run ./... debe pasar sin errores.
+
+
+12. CI/CD
+Estrategia de ramas
+RamaPropósitomainProducción. Solo recibe merges desde dev via PR.devIntegración. Rama base para features.feat/*Feature branches. Se abren desde dev.fix/*Bugfix branches. Se abren desde dev.
+Pipeline CI — .github/workflows/ci.yml
+Trigger: push a dev, PR hacia main.
+
+golangci-lint run ./...
+go test ./... -race -coverprofile=coverage.out
+go build ./...
+
+Pipeline Release — .github/workflows/release.yml
+Trigger: tag v* pusheado a main.
+
+CI completo (lint + tests)
+Build binarios CLI:
+
+GOOS=linux GOARCH=amd64
+GOOS=darwin GOARCH=arm64
+GOOS=windows GOARCH=amd64
+
+
+Build app Wails por plataforma
+Creación de GitHub Release con todos los artefactos adjuntos
+Actualización automática de CHANGELOG.md
+
+
+13. Versionado semántico
+Formato de tag: vMAJOR.MINOR.PATCH (e.g. v1.2.0)
+
+MAJOR — cambios incompatibles (flags eliminados, comportamiento roto).
+MINOR — nuevos comandos, flags o pantallas, compatibles hacia atrás.
+PATCH — bugfixes y mejoras internas sin cambio de interfaz.
+
+
+14. Fases de desarrollo
+FaseScopeFase 1Setup del proyecto, estructura base, CI pipeline, ramasFase 2internal/git — acceso a repos locales + comando historyFase 3internal/changelog — parsing de commits + comando contributorsFase 4Comando generate (sin LLM, plantillas)Fase 5Comando story (sin LLM, plantillas)Fase 6internal/renderer — formatos md, json, html, pdfFase 7internal/styles — sistema modular + comando styleFase 8internal/github — integración GitHub APIFase 9internal/llm — integración LLM opcional (Anthropic + OpenAI)Fase 10App Wails — estructura base + bindingsFase 11App Wails — pantallas y UI completaFase 12Pipeline release + binarios multiplataformaFase 13Pulido, docs, README, ejemplos
+
+Cada fase termina con tests pasando y lint limpio antes de mergear a dev.
+Solo se mergea a main cuando una fase completa está estable en dev.
+
+
+15. Roadmap (fuera de scope v1)
+
+Marketplace de estilos — repositorio público de .shipstyle de la comunidad.
+Soporte GitLab.
+Plugin para VS Code / Cursor.
+Integración Slack / Discord para publicar changelogs automáticamente.
+shiplog watch — modo daemon que genera changelog automáticamente al crear un tag.
