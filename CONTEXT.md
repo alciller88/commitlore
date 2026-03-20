@@ -113,6 +113,7 @@ No cambies decisiones técnicas de la sección 3 sin consultar al humano.
 Un cambio a la vez. Si necesitas refactorizar algo para implementar la fase, hazlo en un commit separado.
 Actualiza este documento si el estado del proyecto cambia.
 Ante la duda, pregunta. Es mejor pedir aclaración que implementar algo incorrecto.
+**Decisiones de arquitectura — preguntar siempre.** Si durante la implementación surge una duda o ambigüedad arquitectónica (dónde viven los archivos, cómo se carga algo, qué patrón usar, si algo del SPEC es inconsistente), el agente DEBE parar y preguntar al humano antes de decidir por su cuenta. No se toma ninguna decisión de arquitectura de forma autónoma. Se expone el problema, las opciones, y se espera confirmación.
 
 
 9. Flujo de trabajo Git — instrucciones para agentes
