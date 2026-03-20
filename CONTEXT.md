@@ -13,7 +13,7 @@ sistema de estilos modular (archivos .shipstyle).
 Consultar SPEC.md para la especificación completa.
 
 2. Estado actual
-CampoValorFase actualFase 0 — Sin iniciarÚltima rama—Versiónv0.0.0Tests pasando—Lint limpio—
+CampoValorFase actualFase 1 — En progresoÚltima rama—Versiónv0.0.0Tests pasando—Lint limpio—
 
 Actualizar esta tabla al iniciar y completar cada fase.
 
