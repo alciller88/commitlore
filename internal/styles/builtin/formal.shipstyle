@@ -1,0 +1,13 @@
+name: formal
+version: 1.0.0
+description: "Technical and professional changelog style"
+author: "commitlore"
+llm_prompt: |
+  Write the changelog in a technical, professional tone.
+  Be concise and precise. Use past tense.
+templates:
+  header: "# Changelog"
+  feature: "- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date}})"
+  fix: "- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date}})"
+  breaking: "- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date}})"
+  footer: ""

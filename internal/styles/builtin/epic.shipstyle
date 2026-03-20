@@ -1,0 +1,14 @@
+name: epic
+version: 1.0.0
+description: "Grand narrative chronicle style"
+author: "commitlore"
+llm_prompt: |
+  Write the changelog as an epic narrative chronicle.
+  Use grandiose language and dramatic flair.
+  Make every change sound legendary.
+templates:
+  header: "===== THE CHRONICLES OF THIS REPOSITORY ====="
+  feature: "  In the annals of history, {{.Author}} did inscribe:\n    \"{{.Message}}\" ({{.Date}})"
+  fix: "  In the annals of history, {{.Author}} did inscribe:\n    \"{{.Message}}\" ({{.Date}})"
+  breaking: "  In the annals of history, {{.Author}} did inscribe:\n    \"{{.Message}}\" ({{.Date}})"
+  footer: "And so the saga continues..."
