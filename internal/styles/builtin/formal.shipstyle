@@ -4,10 +4,12 @@ description: "Technical and professional changelog style"
 author: "commitlore"
 llm_prompt: |
   Write the changelog in a technical, professional tone.
-  Be concise and precise. Use past tense.
+  Be concise and precise. Use past tense. Group changes by type.
+  Each entry should state what changed and why, without embellishment.
+  Use active voice: "Added X", "Fixed Y", "Removed Z".
 templates:
   header: "# Changelog"
-  feature: "- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date}})"
-  fix: "- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date}})"
-  breaking: "- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date}})"
+  feature: "- Added: {{.Message}} ({{.Hash | short}}, {{.Author}})"
+  fix: "- Fixed: {{.Message}} ({{.Hash | short}}, {{.Author}})"
+  breaking: "- ⚠ BREAKING: {{.Message}} ({{.Hash | short}}, {{.Author}})"
   footer: ""

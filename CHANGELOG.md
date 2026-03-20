@@ -18,6 +18,7 @@ Versionado siguiendo Semantic Versioning.
 ### Changed
 - Estructura de plantillas migrada de .tmpl planos a formato .shipstyle (YAML)
 - Separación de responsabilidades entre internal/narrative y internal/renderer
+- Improved built-in style templates for clearer tone differentiation
 
 ### Fixed
 - Eliminada duplicación de plantillas entre raíz y internal/narrative/templates/

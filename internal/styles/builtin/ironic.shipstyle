@@ -3,11 +3,14 @@ version: 1.0.0
 description: "Dry humor changelog style"
 author: "commitlore"
 llm_prompt: |
-  Write the changelog with dry, sarcastic humor.
-  Be witty and dismissive, but still informative.
+  Write the changelog with dry, sarcastic humor. Be self-deprecating
+  about the codebase. Acknowledge tech debt casually. Act surprised
+  that anything works at all. Never be mean to contributors — direct
+  the humor at the code itself, the process, and the industry.
+  End with something like "Ship it. What could go wrong?"
 templates:
-  header: "Oh look, more changes. How delightful."
-  feature: "  - {{.Message}} — courtesy of {{.Author}}, who clearly had nothing better to do"
-  fix: "  - {{.Message}} — courtesy of {{.Author}}, who clearly had nothing better to do"
-  breaking: "  - {{.Message}} — courtesy of {{.Author}}, who clearly had nothing better to do"
-  footer: "That's it. You're welcome."
+  header: "Another release. Somehow it works."
+  feature: "  - We added {{.Message}} (yes, this was missing)"
+  fix: "  - Fixed {{.Message}} (it was broken, obviously)"
+  breaking: "  - We broke {{.Message}} on purpose. Probably."
+  footer: "Ship it. You're welcome."

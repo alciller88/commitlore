@@ -29,7 +29,7 @@ func TestLoad_ironic(t *testing.T) {
 	s, err := Load("ironic")
 	require.NoError(t, err)
 	assert.Equal(t, "ironic", s.Name)
-	assert.Contains(t, s.Templates.Header, "delightful")
+	assert.Contains(t, s.Templates.Header, "Somehow it works")
 }
 
 func TestLoad_epic(t *testing.T) {
