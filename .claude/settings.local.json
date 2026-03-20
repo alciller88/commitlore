@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(for dir:*)",
+      "Bash(do touch:*)",
+      "Bash(done)",
+      "Bash(go mod:*)",
+      "Bash(cmd.exe /c \"where go\")",
+      "Bash(powershell.exe -Command \"Get-Command go -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\")",
+      "Bash(export PATH=\"$PATH:/c/Program Files/Go/bin:/c/Go/bin:$HOME/go/bin\")",
+      "Bash(go get:*)",
+      "Bash(go test:*)",
+      "Bash(go tool:*)",
+      "Bash(go build:*)",
+      "Bash(go run:*)",
+      "Bash(export GOPATH=\"$HOME/go\")",
+      "Bash(export PATH=\"$PATH:/c/Program Files/Go/bin:$GOPATH/bin\")",
+      "Bash(golangci-lint run:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/Go/bin:$HOME/go/bin\")",
+      "Bash(gh pr:*)",
+      "Bash(where gh:*)",
+      "Read(//c/Program Files/GitHub CLI/**)",
+      "Read(//c/Users/alcil/MyProjects/commitlore/$LOCALAPPDATA/GitHub CLI/**)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/GitHub CLI:$LOCALAPPDATA/Programs/GitHub CLI\")",
+      "Bash(gh --version)",
+      "Bash(gofmt -w main.go cmd/ internal/)"
+    ]
+  }
+}
