@@ -92,7 +92,7 @@ func matchPrefix(prefix string) (CommitType, bool) {
 }
 
 var inferenceRules = []struct {
-	keywords []string
+	keywords   []string
 	commitType CommitType
 }{
 	{[]string{"breaking", "removed", "incompatible"}, TypeBreaking},
