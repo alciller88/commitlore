@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    name: CI Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.57.2
+
+      - name: Run tests
+        run: go test ./... -race -coverprofile=coverage.out
+
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    needs: ci
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Build linux/amd64
+        env:
+          GOOS: linux
+          GOARCH: amd64
+        run: go build -o shiplog-linux-amd64 .
+
+      - name: Build darwin/arm64
+        env:
+          GOOS: darwin
+          GOARCH: arm64
+        run: go build -o shiplog-darwin-arm64 .
+
+      - name: Build windows/amd64
+        env:
+          GOOS: windows
+          GOARCH: amd64
+        run: go build -o shiplog-windows-amd64.exe .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            shiplog-linux-amd64
+            shiplog-darwin-arm64
+            shiplog-windows-amd64.exe
