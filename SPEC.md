@@ -155,11 +155,11 @@ shiplog/
 │   ├── renderer/             # Renderizado (terminal, md, json, html, pdf)
 │   ├── llm/                  # Adaptadores LLM (Anthropic, OpenAI)
 │   └── styles/               # Carga, validación y gestión de .shipstyle
+│       └── builtin/          # Estilos built-in embebidos (.shipstyle)
 ├── app/                      # App Wails
 │   ├── frontend/             # Svelte + Tailwind + shadcn-svelte
 │   └── app.go                # Bindings Wails → internal/
-├── styles/                   # Estilos built-in (.shipstyle)
-├── templates/                # Plantillas HTML/texto
+├── styles/                   # Estilos del usuario (.shipstyle)
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml            # Lint + tests en push/PR
