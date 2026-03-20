@@ -1,0 +1,7 @@
+# Changelog
+{{range .Groups}}
+## {{.Label}}
+{{range .Commits}}
+- {{.Hash | short}} {{.Message}} ({{.Author}}, {{.Date | date}})
+{{- end}}
+{{end}}
