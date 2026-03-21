@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
 //go:embed all:frontend/dist
@@ -37,12 +38,20 @@ func run() error {
 		},
 	})
 
-	app.Window.NewWithOptions(application.WebviewWindowOptions{
+	win := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "CommitLore",
 		Width:            1200,
 		Height:           800,
 		URL:              "/",
 		BackgroundColour: application.NewRGB(13, 17, 23),
+		EnableFileDrop:   true,
+	})
+
+	win.OnWindowEvent(events.Common.WindowFilesDropped, func(event *application.WindowEvent) {
+		files := event.Context().DroppedFiles()
+		if len(files) > 0 {
+			app.Event.Emit("file-dropped", files[0])
+		}
 	})
 
 	return app.Run()

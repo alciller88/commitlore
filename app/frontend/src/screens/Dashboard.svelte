@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte'
   import { OpenFolderPicker, History } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
   import { GetRecentRepos, AddRecentRepo } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { Events } from '@wailsio/runtime'
 
   export let activeRepo = ''
 
@@ -12,9 +13,21 @@
   let error = ''
   let loading = false
   let repoSummary: {name: string, lastCommit: string, totalCommits: number, contributors: number} | null = null
-  let dragOver = false
+  let unsubFileDrop: (() => void) | null = null
 
-  onMount(loadRecentRepos)
+  onMount(() => {
+    loadRecentRepos()
+    unsubFileDrop = Events.On('file-dropped', (event: any) => {
+      const path = event.data
+      if (path && typeof path === 'string') {
+        selectRepo(path, 'local')
+      }
+    })
+  })
+
+  onDestroy(() => {
+    if (unsubFileDrop) unsubFileDrop()
+  })
 
   async function loadRecentRepos() {
     try {
@@ -77,26 +90,6 @@
     }
   }
 
-  function handleDrop(e: DragEvent) {
-    dragOver = false
-    e.preventDefault()
-    const items = e.dataTransfer?.items
-    if (items && items.length > 0) {
-      const item = items[0]
-      if (item.kind === 'file') {
-        const file = item.getAsFile()
-        if (file) {
-          selectRepo((file as any).path || file.name, 'local')
-        }
-      }
-    }
-  }
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault()
-    dragOver = true
-  }
-
   function shortenPath(p: string) {
     if (p.length <= 40) return p
     const parts = p.replace(/\\/g, '/').split('/')
@@ -124,16 +117,15 @@
 
     <div class="entry-points">
       <button class="entry-btn" on:click={openFolder} disabled={loading}>
-        <span class="entry-icon">&#128193;</span>
+        <svg class="entry-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28">
+          <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
         <span class="entry-label">Open folder</span>
       </button>
 
       <div
         class="drop-zone"
-        class:drag-over={dragOver}
-        on:drop={handleDrop}
-        on:dragover={handleDragOver}
-        on:dragleave={() => dragOver = false}
+        data-file-drop-target="true"
         role="button"
         tabindex="0"
       >
@@ -159,7 +151,13 @@
         <div class="recent-list">
           {#each recentRepos.slice(0, 5) as repo}
             <button class="recent-item" on:click={() => selectRepo(repo.path, repo.type)}>
-              <span class="recent-icon">{repo.type === 'github' ? '&#9729;' : '&#128194;'}</span>
+              <span class="recent-icon">
+                {#if repo.type === 'github'}
+                  <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                {:else}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+                {/if}
+              </span>
               <span class="recent-path">{shortenPath(repo.path)}</span>
               <span class="recent-date">{formatDate(repo.lastUsed)}</span>
             </button>
@@ -234,7 +232,7 @@
   }
   .entry-btn:hover { border-color: #58a6ff; background: #1c2333; }
   .entry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .entry-icon { font-size: 28px; }
+  .entry-icon { display: flex; align-items: center; color: #58a6ff; }
 
   .drop-zone {
     display: flex;
@@ -248,7 +246,7 @@
     min-width: 160px;
     cursor: default;
   }
-  .drop-zone.drag-over { border-color: #58a6ff; background: #1c233322; }
+  .drop-zone:hover { border-color: #58a6ff; background: #1c233322; }
 
   .github-input {
     display: flex;

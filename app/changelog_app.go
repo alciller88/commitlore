@@ -11,6 +11,7 @@ import (
 	"github.com/alciller88/commitlore/internal/narrative"
 	"github.com/alciller88/commitlore/internal/renderer"
 	"github.com/alciller88/commitlore/internal/styles"
+	"github.com/zalando/go-keyring"
 )
 
 const enrichTimeout = 30 * time.Second
@@ -69,8 +70,10 @@ func tryEnrich(provider, model, llmPrompt, text string) string {
 		return text
 	}
 
-	apiKey := os.Getenv("COMMITLORE_LLM_API_KEY")
-	p, err := llm.New(provider, apiKey, os.Getenv("COMMITLORE_LLM_BASE_URL"), model)
+	apiKey := resolveAPIKey(provider)
+	baseURL := os.Getenv("COMMITLORE_LLM_BASE_URL")
+
+	p, err := llm.New(provider, apiKey, baseURL, model)
 	if err != nil {
 		return text
 	}
@@ -84,4 +87,17 @@ func tryEnrich(provider, model, llmPrompt, text string) string {
 	}
 
 	return result
+}
+
+// resolveAPIKey checks env var first, then OS keychain.
+func resolveAPIKey(provider string) string {
+	if key := os.Getenv("COMMITLORE_LLM_API_KEY"); key != "" {
+		return key
+	}
+
+	key, err := keyring.Get(keyringService, provider)
+	if err != nil {
+		return ""
+	}
+	return key
 }
