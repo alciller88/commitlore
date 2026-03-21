@@ -167,6 +167,24 @@ Story — narrative visualization of the repo history.
 History — commit explorer with filters.
 Contributors — visual contribution map.
 Styles — visual manager: create, import, export, preview styles.
+Settings — LLM provider configuration, API key management via OS keychain.
+
+Repo Picker (all screens)
+
+Empty state with three entry points: native folder picker, drag & drop, GitHub owner/repo input.
+Recent repos list persisted in ~/.config/commitlore/config.yml (max 10 entries).
+Visual feedback to reopen recent repos quickly.
+
+Output Display (Generate, Story)
+
+HTML preview rendered inline + Copy button + Save as file button.
+Uses internal/renderer HTML output.
+
+LLM Configuration (Settings screen)
+
+API key stored in OS keychain via go-keyring (Windows Credential Manager, macOS Keychain, Linux Secret Service).
+Key never written to disk in plaintext.
+UI shows key status: configured / not configured.
 
 Visual Identity
 
