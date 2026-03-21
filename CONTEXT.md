@@ -100,7 +100,7 @@ Never create circular dependencies.
 
 
 7. Environment Variables
-VariablePurposeRequiredCOMMITLORE_LLM_PROVIDERLLM provider (anthropic, openai)NoCOMMITLORE_LLM_API_KEYLLM provider API keyNoGITHUB_TOKENGitHub token for private repos/PRsNo
+VariablePurposeRequiredCOMMITLORE_LLM_PROVIDERLLM provider (anthropic, openai, ollama, groq)NoCOMMITLORE_LLM_API_KEYLLM provider API keyNoCOMMITLORE_LLM_BASE_URLOverride API base URL (OpenAI-compatible endpoints)NoGITHUB_TOKENGitHub token for private repos/PRsNo
 
 8. Instructions for AI Agents
 If you are an agent working on this project, read this before writing code:

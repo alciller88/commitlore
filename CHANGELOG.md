@@ -6,6 +6,17 @@ Versioning follows Semantic Versioning.
 ## [Unreleased]
 
 ### Added
+- internal/llm: optional LLM integration with Anthropic and OpenAI adapters (Phase 9)
+- internal/llm: provider.go — Provider interface with Enrich() method (Phase 9)
+- internal/llm: anthropic.go — Anthropic Messages API adapter, default model claude-haiku-4-5-20251001 (Phase 9)
+- internal/llm: openai.go — OpenAI-compatible Chat Completions adapter, default model gpt-4o-mini (Phase 9)
+- internal/llm: aliases.go — convenience aliases: ollama → localhost:11434, groq → api.groq.com (Phase 9)
+- internal/llm: factory.go — New() factory with provider validation and 30s timeout (Phase 9)
+- internal/llm: sanitize.go — SanitizeRepoData() truncates to 500 chars, escapes control chars (Phase 9)
+- internal/llm: prompt.go — BuildPrompt() wraps data with ---DATA START/END--- delimiters (Phase 9)
+- cmd/generate: --llm and --llm-base-url flags for LLM enrichment (Phase 9)
+- cmd/story: --llm and --llm-base-url flags for LLM enrichment (Phase 9)
+- SPEC.md §8: updated with --llm-base-url, aliases (ollama, groq), env var COMMITLORE_LLM_BASE_URL (Phase 9)
 - internal/github: GitHub API integration via go-github — client, commits, and PRs (Phase 8)
 - internal/github: client.go — GitHub client with optional GITHUB_TOKEN authentication (Phase 8)
 - internal/github: repo.go — fetch commits from remote repos with --since, --until, --author, --limit filters (Phase 8)

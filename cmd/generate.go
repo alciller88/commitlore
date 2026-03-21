@@ -18,13 +18,16 @@ func init() {
 
 func newGenerateCmd() *cobra.Command {
 	var repoPath, since, until, style, format, output string
+	var llmFlag, llmBaseURL string
 	var includePRs bool
 
 	cmd := &cobra.Command{
 		Use:   "generate",
 		Short: "Generate a changelog from commits",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runGenerate(repoPath, since, until, style, format, output, includePRs)
+			provider := resolveLLMProvider(llmFlag)
+			baseURL := resolveLLMBaseURL(llmBaseURL)
+			return runGenerate(repoPath, since, until, style, format, output, provider, baseURL, includePRs)
 		},
 	}
 
@@ -35,11 +38,13 @@ func newGenerateCmd() *cobra.Command {
 	cmd.Flags().StringVar(&style, "style", "formal", "Style: formal, patchnotes, ironic, epic")
 	cmd.Flags().StringVar(&format, "format", "terminal", "Format: terminal, md, json, html")
 	cmd.Flags().StringVar(&output, "output", "", "Output file path (default: stdout)")
+	cmd.Flags().StringVar(&llmFlag, "llm", "none", "LLM provider: anthropic, openai, ollama, groq, none")
+	cmd.Flags().StringVar(&llmBaseURL, "llm-base-url", "", "Override API base URL (OpenAI-compatible)")
 
 	return cmd
 }
 
-func runGenerate(repoPath, since, until, styleName, format, output string, includePRs bool) error {
+func runGenerate(repoPath, since, until, styleName, format, output, llmProvider, llmBaseURL string, includePRs bool) error {
 	opts, err := buildLogOptions("", since, until, 0)
 	if err != nil {
 		return err
@@ -69,7 +74,7 @@ func runGenerate(repoPath, since, until, styleName, format, output string, inclu
 		fmt.Fprintln(os.Stderr, "Warning: --include-prs requires --repo in owner/repo format. Ignoring flag.")
 	}
 
-	return generateOutput(cl, styleName, format, output)
+	return generateOutput(cl, styleName, format, output, llmProvider, llmBaseURL)
 }
 
 func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
@@ -83,7 +88,7 @@ func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
 	}
 }
 
-func generateOutput(cl changelog.Changelog, styleName, format, output string) error {
+func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvider, llmBaseURL string) error {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return err
@@ -93,6 +98,8 @@ func generateOutput(cl changelog.Changelog, styleName, format, output string) er
 	if err != nil {
 		return err
 	}
+
+	text = enrichWithLLM(llmProvider, llmBaseURL, style.LLMPrompt, text)
 
 	rendered, err := renderer.Render(text, cl, style, renderer.Format(format))
 	if err != nil {
