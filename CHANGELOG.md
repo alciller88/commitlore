@@ -6,6 +6,13 @@ Versioning follows Semantic Versioning.
 ## [Unreleased]
 
 ### Added
+- app/: Wails v2 desktop app base structure with Svelte + TypeScript frontend (Phase 10)
+- app/app.go: main Wails entry point with Run(), binds all domain structs (Phase 10)
+- app/git_app.go: GitApp binding — History() and Contributors() for local and GitHub repos (Phase 10)
+- app/changelog_app.go: ChangelogApp binding — Generate() with optional LLM enrichment (Phase 10)
+- app/story_app.go: StoryApp binding — GenerateStory() with chronology and LLM support (Phase 10)
+- app/style_app.go: StyleApp binding — ListStyles, ShowStyle, ImportStyle, ExportStyle, DeleteStyle, CreateStyle (Phase 10)
+- app/frontend/: Svelte frontend with sidebar navigation and 6 placeholder screens (Phase 10)
 - internal/llm: optional LLM integration with Anthropic and OpenAI adapters (Phase 9)
 - internal/llm: provider.go — Provider interface with Enrich() method (Phase 9)
 - internal/llm: anthropic.go — Anthropic Messages API adapter, default model claude-haiku-4-5-20251001 (Phase 9)
