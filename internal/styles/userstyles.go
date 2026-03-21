@@ -37,7 +37,7 @@ func ValidateOutputPath(path string) error {
 
 func splitPath(path string) []string {
 	return strings.FieldsFunc(path, func(r rune) bool {
-		return r == filepath.Separator || r == '/'
+		return r == '/' || r == '\\' || r == filepath.Separator
 	})
 }
 
