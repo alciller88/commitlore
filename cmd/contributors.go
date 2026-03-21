@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/alciller88/commitlore/internal/git"
+	ghpkg "github.com/alciller88/commitlore/internal/github"
 	"github.com/spf13/cobra"
 )
 
@@ -42,7 +43,7 @@ func newContributorsCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&repoPath, "repo", ".", "Path to local git repository")
+	cmd.Flags().StringVar(&repoPath, "repo", ".", "Local path or GitHub repo (owner/repo)")
 	cmd.Flags().StringVar(&since, "since", "", "Analyze commits since date (YYYY-MM-DD)")
 	cmd.Flags().IntVar(&top, "top", defaultTop, "Number of contributors to show")
 
@@ -62,12 +63,7 @@ func buildContribOptions(since string) (git.LogOptions, error) {
 }
 
 func runContributors(repoPath string, opts git.LogOptions, top int) error {
-	repo, err := git.Open(repoPath)
-	if err != nil {
-		return err
-	}
-
-	commits, err := repo.Log(opts)
+	commits, err := fetchCommitsFromSource(repoPath, opts)
 	if err != nil {
 		return err
 	}
@@ -77,10 +73,24 @@ func runContributors(repoPath string, opts git.LogOptions, top int) error {
 		return nil
 	}
 
-	contribs := aggregateContributors(repo, commits)
+	var contribs map[string]*Contributor
+	if ghpkg.IsRemoteRepo(repoPath) {
+		contribs = aggregateContributorsNoFiles(commits)
+	} else {
+		contribs = aggregateContributorsLocal(repoPath, commits)
+	}
+
 	ranked := rankByCommits(contribs, top)
 	printContributorsTable(ranked)
 	return nil
+}
+
+func aggregateContributorsLocal(repoPath string, commits []git.Commit) map[string]*Contributor {
+	repo, err := git.Open(repoPath)
+	if err != nil {
+		return aggregateContributorsNoFiles(commits)
+	}
+	return aggregateContributors(repo, commits)
 }
 
 func aggregateContributors(repo *git.Repo, commits []git.Commit) map[string]*Contributor {
@@ -90,6 +100,16 @@ func aggregateContributors(repo *git.Repo, commits []git.Commit) map[string]*Con
 		contrib.Commits++
 		updateDateRange(contrib, c.Date)
 		collectFiles(repo, contrib, c.Hash)
+	}
+	return contribs
+}
+
+func aggregateContributorsNoFiles(commits []git.Commit) map[string]*Contributor {
+	contribs := make(map[string]*Contributor)
+	for _, c := range commits {
+		contrib := getOrCreateContributor(contribs, c)
+		contrib.Commits++
+		updateDateRange(contrib, c.Date)
 	}
 	return contribs
 }

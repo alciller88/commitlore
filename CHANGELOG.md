@@ -6,6 +6,17 @@ Versioning follows Semantic Versioning.
 ## [Unreleased]
 
 ### Added
+- internal/github: GitHub API integration via go-github — client, commits, and PRs (Phase 8)
+- internal/github: client.go — GitHub client with optional GITHUB_TOKEN authentication (Phase 8)
+- internal/github: repo.go — fetch commits from remote repos with --since, --until, --author, --limit filters (Phase 8)
+- internal/github: prs.go — fetch merged PRs with date range filters, read-only GET only (Phase 8)
+- internal/github: errors.go — user-friendly error messages for 404, 401, 403, 429 (Phase 8)
+- cmd/reposource.go: shared repo source detection — auto-routes to local git or GitHub API (Phase 8)
+- cmd/generate: --repo owner/repo and GitHub URL support, --include-prs with PR data in changelog (Phase 8)
+- cmd/history: --repo owner/repo and GitHub URL support (Phase 8)
+- cmd/contributors: --repo owner/repo and GitHub URL support (Phase 8)
+- cmd/story: --repo owner/repo and GitHub URL support (Phase 8)
+- internal/changelog: AppendCommit() and InferTypeFromMessage() for PR integration (Phase 8)
 - cmd/style: style command with subcommands list, show, create, import, export, delete (Phase 7)
 - internal/styles: user style management — load, save, list, delete, import from file/URL, export (Phase 7)
 - internal/styles: user styles directory at ~/.config/commitlore/styles/ with cross-platform support (Phase 7)
