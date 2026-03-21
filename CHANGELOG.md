@@ -6,6 +6,11 @@ Versionado siguiendo Semantic Versioning.
 ## [Unreleased]
 
 ### Added
+- cmd/story: comando story con flags --repo, --from, --style, --format, --output (Fase 5)
+- internal/git: chronology, tags, and activity peaks for story command (Fase 5)
+- internal/narrative: GenerateStory() con plantillas story por estilo (Fase 5)
+- internal/renderer: RenderStory() con soporte terminal ANSI y JSON (Fase 5)
+- internal/styles: campos story_intro, story_milestone, story_peak, story_contributor, story_footer en .shipstyle (Fase 5)
 - internal/git: acceso a repos locales con go-git (Fase 2)
 - internal/changelog: parsing y agrupación de commits por tipo (Fase 3)
 - cmd/history: comando history con filtros --author, --since, --until, --limit (Fase 2)
