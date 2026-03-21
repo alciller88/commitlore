@@ -1,7 +1,8 @@
-package app
+package main
 
 import (
 	"embed"
+	"log"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 )
@@ -9,8 +10,13 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// Run starts the Wails v3 application with all services registered.
-func Run() error {
+func main() {
+	if err := run(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error {
 	gitApp := NewGitApp()
 	changelogApp := NewChangelogApp()
 	storyApp := NewStoryApp()
