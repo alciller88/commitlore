@@ -83,6 +83,14 @@ func toCommit(c *object.Commit) Commit {
 		Author:  c.Author.Name,
 		Email:   c.Author.Email,
 		Date:    c.Author.When,
-		Message: strings.TrimSpace(c.Message),
+		Message: subjectLine(c.Message),
 	}
+}
+
+func subjectLine(msg string) string {
+	msg = strings.TrimSpace(msg)
+	if idx := strings.IndexByte(msg, '\n'); idx >= 0 {
+		msg = msg[:idx]
+	}
+	return strings.TrimSpace(msg)
 }
