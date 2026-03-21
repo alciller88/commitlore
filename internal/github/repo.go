@@ -45,7 +45,7 @@ func (c *Client) fetchAllCommits(
 	for {
 		batch, resp, err := c.gh.Repositories.ListCommits(ctx, c.owner, c.repo, ghOpts)
 		if err != nil {
-			return nil, wrapAPIError(err)
+			return nil, wrapAPIError(err, c.owner, c.repo)
 		}
 
 		for _, rc := range batch {

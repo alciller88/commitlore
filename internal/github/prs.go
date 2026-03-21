@@ -43,7 +43,7 @@ func (c *Client) fetchAllPRs(
 	for {
 		batch, resp, err := c.gh.PullRequests.List(ctx, c.owner, c.repo, ghOpts)
 		if err != nil {
-			return nil, wrapAPIError(err)
+			return nil, wrapAPIError(err, c.owner, c.repo)
 		}
 
 		done := false
