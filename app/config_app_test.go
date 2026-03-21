@@ -132,6 +132,27 @@ func TestSetLLMConfig_savesProviderAndModel(t *testing.T) {
 	assert.NotContains(t, string(data), "sk-")
 }
 
+func TestLoadLLMSettings_readsFromConfig(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	require.NoError(t, c.SetLLMConfig("groq", "llama-3.3-70b-versatile", ""))
+
+	provider, model := loadLLMSettings()
+	assert.Equal(t, "groq", provider)
+	assert.Equal(t, "llama-3.3-70b-versatile", model)
+}
+
+func TestLoadLLMSettings_emptyWhenNotConfigured(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	provider, model := loadLLMSettings()
+	assert.Equal(t, "", provider)
+	assert.Equal(t, "", model)
+}
+
 func TestConfigPersistence_surviveReload(t *testing.T) {
 	_, cleanup := setupTestConfig(t)
 	defer cleanup()
