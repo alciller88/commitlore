@@ -5,6 +5,10 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+- assets/logo.svg: replaced with square scroll icon (400x400 viewBox, commit hashes only)
+- internal/renderer: header shows icon-only at 100x100px, removed "CommitLore" text
+
 ### Fixed
 - internal/git: commit Message now contains only subject line (first line), not full body
 - internal/narrative: vocabulary replacements now match whole words only (no partial matches)
