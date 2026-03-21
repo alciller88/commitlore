@@ -14,3 +14,8 @@ templates:
   fix: "  🛡️  PATCHED: {{.Message}} [{{.Author}}]"
   breaking: "  💀 REMOVED FROM THE GAME: {{.Message}} [{{.Author}}]"
   footer: "— Stay strong, adventurer —"
+  story_intro: "⚔️  THE LEGEND BEGINS\n\nOn {{.FirstCommitDate}}, hero {{.FirstAuthor}} spawned into the world.\n{{.TotalCommits}} quests completed. {{.TotalContributors}} heroes recruited."
+  story_milestone: "  🏆 ACHIEVEMENT UNLOCKED: {{.Name}} — {{.Date}}"
+  story_peak: "  🔥 HOT STREAK: {{.Month}} — {{.Count}} quests completed"
+  story_contributor: "  🎮 NEW PLAYER: {{.Name}} joined the party on {{.Date}}"
+  story_footer: "— The game continues, adventurer —"

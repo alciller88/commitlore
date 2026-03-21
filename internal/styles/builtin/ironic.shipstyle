@@ -14,3 +14,8 @@ templates:
   fix: "  - Fixed {{.Message}} (it was broken, obviously)"
   breaking: "  - We broke {{.Message}} on purpose. Probably."
   footer: "Ship it. You're welcome."
+  story_intro: "A story nobody asked for.\n\nSomeone thought it was a good idea to start this repo on {{.FirstCommitDate}}.\n{{.FirstAuthor}} pressed git init and here we are. {{.TotalCommits}} commits later, {{.TotalContributors}} people are involved."
+  story_milestone: "  - {{.Name}} was tagged on {{.Date}}. Progress, apparently."
+  story_peak: "  - {{.Month}}: {{.Count}} commits. Someone was busy."
+  story_contributor: "  - {{.Name}} showed up on {{.Date}}. One of us now."
+  story_footer: "And that's the story. You're welcome."
