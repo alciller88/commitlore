@@ -18,7 +18,7 @@ func init() {
 
 func newGenerateCmd() *cobra.Command {
 	var repoPath, since, until, style, format, output string
-	var llmFlag, llmBaseURL string
+	var llmFlag, llmBaseURL, llmModel string
 	var includePRs bool
 
 	cmd := &cobra.Command{
@@ -27,7 +27,8 @@ func newGenerateCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := resolveLLMProvider(llmFlag)
 			baseURL := resolveLLMBaseURL(llmBaseURL)
-			return runGenerate(repoPath, since, until, style, format, output, provider, baseURL, includePRs)
+			model := resolveLLMModel(llmModel)
+			return runGenerate(repoPath, since, until, style, format, output, provider, baseURL, model, includePRs)
 		},
 	}
 
@@ -40,11 +41,12 @@ func newGenerateCmd() *cobra.Command {
 	cmd.Flags().StringVar(&output, "output", "", "Output file path (default: stdout)")
 	cmd.Flags().StringVar(&llmFlag, "llm", "none", "LLM provider: anthropic, openai, ollama, groq, none")
 	cmd.Flags().StringVar(&llmBaseURL, "llm-base-url", "", "Override API base URL (OpenAI-compatible)")
+	cmd.Flags().StringVar(&llmModel, "llm-model", "", "Override LLM model (default per provider)")
 
 	return cmd
 }
 
-func runGenerate(repoPath, since, until, styleName, format, output, llmProvider, llmBaseURL string, includePRs bool) error {
+func runGenerate(repoPath, since, until, styleName, format, output, llmProvider, llmBaseURL, llmModel string, includePRs bool) error {
 	opts, err := buildLogOptions("", since, until, 0)
 	if err != nil {
 		return err
@@ -74,7 +76,7 @@ func runGenerate(repoPath, since, until, styleName, format, output, llmProvider,
 		fmt.Fprintln(os.Stderr, "Warning: --include-prs requires --repo in owner/repo format. Ignoring flag.")
 	}
 
-	return generateOutput(cl, styleName, format, output, llmProvider, llmBaseURL)
+	return generateOutput(cl, styleName, format, output, llmProvider, llmBaseURL, llmModel)
 }
 
 func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
@@ -88,7 +90,7 @@ func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
 	}
 }
 
-func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvider, llmBaseURL string) error {
+func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return err
@@ -99,7 +101,7 @@ func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvid
 		return err
 	}
 
-	text = enrichWithLLM(llmProvider, llmBaseURL, style.LLMPrompt, text)
+	text = enrichWithLLM(llmProvider, llmBaseURL, llmModel, style.LLMPrompt, text)
 
 	rendered, err := renderer.Render(text, cl, style, renderer.Format(format))
 	if err != nil {

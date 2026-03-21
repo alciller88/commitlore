@@ -45,7 +45,7 @@ GitLab and other providers are out of scope for v1.
 5. CLI Commands
 All commands share the following global flags.
 Global Flags
-FlagValuesDefaultDescription--formatterminal, md, json, htmlterminalOutput format--stylename of loaded styleformalText tone--outputfile pathstdoutDestination file--llmanthropic, openai, nonenoneLLM to use for enriching output--llm-base-urlURL""Override API base URL (OpenAI-compatible endpoints)
+FlagValuesDefaultDescription--formatterminal, md, json, htmlterminalOutput format--stylename of loaded styleformalText tone--outputfile pathstdoutDestination file--llmanthropic, openai, nonenoneLLM to use for enriching output--llm-base-urlURL""Override API base URL (OpenAI-compatible endpoints)--llm-modelmodel name""Override LLM model (default per provider)
 
 5.1 commitlore generate
 Generates a changelog from commits and/or PRs.

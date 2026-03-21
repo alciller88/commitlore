@@ -1,22 +1,40 @@
 package llm
 
-// providerAlias maps convenience names to their openai-compatible base URLs.
-var providerAliases = map[string]string{
-	"ollama": "http://localhost:11434/v1",
-	"groq":   "https://api.groq.com/openai/v1",
+// aliasConfig holds the resolved settings for a provider alias.
+type aliasConfig struct {
+	baseURL     string
+	model       string
+	requiresKey bool
+}
+
+// providerAliases maps convenience names to their openai-compatible config.
+var providerAliases = map[string]aliasConfig{
+	"ollama": {
+		baseURL:     "http://localhost:11434/v1",
+		model:       "llama3.2",
+		requiresKey: false,
+	},
+	"groq": {
+		baseURL:     "https://api.groq.com/openai/v1",
+		model:       "llama-3.3-70b-versatile",
+		requiresKey: true,
+	},
 }
 
 // ResolveAlias checks if the provider name is a convenience alias.
-// Returns the resolved provider name, base URL, and whether an API key is required.
-func ResolveAlias(provider, baseURL string) (resolvedProvider, resolvedURL string, requiresKey bool) {
-	if aliasURL, ok := providerAliases[provider]; ok {
-		resolved := "openai"
-		if baseURL != "" {
-			return resolved, baseURL, provider != "ollama"
-		}
-		return resolved, aliasURL, provider != "ollama"
+// Returns the resolved provider name, base URL, default model, and whether
+// an API key is required.
+func ResolveAlias(provider, baseURL string) (resolvedProvider, resolvedURL, defaultModel string, requiresKey bool) {
+	cfg, ok := providerAliases[provider]
+	if !ok {
+		return provider, baseURL, "", true
 	}
-	return provider, baseURL, true
+
+	resolved := "openai"
+	if baseURL != "" {
+		return resolved, baseURL, cfg.model, cfg.requiresKey
+	}
+	return resolved, cfg.baseURL, cfg.model, cfg.requiresKey
 }
 
 // IsAlias returns true if the provider name is a known alias.

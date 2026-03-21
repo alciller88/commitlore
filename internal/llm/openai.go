@@ -23,15 +23,18 @@ type OpenAIProvider struct {
 }
 
 // NewOpenAI creates an OpenAI-compatible provider.
-func NewOpenAI(apiKey, baseURL string, httpClient *http.Client) *OpenAIProvider {
+func NewOpenAI(apiKey, baseURL, model string, httpClient *http.Client) *OpenAIProvider {
 	if baseURL == "" {
 		baseURL = openaiDefaultURL
 	}
 	baseURL = strings.TrimRight(baseURL, "/")
+	if model == "" {
+		model = openaiDefaultModel
+	}
 	return &OpenAIProvider{
 		apiKey:  apiKey,
 		baseURL: baseURL,
-		model:   openaiDefaultModel,
+		model:   model,
 		client:  httpClient,
 	}
 }

@@ -30,16 +30,24 @@ func resolveLLMBaseURL(flagValue string) string {
 	return os.Getenv("COMMITLORE_LLM_BASE_URL")
 }
 
+// resolveLLMModel returns the model from flag or env var.
+func resolveLLMModel(flagValue string) string {
+	if flagValue != "" {
+		return flagValue
+	}
+	return os.Getenv("COMMITLORE_LLM_MODEL")
+}
+
 // enrichWithLLM passes text through an LLM for enrichment.
 // On any error (timeout, auth, network), it logs a warning and returns
 // the original text. The LLM never causes a command failure.
-func enrichWithLLM(provider, baseURL, llmPrompt, text string) string {
+func enrichWithLLM(provider, baseURL, model, llmPrompt, text string) string {
 	if provider == "none" || llmPrompt == "" {
 		return text
 	}
 
 	apiKey := os.Getenv("COMMITLORE_LLM_API_KEY")
-	p, err := llm.New(provider, apiKey, baseURL)
+	p, err := llm.New(provider, apiKey, baseURL, model)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: %s. Using template output.\n", err)
 		return text

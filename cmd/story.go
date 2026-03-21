@@ -21,7 +21,7 @@ func init() {
 
 func newStoryCmd() *cobra.Command {
 	var repoPath, from, style, format, output string
-	var llmFlag, llmBaseURL string
+	var llmFlag, llmBaseURL, llmModel string
 
 	cmd := &cobra.Command{
 		Use:   "story",
@@ -29,7 +29,8 @@ func newStoryCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := resolveLLMProvider(llmFlag)
 			baseURL := resolveLLMBaseURL(llmBaseURL)
-			return runStory(repoPath, from, style, format, output, provider, baseURL)
+			model := resolveLLMModel(llmModel)
+			return runStory(repoPath, from, style, format, output, provider, baseURL, model)
 		},
 	}
 
@@ -40,18 +41,19 @@ func newStoryCmd() *cobra.Command {
 	cmd.Flags().StringVar(&output, "output", "", "Output file path (default: stdout)")
 	cmd.Flags().StringVar(&llmFlag, "llm", "none", "LLM provider: anthropic, openai, ollama, groq, none")
 	cmd.Flags().StringVar(&llmBaseURL, "llm-base-url", "", "Override API base URL (OpenAI-compatible)")
+	cmd.Flags().StringVar(&llmModel, "llm-model", "", "Override LLM model (default per provider)")
 
 	return cmd
 }
 
-func runStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL string) error {
+func runStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
 	if ghpkg.IsRemoteRepo(repoPath) {
-		return runRemoteStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL)
+		return runRemoteStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL, llmModel)
 	}
-	return runLocalStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL)
+	return runLocalStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL, llmModel)
 }
 
-func runLocalStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL string) error {
+func runLocalStory(repoPath, from, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
 	repo, err := git.Open(repoPath)
 	if err != nil {
 		return err
@@ -72,10 +74,10 @@ func runLocalStory(repoPath, from, styleName, format, output, llmProvider, llmBa
 		return err
 	}
 
-	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL)
+	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL, llmModel)
 }
 
-func runRemoteStory(repoRef, from, styleName, format, output, llmProvider, llmBaseURL string) error {
+func runRemoteStory(repoRef, from, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
 	opts := git.LogOptions{}
 	if from != "" {
 		t, err := time.Parse(dateLayout, from)
@@ -96,7 +98,7 @@ func runRemoteStory(repoRef, from, styleName, format, output, llmProvider, llmBa
 	}
 
 	ch := git.BuildChronology(commits, nil, topPeaks)
-	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL)
+	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL, llmModel)
 }
 
 func fetchStoryCommits(repo *git.Repo, from string) ([]git.Commit, error) {
@@ -119,7 +121,7 @@ func buildStoryChronology(repo *git.Repo, commits []git.Commit) (git.Chronology,
 	return git.BuildChronology(commits, tags, topPeaks), nil
 }
 
-func renderStory(ch git.Chronology, styleName, format, output, llmProvider, llmBaseURL string) error {
+func renderStory(ch git.Chronology, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return err
@@ -130,7 +132,7 @@ func renderStory(ch git.Chronology, styleName, format, output, llmProvider, llmB
 		return err
 	}
 
-	text = enrichWithLLM(llmProvider, llmBaseURL, style.LLMPrompt, text)
+	text = enrichWithLLM(llmProvider, llmBaseURL, llmModel, style.LLMPrompt, text)
 
 	rendered, err := renderer.RenderStory(text, ch, style, renderer.Format(format))
 	if err != nil {
