@@ -93,7 +93,7 @@ func renderStory(ch git.Chronology, styleName, format, output string) error {
 		return err
 	}
 
-	rendered, err := renderer.RenderStory(text, ch, renderer.Format(format))
+	rendered, err := renderer.RenderStory(text, ch, style, renderer.Format(format))
 	if err != nil {
 		return err
 	}

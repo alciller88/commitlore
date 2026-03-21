@@ -74,3 +74,65 @@ func TestIsBuiltin(t *testing.T) {
 	assert.False(t, IsBuiltin("custom"))
 	assert.False(t, IsBuiltin(""))
 }
+
+func TestLoad_themeLoaded(t *testing.T) {
+	s, err := Load("epic")
+	require.NoError(t, err)
+	assert.Equal(t, "dark", s.Theme.Mode)
+	assert.Equal(t, "#d4af37", s.Theme.Colors.Primary)
+	assert.Equal(t, "bordered", s.Theme.CardStyle)
+	assert.True(t, s.Theme.Animations)
+}
+
+func TestLoad_terminalLoaded(t *testing.T) {
+	s, err := Load("patchnotes")
+	require.NoError(t, err)
+	assert.Equal(t, "magenta", s.Terminal.Colors.Header)
+	assert.Equal(t, "normal", s.Terminal.Density)
+	assert.NotEmpty(t, s.Terminal.Decorators.Separator)
+}
+
+func TestLoad_vocabularyLoaded(t *testing.T) {
+	s, err := Load("epic")
+	require.NoError(t, err)
+	assert.Equal(t, "ancient curse", s.Vocabulary["bug"])
+	assert.Equal(t, "vanquish", s.Vocabulary["fix"])
+}
+
+func TestValidate_invalidCardStyle(t *testing.T) {
+	s := Style{Name: "test", Templates: Templates{Header: "h"}, Theme: Theme{CardStyle: "invalid"}}
+	err := validate(s)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "card_style")
+}
+
+func TestValidate_invalidDensity(t *testing.T) {
+	s := Style{Name: "test", Templates: Templates{Header: "h"}, Terminal: Terminal{Density: "invalid"}}
+	err := validate(s)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "density")
+}
+
+func TestValidate_invalidMode(t *testing.T) {
+	s := Style{Name: "test", Templates: Templates{Header: "h"}, Theme: Theme{Mode: "invalid"}}
+	err := validate(s)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "mode")
+}
+
+func TestValidate_emptyOptionalFieldsPass(t *testing.T) {
+	s := Style{Name: "test", Templates: Templates{Header: "h"}}
+	err := validate(s)
+	assert.NoError(t, err)
+}
+
+func TestValidate_validValues(t *testing.T) {
+	s := Style{
+		Name:      "test",
+		Templates: Templates{Header: "h"},
+		Theme:     Theme{Mode: "dark", CardStyle: "glassmorphism"},
+		Terminal:  Terminal{Density: "compact"},
+	}
+	err := validate(s)
+	assert.NoError(t, err)
+}
