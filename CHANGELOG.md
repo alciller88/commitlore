@@ -5,6 +5,12 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (Phase 11 bugs)
+- internal/git: added JSON tags to Commit struct — frontend was receiving PascalCase fields but expected camelCase
+- app/frontend: replaced HTML entity icons (&#9729; &#128194;) with inline SVGs — WebView didn't render emoji entities
+- app/app.go: enabled native file drop via Wails v3 EnableFileDrop + WindowFilesDropped event — HTML5 drag events don't receive OS files in WebView
+- app/changelog_app.go: resolveAPIKey() checks OS keychain via go-keyring when env var is empty — UI-configured LLM keys now reach the provider
+
 ### Added (Phase 11)
 - app/config_app.go: ConfigApp binding — GetRecentRepos, AddRecentRepo, SetLLMConfig, GetLLMConfig, ClearLLMKey
 - app/config_app.go: recent repos persisted in ~/.config/commitlore/config.yml (max 10 entries, MRU order)
