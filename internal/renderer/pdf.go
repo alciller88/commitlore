@@ -3,6 +3,7 @@ package renderer
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/alciller88/commitlore/internal/changelog"
@@ -17,6 +18,8 @@ const (
 	pdfH2Size     = 14.0
 	pdfLineHeight = 6.0
 )
+
+var emojiPattern = regexp.MustCompile(`[\x{1F000}-\x{1FFFF}]|[\x{2600}-\x{27BF}]|[\x{FE00}-\x{FE0F}]|[\x{200D}]`)
 
 func renderChangelogPDF(content string, cl changelog.Changelog) (string, error) {
 	pdf := newPDF()
@@ -48,9 +51,16 @@ func newPDF() *gofpdf.Fpdf {
 	return pdf
 }
 
+func pdfContentWidth(pdf *gofpdf.Fpdf) float64 {
+	w, _ := pdf.GetPageSize()
+	left, _, right, _ := pdf.GetMargins()
+	return w - left - right
+}
+
 func writePDFTitle(pdf *gofpdf.Fpdf, title string) {
 	pdf.SetFont("Helvetica", "B", pdfTitleSize)
-	pdf.CellFormat(0, 10, title, "", 1, "L", false, 0, "")
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	pdf.CellFormat(0, 10, tr(stripEmojis(title)), "", 1, "L", false, 0, "")
 	pdf.Ln(4)
 	drawPDFLine(pdf)
 	pdf.Ln(4)
@@ -59,15 +69,18 @@ func writePDFTitle(pdf *gofpdf.Fpdf, title string) {
 func writePDFGroupHeader(pdf *gofpdf.Fpdf, title string) {
 	pdf.Ln(3)
 	pdf.SetFont("Helvetica", "B", pdfH2Size)
-	pdf.CellFormat(0, 8, title, "", 1, "L", false, 0, "")
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	pdf.CellFormat(0, 8, tr(stripEmojis(title)), "", 1, "L", false, 0, "")
 	pdf.Ln(2)
 }
 
 func writePDFCommits(pdf *gofpdf.Fpdf, commits []changelog.ParsedCommit) {
 	pdf.SetFont("Helvetica", "", pdfFontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	w := pdfContentWidth(pdf)
 	for _, c := range commits {
-		line := formatCommitLine(c)
-		pdf.CellFormat(0, pdfLineHeight, line, "", 1, "L", false, 0, "")
+		line := tr(stripEmojis(formatCommitLine(c)))
+		pdf.MultiCell(w, pdfLineHeight, line, "", "L", false)
 	}
 }
 
@@ -82,12 +95,14 @@ func writeStoryIntroPDF(pdf *gofpdf.Fpdf, ch git.Chronology) {
 		return
 	}
 	pdf.SetFont("Helvetica", "", pdfFontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	w := pdfContentWidth(pdf)
 	line := fmt.Sprintf("Started on %s by %s. Total commits: %d. Contributors: %d.",
 		ch.FirstCommit.Date.Format("2006-01-02"),
 		ch.FirstCommit.Author,
 		ch.TotalCommits,
 		len(ch.Contributors))
-	pdf.CellFormat(0, pdfLineHeight, line, "", 1, "L", false, 0, "")
+	pdf.MultiCell(w, pdfLineHeight, tr(stripEmojis(line)), "", "L", false)
 	pdf.Ln(2)
 }
 
@@ -97,9 +112,11 @@ func writeStoryTagsPDF(pdf *gofpdf.Fpdf, ch git.Chronology) {
 	}
 	writePDFGroupHeader(pdf, "Milestones")
 	pdf.SetFont("Helvetica", "", pdfFontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	w := pdfContentWidth(pdf)
 	for _, t := range ch.Tags {
-		line := fmt.Sprintf("%s — %s", t.Name, t.Date.Format("2006-01-02"))
-		pdf.CellFormat(0, pdfLineHeight, line, "", 1, "L", false, 0, "")
+		line := fmt.Sprintf("%s -- %s", t.Name, t.Date.Format("2006-01-02"))
+		pdf.MultiCell(w, pdfLineHeight, tr(stripEmojis(line)), "", "L", false)
 	}
 }
 
@@ -109,9 +126,11 @@ func writeStoryPeaksPDF(pdf *gofpdf.Fpdf, ch git.Chronology) {
 	}
 	writePDFGroupHeader(pdf, "Activity Peaks")
 	pdf.SetFont("Helvetica", "", pdfFontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	w := pdfContentWidth(pdf)
 	for _, p := range ch.Peaks {
-		line := fmt.Sprintf("%s — %d commits", p.Month, p.Count)
-		pdf.CellFormat(0, pdfLineHeight, line, "", 1, "L", false, 0, "")
+		line := fmt.Sprintf("%s -- %d commits", p.Month, p.Count)
+		pdf.MultiCell(w, pdfLineHeight, tr(stripEmojis(line)), "", "L", false)
 	}
 }
 
@@ -121,9 +140,11 @@ func writeStoryContributorsPDF(pdf *gofpdf.Fpdf, ch git.Chronology) {
 	}
 	writePDFGroupHeader(pdf, "Contributors")
 	pdf.SetFont("Helvetica", "", pdfFontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("")
+	w := pdfContentWidth(pdf)
 	for _, c := range ch.Contributors {
-		line := fmt.Sprintf("%s — joined %s", c.Name, c.Date.Format("2006-01-02"))
-		pdf.CellFormat(0, pdfLineHeight, line, "", 1, "L", false, 0, "")
+		line := fmt.Sprintf("%s -- joined %s", c.Name, c.Date.Format("2006-01-02"))
+		pdf.MultiCell(w, pdfLineHeight, tr(stripEmojis(line)), "", "L", false)
 	}
 }
 
@@ -151,4 +172,8 @@ func pdfToString(pdf *gofpdf.Fpdf) (string, error) {
 		return "", fmt.Errorf("writing PDF: %w", err)
 	}
 	return buf.String(), nil
+}
+
+func stripEmojis(s string) string {
+	return emojiPattern.ReplaceAllString(s, "")
 }
