@@ -1,7 +1,7 @@
-CHANGELOG — shiplog
-Todos los cambios notables de este proyecto se documentan aquí.
-Formato basado en Keep a Changelog.
-Versionado siguiendo Semantic Versioning.
+CHANGELOG — CommitLore
+All notable changes to this project are documented here.
+Format based on Keep a Changelog.
+Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
@@ -13,42 +13,45 @@ Versionado siguiendo Semantic Versioning.
 - internal/renderer: compact density strips author/date details from terminal output
 
 ### Removed
-- Formato PDF eliminado en favor de HTML (mejor calidad visual, compatible con impresión desde navegador)
+- PDF format removed in favor of HTML (better visual quality, compatible with browser printing)
 
 ### Added
-- internal/styles: schema .shipstyle extendido con vocabulary, theme, terminal y metadatos marketplace (Fase 6.5)
-- internal/renderer: HTML dinámico con colores, tipografía, card_style y custom_css del tema (Fase 6.5)
-- internal/renderer: terminal.go con colores ANSI y decoradores del estilo (Fase 6.5)
-- internal/narrative: ApplyVocabulary() para sustituciones de palabras sin LLM (Fase 6.5)
-- internal/styles: validación de card_style, density y mode (Fase 6.5)
-- internal/renderer: formato HTML autocontenido con dark theme, badges por tipo y barras de actividad (Fase 6)
-- cmd/story: comando story con flags --repo, --from, --style, --format, --output (Fase 5)
-- internal/git: chronology, tags, and activity peaks for story command (Fase 5)
-- internal/narrative: GenerateStory() con plantillas story por estilo (Fase 5)
-- internal/renderer: RenderStory() con soporte terminal ANSI y JSON (Fase 5)
-- internal/styles: campos story_intro, story_milestone, story_peak, story_contributor, story_footer en .shipstyle (Fase 5)
-- internal/git: acceso a repos locales con go-git (Fase 2)
-- internal/changelog: parsing y agrupación de commits por tipo (Fase 3)
-- cmd/history: comando history con filtros --author, --since, --until, --limit (Fase 2)
-- cmd/contributors: comando contributors con flags --repo, --since, --top (Fase 3)
-- cmd/generate: comando generate con flags --repo, --since, --until, --style, --format, --output (Fase 4)
-- internal/narrative: generación de texto por estilo con plantillas embebidas (Fase 4)
-- internal/styles: sistema de estilos modular con formato .shipstyle en YAML (Fase 4)
-- internal/renderer: renderizado por formato (terminal, md, json) (Fase 4)
+- assets/logo.svg: official CommitLore logo (scroll + branch design, adaptive dark/light)
+- internal/renderer: embedded logo in HTML header (48px) and footer (24px) as default
+- internal/styles: extended .shipstyle schema with vocabulary, theme, terminal, and marketplace metadata (Phase 6.5)
+- internal/renderer: dynamic HTML with colors, typography, card_style, and custom_css from theme (Phase 6.5)
+- internal/renderer: terminal.go with ANSI colors and decorators from style (Phase 6.5)
+- internal/narrative: ApplyVocabulary() for word substitutions without LLM (Phase 6.5)
+- internal/styles: validation for card_style, density, and mode (Phase 6.5)
+- internal/renderer: self-contained HTML format with dark theme, type badges, and activity bars (Phase 6)
+- cmd/story: story command with flags --repo, --from, --style, --format, --output (Phase 5)
+- internal/git: chronology, tags, and activity peaks for story command (Phase 5)
+- internal/narrative: GenerateStory() with story templates per style (Phase 5)
+- internal/renderer: RenderStory() with terminal ANSI and JSON support (Phase 5)
+- internal/styles: story_intro, story_milestone, story_peak, story_contributor, story_footer fields in .shipstyle (Phase 5)
+- internal/git: local repo access with go-git (Phase 2)
+- internal/changelog: commit parsing and grouping by type (Phase 3)
+- cmd/history: history command with filters --author, --since, --until, --limit (Phase 2)
+- cmd/contributors: contributors command with flags --repo, --since, --top (Phase 3)
+- cmd/generate: generate command with flags --repo, --since, --until, --style, --format, --output (Phase 4)
+- internal/narrative: text generation by style with embedded templates (Phase 4)
+- internal/styles: modular style system with .shipstyle YAML format (Phase 4)
+- internal/renderer: format rendering (terminal, md, json) (Phase 4)
 
 ### Changed
+- SPEC.md, CONTEXT.md, CHANGELOG.md translated to English
 - Enriched built-in styles with full visual identity and creative templates
-- Estructura de plantillas migrada de .tmpl planos a formato .shipstyle (YAML)
-- Separación de responsabilidades entre internal/narrative y internal/renderer
+- Template structure migrated from plain .tmpl to .shipstyle (YAML) format
+- Separation of responsibilities between internal/narrative and internal/renderer
 - Improved built-in style templates for clearer tone differentiation
 
 ### Fixed
-- Eliminada duplicación de plantillas entre raíz y internal/narrative/templates/
+- Removed duplicate templates between root and internal/narrative/templates/
 
 ## [0.0.0] — 2026-03-20
 
 ### Added
-- Estructura inicial del proyecto
-- SPEC.md — especificación completa del proyecto
-- CONTEXT.md — contexto para agentes y colaboradores
-- CHANGELOG.md — este archivo
+- Initial project structure
+- SPEC.md — complete project specification
+- CONTEXT.md — context for agents and collaborators
+- CHANGELOG.md — this file
