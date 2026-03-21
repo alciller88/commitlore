@@ -5,6 +5,7 @@
   import History from './screens/History.svelte'
   import Contributors from './screens/Contributors.svelte'
   import Styles from './screens/Styles.svelte'
+  import Settings from './screens/Settings.svelte'
 
   const screens = [
     { name: 'Dashboard', icon: '~' },
@@ -13,12 +14,18 @@
     { name: 'History', icon: '>' },
     { name: 'Contributors', icon: '@' },
     { name: 'Styles', icon: '*' },
+    { name: 'Settings', icon: '=' },
   ] as const
 
   let activeScreen = 'Dashboard'
+  let activeRepo = ''
+
+  function handleRepoSelected(event: CustomEvent<string>) {
+    activeRepo = event.detail
+  }
 
   const components: Record<string, any> = {
-    Dashboard, Generate, Story, History, Contributors, Styles,
+    Dashboard, Generate, Story, History, Contributors, Styles, Settings,
   }
 </script>
 
@@ -37,7 +44,11 @@
     {/each}
   </nav>
   <main class="content">
-    <svelte:component this={components[activeScreen]} />
+    <svelte:component
+      this={components[activeScreen]}
+      {activeRepo}
+      on:repoSelected={handleRepoSelected}
+    />
   </main>
 </div>
 
@@ -46,7 +57,8 @@
     display: flex;
     height: 100vh;
     background: #0d1117;
-    color: #c9d1d9;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   .sidebar {
@@ -56,6 +68,7 @@
     display: flex;
     flex-direction: column;
     padding: 0;
+    flex-shrink: 0;
   }
 
   .sidebar-header {
@@ -64,7 +77,7 @@
     font-weight: 700;
     color: #f0f6fc;
     border-bottom: 1px solid #30363d;
-    font-family: 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
 
   .nav-item {
@@ -80,11 +93,12 @@
     text-align: left;
     width: 100%;
     transition: background 0.15s, color 0.15s;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
   .nav-item:hover {
     background: #1f2937;
-    color: #c9d1d9;
+    color: #e6edf3;
   }
 
   .nav-item.active {
@@ -94,20 +108,15 @@
   }
 
   .nav-icon {
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 16px;
     width: 20px;
     text-align: center;
   }
 
-  .nav-label {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-
   .content {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow-y: auto;
+    padding: 24px;
   }
 </style>
