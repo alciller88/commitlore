@@ -45,7 +45,7 @@ GitLab and other providers are out of scope for v1.
 5. CLI Commands
 All commands share the following global flags.
 Global Flags
-FlagValuesDefaultDescription--formatterminal, md, json, htmlterminalOutput format--stylename of loaded styleformalText tone--outputfile pathstdoutDestination file--llmanthropic, openai, nonenoneLLM to use for enriching output
+FlagValuesDefaultDescription--formatterminal, md, json, htmlterminalOutput format--stylename of loaded styleformalText tone--outputfile pathstdoutDestination file--llmanthropic, openai, nonenoneLLM to use for enriching output--llm-base-urlURL""Override API base URL (OpenAI-compatible endpoints)
 
 5.1 commitlore generate
 Generates a changelog from commits and/or PRs.
@@ -144,7 +144,17 @@ PDF removed in favor of HTML. The generated HTML can be printed to PDF from any 
 The tool works completely without LLM using templates from the active style.
 Environment variables: COMMITLORE_LLM_PROVIDER and COMMITLORE_LLM_API_KEY.
 The --llm flag overrides the environment variable per command.
+The --llm-base-url flag overrides the API endpoint (useful for OpenAI-compatible
+providers: Ollama, Groq, LM Studio, Together AI, etc.).
+
 Supported providers in v1: anthropic, openai.
+OpenAI-compatible providers use --llm openai --llm-base-url <endpoint>.
+Convenience aliases (map to openai adapter + default base URL):
+  ollama  → http://localhost:11434/v1
+  groq    → https://api.groq.com/openai/v1
+
+The --llm-base-url flag is also available as environment variable
+COMMITLORE_LLM_BASE_URL.
 
 
 9. Desktop App (Wails)
