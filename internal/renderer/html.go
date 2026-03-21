@@ -1,0 +1,208 @@
+package renderer
+
+import (
+	"bytes"
+	"fmt"
+	"html/template"
+
+	"github.com/alciller88/commitlore/internal/changelog"
+	"github.com/alciller88/commitlore/internal/git"
+)
+
+const htmlLayout = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{.Title}}</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; background: #0d1117; color: #c9d1d9; }
+h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+h2 { color: #79c0ff; margin-top: 1.5rem; }
+ul { list-style: none; padding-left: 0; }
+li { padding: 0.3rem 0; border-bottom: 1px solid #21262d; }
+.hash { color: #d2a8ff; font-family: monospace; font-size: 0.85em; }
+.author { color: #3fb950; }
+.date { color: #8b949e; font-size: 0.85em; }
+.type-badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.75em; font-weight: bold; margin-right: 0.3rem; }
+.type-feat { background: #1f6feb33; color: #58a6ff; }
+.type-fix { background: #3fb95033; color: #3fb950; }
+.type-breaking { background: #f8514933; color: #f85149; }
+.type-other { background: #30363d; color: #8b949e; }
+.footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #30363d; color: #8b949e; font-size: 0.85em; }
+.peak-bar { display: inline-block; background: #1f6feb; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }
+</style>
+</head>
+<body>
+{{.Body}}
+</body>
+</html>`
+
+func renderChangelogHTML(content string, cl changelog.Changelog) (string, error) {
+	body, err := buildChangelogBody(cl)
+	if err != nil {
+		return "", err
+	}
+	return renderHTMLPage("Changelog — commitlore", body)
+}
+
+func buildChangelogBody(cl changelog.Changelog) (string, error) {
+	var buf bytes.Buffer
+	buf.WriteString("<h1>Changelog</h1>\n")
+	for _, g := range cl.Groups {
+		if err := writeGroupHTML(&buf, g); err != nil {
+			return "", err
+		}
+	}
+	writeHTMLFooter(&buf)
+	return buf.String(), nil
+}
+
+func writeGroupHTML(buf *bytes.Buffer, g changelog.ChangelogGroup) error {
+	fmt.Fprintf(buf, "<h2>%s</h2>\n<ul>\n", template.HTMLEscapeString(groupTitle(g.Type)))
+	for _, c := range g.Commits {
+		writeCommitHTML(buf, c)
+	}
+	buf.WriteString("</ul>\n")
+	return nil
+}
+
+func writeCommitHTML(buf *bytes.Buffer, c changelog.ParsedCommit) {
+	badge := typeBadgeClass(c.Type)
+	fmt.Fprintf(buf,
+		"<li><span class=\"type-badge %s\">%s</span> %s <span class=\"hash\">%s</span> — <span class=\"author\">%s</span> <span class=\"date\">%s</span></li>\n",
+		badge, template.HTMLEscapeString(string(c.Type)),
+		template.HTMLEscapeString(c.Message),
+		shortHash(c.Hash),
+		template.HTMLEscapeString(c.Author),
+		c.Date.Format("2006-01-02"),
+	)
+}
+
+func renderStoryHTML(content string, ch git.Chronology) (string, error) {
+	body := buildStoryBody(ch)
+	return renderHTMLPage("Story — commitlore", body)
+}
+
+func buildStoryBody(ch git.Chronology) string {
+	var buf bytes.Buffer
+	buf.WriteString("<h1>Repository Story</h1>\n")
+	writeStoryIntroHTML(&buf, ch)
+	writeStoryTagsHTML(&buf, ch)
+	writeStoryPeaksHTML(&buf, ch)
+	writeStoryContributorsHTML(&buf, ch)
+	writeHTMLFooter(&buf)
+	return buf.String()
+}
+
+func writeStoryIntroHTML(buf *bytes.Buffer, ch git.Chronology) {
+	if ch.TotalCommits == 0 {
+		return
+	}
+	fmt.Fprintf(buf,
+		"<p>Started on <strong>%s</strong> by <span class=\"author\">%s</span>. Total commits: <strong>%d</strong>. Contributors: <strong>%d</strong>.</p>\n",
+		ch.FirstCommit.Date.Format("2006-01-02"),
+		template.HTMLEscapeString(ch.FirstCommit.Author),
+		ch.TotalCommits,
+		len(ch.Contributors),
+	)
+}
+
+func writeStoryTagsHTML(buf *bytes.Buffer, ch git.Chronology) {
+	if len(ch.Tags) == 0 {
+		return
+	}
+	buf.WriteString("<h2>Milestones</h2>\n<ul>\n")
+	for _, t := range ch.Tags {
+		fmt.Fprintf(buf, "<li><strong>%s</strong> — <span class=\"date\">%s</span> <span class=\"hash\">%s</span></li>\n",
+			template.HTMLEscapeString(t.Name), t.Date.Format("2006-01-02"), shortHash(t.Hash))
+	}
+	buf.WriteString("</ul>\n")
+}
+
+func writeStoryPeaksHTML(buf *bytes.Buffer, ch git.Chronology) {
+	if len(ch.Peaks) == 0 {
+		return
+	}
+	maxCount := ch.Peaks[0].Count
+	buf.WriteString("<h2>Activity Peaks</h2>\n<ul>\n")
+	for _, p := range ch.Peaks {
+		barWidth := peakBarWidth(p.Count, maxCount)
+		fmt.Fprintf(buf, "<li><span class=\"peak-bar\" style=\"width:%dpx\"></span> %s — <strong>%d</strong> commits</li>\n",
+			barWidth, template.HTMLEscapeString(p.Month), p.Count)
+	}
+	buf.WriteString("</ul>\n")
+}
+
+func writeStoryContributorsHTML(buf *bytes.Buffer, ch git.Chronology) {
+	if len(ch.Contributors) == 0 {
+		return
+	}
+	buf.WriteString("<h2>Contributors</h2>\n<ul>\n")
+	for _, c := range ch.Contributors {
+		fmt.Fprintf(buf, "<li><span class=\"author\">%s</span> — joined <span class=\"date\">%s</span></li>\n",
+			template.HTMLEscapeString(c.Name), c.Date.Format("2006-01-02"))
+	}
+	buf.WriteString("</ul>\n")
+}
+
+func renderHTMLPage(title, body string) (string, error) {
+	tmpl, err := template.New("page").Parse(htmlLayout)
+	if err != nil {
+		return "", fmt.Errorf("parsing HTML layout: %w", err)
+	}
+	var buf bytes.Buffer
+	data := map[string]template.HTML{"Title": template.HTML(template.HTMLEscapeString(title)), "Body": template.HTML(body)}
+	if err := tmpl.Execute(&buf, data); err != nil {
+		return "", fmt.Errorf("rendering HTML: %w", err)
+	}
+	return buf.String(), nil
+}
+
+func shortHash(hash string) string {
+	if len(hash) > 7 {
+		return hash[:7]
+	}
+	return hash
+}
+
+func groupTitle(t changelog.CommitType) string {
+	titles := map[changelog.CommitType]string{
+		changelog.TypeBreaking: "Breaking Changes",
+		changelog.TypeFeat:     "Features",
+		changelog.TypeFix:      "Bug Fixes",
+		changelog.TypeRefactor: "Refactoring",
+		changelog.TypeDocs:     "Documentation",
+		changelog.TypeTest:     "Tests",
+		changelog.TypeChore:    "Chores",
+		changelog.TypeOther:    "Other",
+	}
+	if title, ok := titles[t]; ok {
+		return title
+	}
+	return string(t)
+}
+
+func typeBadgeClass(t changelog.CommitType) string {
+	switch t {
+	case changelog.TypeFeat:
+		return "type-feat"
+	case changelog.TypeFix:
+		return "type-fix"
+	case changelog.TypeBreaking:
+		return "type-breaking"
+	default:
+		return "type-other"
+	}
+}
+
+func peakBarWidth(count, max int) int {
+	if max == 0 {
+		return 0
+	}
+	return (count * 200) / max
+}
+
+func writeHTMLFooter(buf *bytes.Buffer) {
+	buf.WriteString("<div class=\"footer\">Generated by commitlore</div>\n")
+}
