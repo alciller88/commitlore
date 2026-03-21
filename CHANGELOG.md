@@ -5,6 +5,11 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (Story/Changelog output parity)
+- internal/renderer: HTML output now includes narrative content — was previously discarded, producing bare data-only HTML while terminal/markdown got rich styled narrative
+- internal/renderer: narrative text rendered as HTML paragraphs in .narrative div above structured data section
+- internal/renderer: CSS for .narrative and .data-section layout
+
 ### Fixed (LLM Settings)
 - app/changelog_app.go, app/story_app.go: Generate and GenerateStory now auto-read LLM config from Settings (config.yml + keychain) — removed redundant llmProvider/llmModel parameters
 - app/frontend: removed LLM selectors from Generate and Story screens — Settings is the single source of truth for LLM configuration

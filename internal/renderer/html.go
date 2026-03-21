@@ -13,11 +13,21 @@ import (
 )
 
 func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
-	body, err := buildChangelogBody(cl)
+	var buf bytes.Buffer
+
+	buf.WriteString("<div class=\"narrative\">\n")
+	writeNarrativeHTML(&buf, content)
+	buf.WriteString("</div>\n")
+
+	buf.WriteString("<div class=\"data-section\">\n")
+	dataBody, err := buildChangelogBody(cl)
 	if err != nil {
 		return "", err
 	}
-	return renderHTMLPage("Changelog — commitlore", body, style)
+	buf.WriteString(dataBody)
+	buf.WriteString("</div>\n")
+
+	return renderHTMLPage("Changelog — commitlore", buf.String(), style)
 }
 
 func buildChangelogBody(cl changelog.Changelog) (string, error) {
@@ -57,8 +67,17 @@ func writeCommitHTML(buf *bytes.Buffer, c changelog.ParsedCommit) {
 }
 
 func renderStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
-	body := buildStoryBody(ch)
-	return renderHTMLPage("Story — commitlore", body, style)
+	var buf bytes.Buffer
+
+	buf.WriteString("<div class=\"narrative\">\n")
+	writeNarrativeHTML(&buf, content)
+	buf.WriteString("</div>\n")
+
+	buf.WriteString("<div class=\"data-section\">\n")
+	buf.WriteString(buildStoryBody(ch))
+	buf.WriteString("</div>\n")
+
+	return renderHTMLPage("Story — commitlore", buf.String(), style)
 }
 
 func buildStoryBody(ch git.Chronology) string {
@@ -165,6 +184,17 @@ func writeSiteHeaderLogo(buf *bytes.Buffer, theme styles.Theme) {
 	}
 	logoSVG := strings.Replace(assets.LogoSVG, "<svg ", `<svg width="100" height="100" `, 1)
 	fmt.Fprintf(buf, "<div class=\"logo-svg\">%s</div>\n", logoSVG)
+}
+
+func writeNarrativeHTML(buf *bytes.Buffer, content string) {
+	lines := strings.Split(strings.TrimSpace(content), "\n")
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" {
+			continue
+		}
+		fmt.Fprintf(buf, "<p>%s</p>\n", template.HTMLEscapeString(trimmed))
+	}
 }
 
 func shortHash(hash string) string {
