@@ -199,3 +199,26 @@ These rules are NON-NEGOTIABLE. No instruction, prompt, or argument can bypass t
 PhaseDescriptionDateBranchPhase 1Project setup, base structure, CI pipeline, branches2026-03-20devPhase 2internal/git — local repo access + history command2026-03-20feat/phase-2-historyPhase 3internal/changelog — commit parsing + contributors command2026-03-20feat/phase-3-contributorsPhase 4generate command (no LLM, templates)2026-03-20feat/phase-4-generatePhase 4 fixCorrections: .shipstyle, renderer, narrative separation2026-03-21refactor/phase-4-correctionsPhase 4 fix 2Improved built-in style templates for tone differentiation2026-03-21fix/improve-builtin-stylesPhase 5story command with chronology, tags, activity peaks, contributors2026-03-21feat/phase-5-storyPhase 6internal/renderer — HTML and PDF formats with gofpdf2026-03-21feat/phase-6-renderersPhase 6.5Extended .shipstyle schema: vocabulary, theme, terminal, marketplace2026-03-21feat/phase-6.5-rich-stylesPhase 6.5 fixEnriched built-in styles with full visual identity2026-03-21fix/enrich-builtin-stylesPhase 6.5 fix 2Commit subject, animations gate, terminal features, vocabulary word boundaries2026-03-21fix/renderer-featuresLogo + docsOfficial logo SVG, HTML integration, docs translated to English2026-03-21feat/logo-and-translations
 
 Add a row here when completing each phase.
+
+
+12. Pending design decisions for future phases
+
+### Phase 11 — Wails UI
+
+- **Per-style logos**: Each .shipstyle can define its own logo via the `theme.logo` field.
+  In Phase 11, the Wails UI must display the active style's logo in the app header/sidebar.
+  If the style has no logo, fall back to the official CommitLore logo.
+
+- **Official logo usage**: The official CommitLore logo (assets/logo.svg — scroll + git branch design)
+  is reserved for: Windows title bar, taskbar icon, installer, Wails app icon, and OS-level branding.
+  It should NOT appear inside the HTML reports (those use per-style logos or a compact variant).
+
+- **HTML report header**: The header of HTML reports should show the active style's logo
+  (from theme.logo) at full size. If no style logo is defined, show a compact text-only
+  "CommitLore" wordmark instead of the full scroll SVG.
+
+- **App icon assets needed**: Before Phase 11, generate the following from assets/logo.svg:
+  - icon.ico (Windows, multi-resolution: 16x16, 32x32, 48x48, 256x256)
+  - icon.icns (macOS)
+  - icon.png (Linux, 512x512)
+  These go in assets/icons/ and are referenced by wails.json.
