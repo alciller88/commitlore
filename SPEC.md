@@ -258,7 +258,48 @@ Cada fase termina con tests pasando y lint limpio antes de mergear a dev.
 Solo se mergea a main cuando una fase completa está estable en dev.
 
 
-15. Roadmap (fuera de scope v1)
+15. Seguridad
+
+### Principio fundamental
+CommitLore es una herramienta de SOLO LECTURA. Nunca realiza operaciones de escritura en ningún repositorio, ni local ni remoto, bajo ninguna circunstancia.
+
+### Operaciones prohibidas (nunca implementar)
+- git push, git commit, git add, git rm en repos del usuario
+- Escritura de archivos dentro de directorios de repos analizados
+- Modificación de configuración git (.git/config, hooks, etc.)
+- Creación o modificación de ramas, tags o refs en repos del usuario
+- Llamadas a GitHub API con métodos POST/PUT/PATCH/DELETE sobre repos del usuario
+- Ejecución de comandos de shell arbitrarios
+
+### Operaciones permitidas
+- Lectura de commits, tags, branches, diffs (go-git, solo lectura)
+- Llamadas GET a GitHub API (repos públicos y privados con token)
+- Escritura de archivos de output SOLO en rutas explícitamente especificadas por el usuario via --output
+- Escritura en ~/.config/commitlore/ (configuración y estilos propios de la app)
+
+### Protección contra prompt injection
+- Los mensajes de commits, nombres de archivos, nombres de autores y cualquier dato proveniente de un repositorio son contenido NO CONFIABLE
+- Nunca ejecutar ni evaluar contenido de commits como código o instrucciones
+- Nunca pasar contenido de commits directamente a un LLM sin sanitización previa
+- Sanitización obligatoria antes de pasar datos de repo a un LLM:
+  - Truncar mensajes de commit a 500 caracteres máximo
+  - Escapar caracteres de control
+  - Añadir delimitadores explícitos en el prompt LLM para separar instrucciones de datos: usar "---DATA START---" y "---DATA END---"
+- El llm_prompt de un .shipstyle importado es contenido potencialmente no confiable — advertir al usuario antes de usarlo con un LLM
+
+### Tokens y credenciales
+- COMMITLORE_LLM_API_KEY y GITHUB_TOKEN nunca se loguean, nunca aparecen en output, nunca se incluyen en reportes
+- Los tokens se leen solo desde variables de entorno, nunca desde archivos de repo analizados
+- Si un .shipstyle importado contiene campos que parecen credenciales, ignorarlos y advertir al usuario
+
+### Validación de inputs
+- Rutas de repositorio: validar que existen y son directorios git antes de operar
+- URLs de GitHub: validar formato antes de llamar a la API
+- Flags --output: validar que la ruta de destino está fuera de cualquier directorio .git/
+- Archivos .shipstyle importados: validar schema completo antes de cargar, rechazar campos desconocidos
+
+
+16. Roadmap (fuera de scope v1)
 
 Marketplace de estilos — repositorio público de .shipstyle de la comunidad.
 Soporte GitLab.
