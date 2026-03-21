@@ -5,6 +5,22 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (Phase 11)
+- app/config_app.go: ConfigApp binding — GetRecentRepos, AddRecentRepo, SetLLMConfig, GetLLMConfig, ClearLLMKey
+- app/config_app.go: recent repos persisted in ~/.config/commitlore/config.yml (max 10 entries, MRU order)
+- app/config_app.go: LLM API key storage via OS keychain (go-keyring: Windows Credential Manager, macOS Keychain, Linux Secret Service)
+- app/git_app.go: OpenFolderPicker() — native folder dialog via Wails v3 Dialog API
+- app/frontend/src/screens/Dashboard.svelte: repo picker (folder, drag & drop, GitHub input) + recent repos + repo summary
+- app/frontend/src/screens/Generate.svelte: changelog form with style/LLM selectors, HTML preview iframe, copy/save
+- app/frontend/src/screens/Story.svelte: narrative form with iframe preview, copy/save
+- app/frontend/src/screens/History.svelte: commit table with hash copy, filters, limit slider
+- app/frontend/src/screens/Contributors.svelte: contribution table with relative activity bars
+- app/frontend/src/screens/Styles.svelte: style manager with built-in/user badges, import/export/delete/create, detail panel
+- app/frontend/src/screens/Settings.svelte: LLM provider config, API key modal (OS keychain), about section
+- app/config_app_test.go: unit tests for ConfigApp (recent repos limit, deduplication, LLM config, persistence)
+- SPEC.md §9: repo picker, output display, LLM configuration, Settings screen specifications
+- go.mod: github.com/zalando/go-keyring dependency
+
 ### Changed
 - app/: migrated from Wails v2 to Wails v3 alpha for Go 1.26 compatibility
 - app/app.go: v3 API — application.New() with Services, Window.NewWithOptions(), AssetOptions.Handler
