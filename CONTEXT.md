@@ -228,3 +228,46 @@ Add a row here when completing each phase.
   - icon.icns (macOS)
   - icon.png (Linux, 512x512)
   These go in assets/icons/ and are referenced by wails.json.
+
+### UI Backlog — post-Phase 11 (prioritized)
+
+#### P0 — Bugs rotos (fix/phase-11-bugs)
+- Commit History muestra "Invalid Date / undefined / undefined" — el frontend no parsea
+  correctamente el JSON devuelto por History()
+- Repos recientes muestran códigos HTML (&#9729; &#128194;) en lugar de iconos —
+  los emoji no renderizan en el WebView de Wails v3
+- Drag & drop de carpetas no funciona
+- LLM no tiene efecto visible en Generate/Story — el output es idéntico con o sin LLM configurada
+
+#### P1 — UX global
+- Repo activo debe ser global y persistente: seleccionar en Dashboard una vez,
+  todas las pantallas (History, Contributors, Generate, Story) lo heredan sin picker propio
+- Dashboard con repo cargado: estado activo con resumen visual, sin "Loading repo info..."
+  al volver desde otra pantalla
+- Story: contenido más rico y útil (más hitos, más contexto por período, métricas de actividad)
+- Generate: el estilo seleccionado debe influir más en la estructura del output,
+  no solo en colores
+- Layout de Generate: los campos del formulario ocupan demasiado espacio vertical,
+  reduciendo el área del visor HTML — rediseñar distribución (formulario lateral o colapsable)
+- Revisar distribución de campos en todas las pantallas con criterio de espacio útil
+
+#### P2 — Estilo global en la UI
+- El estilo activo (formal/patchnotes/epic/ironic/user) debe cambiar la paleta de colores,
+  tipografía y icono de la app completa, no solo los outputs
+- Implementar via CSS variables inyectadas desde el theme del .shipstyle activo:
+  colors.primary, colors.secondary, colors.background, colors.surface, colors.text,
+  colors.accent, typography.font_family
+- El icono de la ventana cambia al logo del estilo activo (theme.logo) si existe,
+  si no al logo oficial de CommitLore
+- El estilo se selecciona en Dashboard o Settings y persiste en config.yml
+
+#### P3 — Visual overhaul (Fase 13)
+- El diseño visual actual es genérico — necesita personalidad y calidad comparable
+  a apps de referencia del sector
+- Tipografía, espaciado, iconografía, micro-interacciones
+- Revisar cada pantalla con criterio de diseño de producto
+- Icono de taskbar/app debe ser el de CommitLore, no el icono por defecto del framework
+- Barra de título de Windows (blanca con minimizar/maximizar/cerrar nativa) debe
+  reemplazarse por una titlebar custom generada con Wails que comparta la estética de la UI
+- Los HTML generados por Generate y Story necesitan un overhaul visual — más atractivos,
+  más estructurados, más coherentes con el estilo activo
