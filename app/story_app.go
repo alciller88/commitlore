@@ -21,7 +21,8 @@ func NewStoryApp() *StoryApp {
 }
 
 // GenerateStory produces a narrative as HTML from the given repo.
-func (s *StoryApp) GenerateStory(repo, from, styleName, llmProvider, llmModel string) (string, error) {
+// LLM config is read automatically from Settings (config.yml + keychain).
+func (s *StoryApp) GenerateStory(repo, from, styleName string) (string, error) {
 	opts, err := buildOpts("", from, "", 0)
 	if err != nil {
 		return "", err
@@ -41,7 +42,8 @@ func (s *StoryApp) GenerateStory(repo, from, styleName, llmProvider, llmModel st
 		return "", cleanError(err)
 	}
 
-	return renderStoryHTML(ch, styleName, llmProvider, llmModel)
+	provider, model := loadLLMSettings()
+	return renderStoryHTML(ch, styleName, provider, model)
 }
 
 func buildChronology(repoRef string, commits []git.Commit) (git.Chronology, error) {

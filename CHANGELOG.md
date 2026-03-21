@@ -5,6 +5,11 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (LLM Settings)
+- app/changelog_app.go, app/story_app.go: Generate and GenerateStory now auto-read LLM config from Settings (config.yml + keychain) — removed redundant llmProvider/llmModel parameters
+- app/frontend: removed LLM selectors from Generate and Story screens — Settings is the single source of truth for LLM configuration
+- app/frontend: added read-only LLM status indicator on Generate and Story screens
+
 ### Fixed (Phase 11 bugs)
 - internal/git: added JSON tags to Commit struct — frontend was receiving PascalCase fields but expected camelCase
 - app/frontend: replaced HTML entity icons (&#9729; &#128194;) with inline SVGs — WebView didn't render emoji entities

@@ -25,7 +25,8 @@ func NewChangelogApp() *ChangelogApp {
 }
 
 // Generate produces a changelog as HTML from the given repo.
-func (c *ChangelogApp) Generate(repo, since, until, styleName, llmProvider, llmModel string) (string, error) {
+// LLM config is read automatically from Settings (config.yml + keychain).
+func (c *ChangelogApp) Generate(repo, since, until, styleName string) (string, error) {
 	opts, err := buildOpts("", since, until, 0)
 	if err != nil {
 		return "", err
@@ -41,7 +42,8 @@ func (c *ChangelogApp) Generate(repo, since, until, styleName, llmProvider, llmM
 	}
 
 	cl := changelog.GroupCommits(commits)
-	return renderChangelog(cl, styleName, llmProvider, llmModel)
+	provider, model := loadLLMSettings()
+	return renderChangelog(cl, styleName, provider, model)
 }
 
 func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel string) (string, error) {
@@ -66,11 +68,15 @@ func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel st
 }
 
 func tryEnrich(provider, model, llmPrompt, text string) string {
-	if provider == "" || provider == "none" || llmPrompt == "" {
+	if provider == "" || llmPrompt == "" {
 		return text
 	}
 
 	apiKey := resolveAPIKey(provider)
+	if apiKey == "" {
+		return text
+	}
+
 	baseURL := os.Getenv("COMMITLORE_LLM_BASE_URL")
 
 	p, err := llm.New(provider, apiKey, baseURL, model)
@@ -100,4 +106,14 @@ func resolveAPIKey(provider string) string {
 		return ""
 	}
 	return key
+}
+
+// loadLLMSettings reads provider and model from config.yml.
+// Returns empty strings if no LLM is configured.
+func loadLLMSettings() (string, string) {
+	cfg, err := loadConfig()
+	if err != nil {
+		return "", ""
+	}
+	return cfg.LLM.Provider, cfg.LLM.Model
 }
