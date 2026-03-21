@@ -79,8 +79,8 @@ func TestLoad_themeLoaded(t *testing.T) {
 	s, err := Load("epic")
 	require.NoError(t, err)
 	assert.Equal(t, "dark", s.Theme.Mode)
-	assert.Equal(t, "#d4af37", s.Theme.Colors.Primary)
-	assert.Equal(t, "bordered", s.Theme.CardStyle)
+	assert.Equal(t, "#D4AF37", s.Theme.Colors.Primary)
+	assert.Equal(t, "glassmorphism", s.Theme.CardStyle)
 	assert.True(t, s.Theme.Animations)
 }
 
@@ -95,8 +95,8 @@ func TestLoad_terminalLoaded(t *testing.T) {
 func TestLoad_vocabularyLoaded(t *testing.T) {
 	s, err := Load("epic")
 	require.NoError(t, err)
-	assert.Equal(t, "ancient curse", s.Vocabulary["bug"])
-	assert.Equal(t, "vanquish", s.Vocabulary["fix"])
+	assert.Equal(t, "dark curse", s.Vocabulary["bug"])
+	assert.Equal(t, "vanquished", s.Vocabulary["fix"])
 }
 
 func TestValidate_invalidCardStyle(t *testing.T) {

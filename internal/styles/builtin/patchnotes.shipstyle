@@ -1,48 +1,75 @@
 name: patchnotes
 version: 1.0.0
-description: "Video game patch notes style"
+description: "Video game patch notes — dramatic, celebratory, ALL CAPS energy"
 author: "commitlore"
+tags: ["gaming", "videogame", "rpg", "dramatic", "fun", "emojis"]
+preview_url: ""
+homepage: ""
 llm_prompt: |
-  Write the changelog as if it were the official patch notes of a major
-  video game update. Use terms like "buffed", "nerfed", "unlocked",
-  "added to the game", "removed from the game", "patched".
-  Be dramatic and epic. Use ALL CAPS for emphasis. Add emojis.
-  Address the reader as "adventurer" or "hero".
+  You are the lead community manager for the most anticipated video game
+  of the decade. You are writing official patch notes that will be read
+  by millions of passionate players. Your tone is DRAMATIC, CELEBRATORY,
+  and HYPE. Rules:
+  - Use ALL CAPS for section headers and key terms
+  - Every feature is an UNLOCKED ability, every fix is a HOTFIXED exploit
+  - Call the reader "Adventurer" or "Hero"
+  - Use gaming terminology: buffed, nerfed, unlocked, patched, exploit,
+    hotfix, loot, quest, achievement, spawn, respawn
+  - Add emojis generously: ⚔️ ✨ 🛡️ 💀 🏆 🔥 🎮 ⚡
+  - End with a motivational sendoff like a game loading screen tip
+  - Every breaking change is something "REMOVED FROM THE GAME"
+  - Treat the changelog like a major expansion announcement
 templates:
-  header: "⚔️  PATCH NOTES"
+  header: "⚔️  PATCH NOTES — NEW UPDATE DEPLOYED"
   feature: "  ✨ UNLOCKED: {{.Message}} [{{.Author}}]"
-  fix: "  🛡️  PATCHED: {{.Message}} [{{.Author}}]"
+  fix: "  🛡️  HOTFIXED: {{.Message}} [{{.Author}}]"
   breaking: "  💀 REMOVED FROM THE GAME: {{.Message}} [{{.Author}}]"
-  footer: "— Stay strong, adventurer —"
-  story_intro: "⚔️  THE LEGEND BEGINS\n\nOn {{.FirstCommitDate}}, hero {{.FirstAuthor}} spawned into the world.\n{{.TotalCommits}} quests completed. {{.TotalContributors}} heroes recruited."
+  footer: "⚔️ Stay strong, Adventurer. The next raid awaits. ⚔️"
+  story_intro: "⚔️  THE LEGEND BEGINS\n\nOn {{.FirstCommitDate}}, the hero known as {{.FirstAuthor}} spawned into the world and initialized the sacred repository.\n\n🏆 STATS:\n  Quests completed: {{.TotalCommits}}\n  Heroes recruited: {{.TotalContributors}}"
   story_milestone: "  🏆 ACHIEVEMENT UNLOCKED: {{.Name}} — {{.Date}}"
-  story_peak: "  🔥 HOT STREAK: {{.Month}} — {{.Count}} quests completed"
-  story_contributor: "  🎮 NEW PLAYER: {{.Name}} joined the party on {{.Date}}"
-  story_footer: "— The game continues, adventurer —"
+  story_peak: "  🔥 HOT STREAK: {{.Month}} — {{.Count}} quests completed in a single moon"
+  story_contributor: "  🎮 NEW PLAYER HAS ENTERED: {{.Name}} joined the party on {{.Date}}"
+  story_footer: "⚔️ The game is far from over. New content incoming. Stay tuned, Hero. ⚔️"
 vocabulary:
-  bug: "glitch"
-  fix: "patch"
+  bug: "exploit"
+  fix: "hotfix"
   feature: "new ability"
   added: "unlocked"
-  removed: "removed from the game"
+  removed: "nerfed"
   updated: "buffed"
+  commit: "quest"
+  merge: "party merge"
+  error: "game crash"
+  refactor: "rebalance"
 theme:
   mode: "dark"
   colors:
-    primary: "#9b59b6"
-    secondary: "#d4af37"
-    background: "#1a0a2e"
-    surface: "#2d1b4e"
-    text: "#e8e0f0"
-    accent: "#8e44ad"
-    border: "#d4af37"
+    primary: "#7C3AED"
+    secondary: "#F59E0B"
+    background: "#0D0D0D"
+    surface: "#1A1033"
+    text: "#EDE9FE"
+    accent: "#8B5CF6"
+    border: "#F59E0B"
   typography:
-    font_family: "'Press Start 2P', 'Courier New', monospace"
+    font_family: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace"
     font_size_base: "13px"
     font_size_header: "22px"
-    font_size_code: "11px"
+    font_size_code: "12px"
   card_style: "bordered"
   animations: true
+  custom_css: |
+    h1, h2 {
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px rgba(124, 58, 237, 0.3); }
+      to { text-shadow: 0 0 15px rgba(124, 58, 237, 0.6), 0 0 30px rgba(245, 158, 11, 0.2); }
+    }
+    li { transition: transform 0.1s; }
+    li:hover { transform: translateX(4px); }
 terminal:
   colors:
     header: "magenta"
@@ -51,7 +78,7 @@ terminal:
     breaking: "red"
     footer: "magenta"
   decorators:
-    separator: "⚔═══════════════════════════════════⚔"
+    separator: "⚔═══════════════════════════════════════⚔"
     bullet: "⚔️"
     indent: "  ║ "
   density: "normal"

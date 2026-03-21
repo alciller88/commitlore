@@ -58,7 +58,7 @@ func TestGenerate_ironic(t *testing.T) {
 	out, err := Generate(sampleChangelog(), loadStyle(t, "ironic"))
 	require.NoError(t, err)
 	assert.NotEmpty(t, out)
-	assert.Contains(t, out, "welcome")
+	assert.Contains(t, out, "What could go wrong")
 }
 
 func TestGenerate_epic(t *testing.T) {
