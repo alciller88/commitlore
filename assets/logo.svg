@@ -1,0 +1,54 @@
+<svg width="100%" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg">
+<style>
+  .logo-text { font-family: 'Courier New', monospace; }
+  @media (prefers-color-scheme: dark) {
+    .scroll-body { fill: #2A2218; stroke: #C4A35A; }
+    .scroll-end { fill: #3A2E18; stroke: #C4A35A; }
+    .branch-line { stroke: #6EE7B7; }
+    .branch-dot { fill: #6EE7B7; }
+    .branch-dot-main { fill: #34D399; }
+    .logo-text-main { fill: #F5F0E8; }
+    .commit-hash { fill: #C4A35A; }
+    .commit-msg { fill: #C4A35A; }
+  }
+  @media (prefers-color-scheme: light) {
+    .scroll-body { fill: #FDF6E3; stroke: #8B6914; }
+    .scroll-end { fill: #F0D99A; stroke: #8B6914; }
+    .branch-line { stroke: #059669; }
+    .branch-dot { fill: #059669; }
+    .branch-dot-main { fill: #047857; }
+    .logo-text-main { fill: #1A1209; }
+    .commit-hash { fill: #8B6914; }
+    .commit-msg { fill: #5A4010; }
+  }
+</style>
+<rect class="scroll-body" x="190" y="80" width="300" height="150" rx="2" stroke-width="1.5"/>
+<rect class="scroll-end" x="175" y="64" width="330" height="26" rx="13" stroke-width="1.5"/>
+<rect class="scroll-end" x="175" y="210" width="330" height="26" rx="13" stroke-width="1.5"/>
+<defs>
+  <clipPath id="scroll-clip">
+    <rect x="198" y="88" width="284" height="116"/>
+  </clipPath>
+</defs>
+<g clip-path="url(#scroll-clip)">
+  <text class="commit-hash logo-text" x="210" y="112" font-size="10" opacity="0.9">a3f9c2e</text>
+  <text class="commit-msg logo-text"  x="288" y="112" font-size="10" opacity="0.9">feat: add narrative renderer</text>
+  <text class="commit-hash logo-text" x="210" y="128" font-size="10" opacity="0.7">7b1d4f8</text>
+  <text class="commit-msg logo-text"  x="288" y="128" font-size="10" opacity="0.7">fix: parse commit subject only</text>
+  <text class="commit-hash logo-text" x="210" y="144" font-size="10" opacity="0.55">2c8e6a1</text>
+  <text class="commit-msg logo-text"  x="288" y="144" font-size="10" opacity="0.55">chore: update built-in styles</text>
+  <text class="commit-hash logo-text" x="210" y="160" font-size="10" opacity="0.35">f1e8b3d</text>
+  <text class="commit-msg logo-text"  x="288" y="160" font-size="10" opacity="0.35">refactor: split renderer logic</text>
+  <text class="commit-hash logo-text" x="210" y="176" font-size="10" opacity="0.18">9d2a7c5</text>
+  <text class="commit-msg logo-text"  x="288" y="176" font-size="10" opacity="0.18">docs: add security rules</text>
+</g>
+<line x1="280" y1="92" x2="280" y2="200" stroke-width="0.6" opacity="0.15" class="commit-hash"/>
+<line class="branch-line" x1="340" y1="236" x2="340" y2="276" stroke-width="2.5"/>
+<path class="branch-line" d="M340 260 Q308 270 295 277" fill="none" stroke-width="2"/>
+<path class="branch-line" d="M340 260 Q372 270 385 277" fill="none" stroke-width="2"/>
+<circle class="branch-dot-main" cx="340" cy="236" r="5"/>
+<circle class="branch-dot" cx="294" cy="278" r="4"/>
+<circle class="branch-dot" cx="386" cy="278" r="4"/>
+<circle class="branch-dot" cx="340" cy="278" r="4"/>
+<text class="logo-text-main logo-text" x="340" y="318" text-anchor="middle" font-size="26" font-weight="600" letter-spacing="3">CommitLore</text>
+</svg>
