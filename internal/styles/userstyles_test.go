@@ -152,6 +152,65 @@ func TestLoad_prefersBuiltinOverUser(t *testing.T) {
 	assert.NotEqual(t, "custom formal", loaded.Description)
 }
 
+func TestValidateName_valid(t *testing.T) {
+	assert.NoError(t, ValidateName("my-style"))
+	assert.NoError(t, ValidateName("style_v2"))
+	assert.NoError(t, ValidateName("CamelCase123"))
+}
+
+func TestValidateName_rejectsPathTraversal(t *testing.T) {
+	err := ValidateName(`..\..\Windows\malicious`)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid style name")
+}
+
+func TestValidateName_rejectsDots(t *testing.T) {
+	assert.Error(t, ValidateName("../etc/passwd"))
+	assert.Error(t, ValidateName("foo.bar"))
+	assert.Error(t, ValidateName("a/b"))
+}
+
+func TestValidateName_rejectsEmpty(t *testing.T) {
+	assert.Error(t, ValidateName(""))
+}
+
+func TestSave_rejectsInvalidName(t *testing.T) {
+	setTestConfigDir(t)
+	s := sampleStyle()
+	s.Name = "../malicious"
+	err := Save(s)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid style name")
+}
+
+func TestDelete_rejectsInvalidName(t *testing.T) {
+	err := Delete("../../etc")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid style name")
+}
+
+func TestValidateOutputPath_allowsNormal(t *testing.T) {
+	assert.NoError(t, ValidateOutputPath("/tmp/style.shipstyle"))
+	assert.NoError(t, ValidateOutputPath("output/formal.shipstyle"))
+}
+
+func TestValidateOutputPath_rejectsGitDir(t *testing.T) {
+	err := ValidateOutputPath("/repo/.git/hooks/style.shipstyle")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), ".git directory")
+}
+
+func TestValidateOutputPath_rejectsGitSubdir(t *testing.T) {
+	assert.Error(t, ValidateOutputPath("project/.git/objects/out"))
+	assert.Error(t, ValidateOutputPath(`.git\config`))
+}
+
+func TestExport_rejectsGitPath(t *testing.T) {
+	err := Export("formal", "/repo/.git/style.shipstyle")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), ".git directory")
+}
+
 func writeTestStyle(t *testing.T, path string) {
 	t.Helper()
 	content := `name: imported

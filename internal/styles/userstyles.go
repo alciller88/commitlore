@@ -6,13 +6,46 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
 
+var validNamePattern = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`)
+
+// ValidateName checks that a style name is safe for use as a filename.
+func ValidateName(name string) error {
+	if !validNamePattern.MatchString(name) {
+		return fmt.Errorf(
+			"invalid style name %q: must contain only letters, numbers, hyphens, and underscores",
+			name)
+	}
+	return nil
+}
+
+// ValidateOutputPath checks that a path is not inside a .git directory.
+func ValidateOutputPath(path string) error {
+	cleaned := filepath.Clean(path)
+	for _, segment := range splitPath(cleaned) {
+		if segment == ".git" {
+			return fmt.Errorf("output path cannot be inside a .git directory")
+		}
+	}
+	return nil
+}
+
+func splitPath(path string) []string {
+	return strings.FieldsFunc(path, func(r rune) bool {
+		return r == '/' || r == '\\' || r == filepath.Separator
+	})
+}
+
 // LoadUser loads a user-installed style by name from the styles directory.
 func LoadUser(name string) (Style, error) {
+	if err := ValidateName(name); err != nil {
+		return Style{}, err
+	}
 	dir, err := UserStylesDir()
 	if err != nil {
 		return Style{}, err
@@ -32,6 +65,9 @@ func LoadFromFile(path string) (Style, error) {
 
 // Save writes a style to the user styles directory.
 func Save(s Style) error {
+	if err := ValidateName(s.Name); err != nil {
+		return err
+	}
 	if err := validate(s); err != nil {
 		return err
 	}
@@ -99,6 +135,9 @@ func ListAll() ([]string, error) {
 
 // Delete removes a user-installed style. Built-in styles cannot be deleted.
 func Delete(name string) error {
+	if err := ValidateName(name); err != nil {
+		return err
+	}
 	if IsBuiltin(name) {
 		return fmt.Errorf("cannot delete built-in style %q", name)
 	}
@@ -180,6 +219,9 @@ func readLimited(r io.Reader) ([]byte, error) {
 
 // Export writes a style (built-in or user) to the specified output path.
 func Export(name, outputPath string) error {
+	if err := ValidateOutputPath(outputPath); err != nil {
+		return err
+	}
 	s, err := Load(name)
 	if err != nil {
 		return err

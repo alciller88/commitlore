@@ -24,6 +24,7 @@ func runImport(source string) error {
 	if err != nil {
 		return err
 	}
+	warnIfUntrustedLLMPrompt(s)
 	fmt.Printf("Style %q imported successfully.\n", s.Name)
 	return nil
 }
@@ -37,4 +38,12 @@ func importStyle(source string) (styles.Style, error) {
 
 func isURL(s string) bool {
 	return strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://")
+}
+
+func warnIfUntrustedLLMPrompt(s styles.Style) {
+	if s.LLMPrompt == "" {
+		return
+	}
+	fmt.Printf("Warning: this style contains an llm_prompt field. Imported styles are\n")
+	fmt.Printf("untrusted — review it with \"commitlore style show %s\" before using --llm.\n", s.Name)
 }
