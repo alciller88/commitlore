@@ -20,13 +20,19 @@ type Style struct {
 	Templates   Templates `yaml:"templates"`
 }
 
-// Templates holds the template strings for each commit type.
+// Templates holds the template strings for each commit type and story sections.
 type Templates struct {
 	Header   string `yaml:"header"`
 	Feature  string `yaml:"feature"`
 	Fix      string `yaml:"fix"`
 	Breaking string `yaml:"breaking"`
 	Footer   string `yaml:"footer"`
+
+	StoryIntro       string `yaml:"story_intro"`
+	StoryMilestone   string `yaml:"story_milestone"`
+	StoryPeak        string `yaml:"story_peak"`
+	StoryContributor string `yaml:"story_contributor"`
+	StoryFooter      string `yaml:"story_footer"`
 }
 
 var builtinNames = []string{"formal", "patchnotes", "ironic", "epic"}

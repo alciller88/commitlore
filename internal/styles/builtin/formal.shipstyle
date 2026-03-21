@@ -13,3 +13,8 @@ templates:
   fix: "- Fixed: {{.Message}} ({{.Hash | short}}, {{.Author}})"
   breaking: "- ⚠ BREAKING: {{.Message}} ({{.Hash | short}}, {{.Author}})"
   footer: ""
+  story_intro: "# Repository Story\n\nThis repository was created on {{.FirstCommitDate}} by {{.FirstAuthor}}.\nTotal commits: {{.TotalCommits}}. Contributors: {{.TotalContributors}}."
+  story_milestone: "- Tag {{.Name}} released on {{.Date}}"
+  story_peak: "- {{.Month}}: {{.Count}} commits"
+  story_contributor: "- {{.Name}}, first commit on {{.Date}}"
+  story_footer: ""

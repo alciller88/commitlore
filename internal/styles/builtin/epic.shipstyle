@@ -14,3 +14,8 @@ templates:
   fix: "  The ancient bug was vanquished by {{.Author}}: {{.Message}}"
   breaking: "  ⚡ The old ways were shattered: {{.Message}}"
   footer: "Thus ends another chapter in the saga."
+  story_intro: "📜 THE SAGA BEGINS\n\nIn the age of {{.FirstCommitDate}}, the great {{.FirstAuthor}} laid the first stone.\nFrom that day, {{.TotalCommits}} deeds were recorded. {{.TotalContributors}} heroes answered the call."
+  story_milestone: "  ⚡ A new era dawned: {{.Name}} — forged on {{.Date}}"
+  story_peak: "  🔥 The fires of creation burned brightest in {{.Month}}: {{.Count}} deeds"
+  story_contributor: "  ⚔️  {{.Name}} joined the fellowship on {{.Date}}"
+  story_footer: "Thus the saga continues. The next chapter awaits."
