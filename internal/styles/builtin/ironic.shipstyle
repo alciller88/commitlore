@@ -19,3 +19,36 @@ templates:
   story_peak: "  - {{.Month}}: {{.Count}} commits. Someone was busy."
   story_contributor: "  - {{.Name}} showed up on {{.Date}}. One of us now."
   story_footer: "And that's the story. You're welcome."
+vocabulary:
+  feature: "thing we forgot to build"
+  added: "finally added"
+  updated: "tweaked (again)"
+theme:
+  mode: "dark"
+  colors:
+    primary: "#a0a0a0"
+    secondary: "#808080"
+    background: "#1a1a1a"
+    surface: "#252525"
+    text: "#b0b0b0"
+    accent: "#666666"
+    border: "#333333"
+  typography:
+    font_family: "'SF Mono', 'Fira Code', monospace"
+    font_size_base: "13px"
+    font_size_header: "20px"
+    font_size_code: "12px"
+  card_style: "minimal"
+  animations: false
+terminal:
+  colors:
+    header: "white"
+    feature: "white"
+    fix: "white"
+    breaking: "yellow"
+    footer: "white"
+  decorators:
+    separator: "- - - - - - - - - - - - - - -"
+    bullet: "-"
+    indent: "  "
+  density: "compact"

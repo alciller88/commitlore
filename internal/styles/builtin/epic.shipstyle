@@ -19,3 +19,43 @@ templates:
   story_peak: "  🔥 The fires of creation burned brightest in {{.Month}}: {{.Count}} deeds"
   story_contributor: "  ⚔️  {{.Name}} joined the fellowship on {{.Date}}"
   story_footer: "Thus the saga continues. The next chapter awaits."
+vocabulary:
+  bug: "ancient curse"
+  fix: "vanquish"
+  feature: "legendary artifact"
+  added: "forged"
+  removed: "banished"
+  updated: "reforged"
+  commit: "deed"
+  merge: "union of realms"
+theme:
+  mode: "dark"
+  colors:
+    primary: "#d4af37"
+    secondary: "#c0962c"
+    background: "#0a0a0f"
+    surface: "#1a1520"
+    text: "#f0e8d8"
+    accent: "#8b6914"
+    border: "#d4af37"
+  typography:
+    font_family: "'Palatino Linotype', 'Book Antiqua', Palatino, serif"
+    font_size_base: "15px"
+    font_size_header: "26px"
+    font_size_code: "12px"
+  card_style: "bordered"
+  animations: true
+  custom_css: |
+    h1, h2 { text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+terminal:
+  colors:
+    header: "yellow"
+    feature: "yellow"
+    fix: "green"
+    breaking: "red"
+    footer: "yellow"
+  decorators:
+    separator: "⚜═══════════════════════════════════⚜"
+    bullet: "⚜"
+    indent: "  ║ "
+  density: "verbose"
