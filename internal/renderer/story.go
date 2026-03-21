@@ -109,4 +109,3 @@ func toJSONContributors(entries []git.ContributorEntry) []jsonContributor {
 	}
 	return result
 }
-
