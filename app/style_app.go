@@ -1,4 +1,4 @@
-package app
+package main
 
 import (
 	"github.com/alciller88/commitlore/internal/styles"
