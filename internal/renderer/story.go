@@ -13,8 +13,10 @@ func RenderStory(content string, ch git.Chronology, format Format) (string, erro
 	switch format {
 	case FormatJSON:
 		return renderStoryJSON(ch)
-	case FormatHTML, FormatPDF:
-		return "", fmt.Errorf("format %q not implemented yet", format)
+	case FormatHTML:
+		return renderStoryHTML(content, ch)
+	case FormatPDF:
+		return renderStoryPDF(content, ch)
 	case FormatTerminal:
 		return addStoryANSI(content), nil
 	default:

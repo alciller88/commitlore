@@ -26,8 +26,10 @@ func Render(content string, cl changelog.Changelog, format Format) (string, erro
 	switch format {
 	case FormatJSON:
 		return renderJSON(cl)
-	case FormatHTML, FormatPDF:
-		return "", fmt.Errorf("format %q not implemented yet", format)
+	case FormatHTML:
+		return renderChangelogHTML(content, cl)
+	case FormatPDF:
+		return renderChangelogPDF(content, cl)
 	case FormatTerminal:
 		return addANSIColors(content), nil
 	default:
