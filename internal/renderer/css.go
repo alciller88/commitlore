@@ -14,10 +14,17 @@ func buildCSS(theme styles.Theme) string {
 	writeTypeBadgeCSS(&buf, c)
 	writeComponentCSS(&buf, c)
 	writeCardStyleCSS(&buf, c)
+	writeCustomCSS(&buf, theme)
+	return buf.String()
+}
+
+func writeCustomCSS(buf *strings.Builder, theme styles.Theme) {
 	if theme.CustomCSS != "" {
 		buf.WriteString(theme.CustomCSS)
 	}
-	return buf.String()
+	if !theme.Animations {
+		buf.WriteString("* { animation: none !important; transition: none !important; }\n")
+	}
 }
 
 func withDefaults(theme styles.Theme) styles.Theme {
