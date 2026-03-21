@@ -109,6 +109,37 @@ func TestRenderStory_htmlEmptyChronology(t *testing.T) {
 	assert.NotContains(t, out, "Milestones")
 }
 
+func TestRenderStory_htmlIncludesNarrativeContent(t *testing.T) {
+	ch := sampleStoryChronology()
+	s := loadTestStyle(t, "epic")
+	narrative := "THE SAGA BEGINS\n\nIn the age of legends, the great Alice laid the first stone."
+	out, err := RenderStory(narrative, ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "THE SAGA BEGINS")
+	assert.Contains(t, out, "Alice laid the first stone")
+	assert.Contains(t, out, "class=\"narrative\"")
+}
+
+func TestRender_htmlIncludesNarrativeContent(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	narrative := "CHANGELOG REPORT\n\nNew features have been added this sprint."
+	out, err := Render(narrative, sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "CHANGELOG REPORT")
+	assert.Contains(t, out, "New features have been added")
+	assert.Contains(t, out, "class=\"narrative\"")
+}
+
+func TestRenderStory_htmlNarrativeEscapesHTML(t *testing.T) {
+	ch := sampleStoryChronology()
+	s := loadTestStyle(t, "formal")
+	narrative := "<script>alert('xss')</script>"
+	out, err := RenderStory(narrative, ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.NotContains(t, out, "<script>alert")
+	assert.Contains(t, out, "&lt;script&gt;")
+}
+
 func sampleStoryChronology() git.Chronology {
 	base := time.Date(2025, 1, 1, 12, 0, 0, 0, time.UTC)
 	return git.Chronology{

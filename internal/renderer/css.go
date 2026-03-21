@@ -87,6 +87,9 @@ func writeComponentCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf, ".peak-bar { display: inline-block; background: %s; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }\n", t.Colors.Accent)
 	buf.WriteString(".logo { height: 100px; width: 100px; margin-right: 1rem; }\n")
 	buf.WriteString(".header-image { width: 100%%; max-height: 200px; object-fit: cover; margin-bottom: 1rem; }\n")
+	fmt.Fprintf(buf, ".narrative { margin-bottom: 2rem; line-height: 1.7; }\n")
+	fmt.Fprintf(buf, ".narrative p { margin: 0.6rem 0; }\n")
+	fmt.Fprintf(buf, ".data-section { border-top: 1px solid %s; padding-top: 1.5rem; margin-top: 1rem; }\n", t.Colors.Border)
 }
 
 func writeCardStyleCSS(buf *strings.Builder, t styles.Theme) {
