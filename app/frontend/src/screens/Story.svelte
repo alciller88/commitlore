@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
   import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
   import { GenerateStory } from '../../bindings/github.com/alciller88/commitlore/app/storyapp.js'
   import { ListStyles } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { GetLLMConfig } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
 
   export let activeRepo = ''
 
@@ -11,34 +12,39 @@
   let repo = ''
   let from = ''
   let styleName = 'formal'
-  let llmProvider = 'none'
-  let llmModel = ''
   let styles: Array<{name: string}> = []
   let loading = false
   let error = ''
   let htmlResult = ''
+  let llmStatus = ''
 
   $: repo = activeRepo || repo
 
-  const llmDefaults: Record<string, string> = {
-    none: '',
-    anthropic: 'claude-haiku-4-5-20251001',
-    openai: 'gpt-4o-mini',
-    groq: 'llama-3.1-8b-instant',
-    ollama: 'llama3.1',
-  }
-
-  $: if (llmProvider !== 'none' && !llmModel) {
-    llmModel = llmDefaults[llmProvider] || ''
-  }
-
-  loadStyles()
+  onMount(() => {
+    loadStyles()
+    loadLLMStatus()
+  })
 
   async function loadStyles() {
     try {
       const raw = await ListStyles()
       styles = JSON.parse(raw)
     } catch {}
+  }
+
+  async function loadLLMStatus() {
+    try {
+      const cfg = await GetLLMConfig()
+      if (cfg.provider && cfg.keyConfigured) {
+        llmStatus = `${cfg.provider} (${cfg.model || 'default'})`
+      } else if (cfg.provider) {
+        llmStatus = `${cfg.provider} — key not configured`
+      } else {
+        llmStatus = 'not configured'
+      }
+    } catch {
+      llmStatus = 'not configured'
+    }
   }
 
   async function pickRepo() {
@@ -55,8 +61,7 @@
     error = ''
     htmlResult = ''
     try {
-      const provider = llmProvider === 'none' ? '' : llmProvider
-      htmlResult = await GenerateStory(repo, from, styleName, provider, llmModel)
+      htmlResult = await GenerateStory(repo, from, styleName)
     } catch (e: any) {
       error = e?.message || 'Story generation failed'
     } finally {
@@ -112,30 +117,16 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="field">
-        <label>LLM</label>
-        <select bind:value={llmProvider}>
-          <option value="none">None</option>
-          <option value="anthropic">Anthropic</option>
-          <option value="openai">OpenAI</option>
-          <option value="groq">Groq</option>
-          <option value="ollama">Ollama</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Model</label>
-        <input type="text" bind:value={llmModel} placeholder="model name" />
-      </div>
+    <div class="action-row">
+      <button class="action-btn" on:click={tellStory} disabled={loading || !repo}>
+        {#if loading}
+          <span class="spinner"></span> Generating...
+        {:else}
+          Tell the story
+        {/if}
+      </button>
+      <span class="llm-status">LLM: {llmStatus}</span>
     </div>
-
-    <button class="action-btn" on:click={tellStory} disabled={loading || !repo}>
-      {#if loading}
-        <span class="spinner"></span> Generating...
-      {:else}
-        Tell the story
-      {/if}
-    </button>
   </div>
 
   {#if htmlResult}
@@ -173,13 +164,16 @@
   }
   .pick-btn:hover { border-color: #58a6ff; }
 
+  .action-row { display: flex; align-items: center; gap: 16px; }
   .action-btn {
     padding: 10px 20px; background: #238636; border: none; border-radius: 6px;
-    color: #fff; font-size: 14px; cursor: pointer; align-self: flex-start;
+    color: #fff; font-size: 14px; cursor: pointer;
     display: flex; align-items: center; gap: 8px; font-family: inherit;
   }
   .action-btn:hover { background: #2ea043; }
   .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .llm-status { color: #8b949e; font-size: 12px; }
 
   .spinner {
     display: inline-block; width: 14px; height: 14px;
