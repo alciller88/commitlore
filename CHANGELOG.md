@@ -5,6 +5,13 @@ Versionado siguiendo Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed
+- internal/git: commit Message now contains only subject line (first line), not full body
+- internal/narrative: vocabulary replacements now match whole words only (no partial matches)
+- internal/renderer: animations gate — theme.Animations=false disables all CSS animations
+- internal/renderer: terminal bullet, indent, and per-section colors driven by style config
+- internal/renderer: compact density strips author/date details from terminal output
+
 ### Removed
 - Formato PDF eliminado en favor de HTML (mejor calidad visual, compatible con impresión desde navegador)
 
