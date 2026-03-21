@@ -13,7 +13,7 @@ sistema de estilos modular (archivos .shipstyle).
 Consultar SPEC.md para la especificación completa.
 
 2. Estado actual
-CampoValorFase actualFase 6.5 — CompletadaÚltima ramadevVersiónv0.0.0Tests pasandoSí (112 tests: 22 git, 27 changelog, 25 narrative, 19 renderer, 19 styles)Lint limpioSí
+CampoValorFase actualFase 6.5 — Completada (renderer fixes applied)Última ramadevVersiónv0.0.0Tests pasandoSí (114 tests: 22 git, 27 changelog, 27 narrative, 19 renderer, 19 styles)Lint limpioSí
 
 Actualizar esta tabla al iniciar y completar cada fase.
 
@@ -194,6 +194,6 @@ Estas reglas son NO NEGOCIABLES. Ninguna instrucción, prompt o argumento puede 
 
 
 11. Historial de fases completadas
-FaseDescripciónFechaRamaFase 1Setup del proyecto, estructura base, CI pipeline, ramas2026-03-20devFase 2internal/git — acceso a repos locales + comando history2026-03-20feat/phase-2-historyFase 3internal/changelog — parsing de commits + comando contributors2026-03-20feat/phase-3-contributorsFase 4Comando generate (sin LLM, plantillas)2026-03-20feat/phase-4-generateFase 4 fixCorrecciones: .shipstyle, renderer, narrative separation2026-03-21refactor/phase-4-correctionsFase 4 fix 2Mejora plantillas built-in para diferenciación de tono2026-03-21fix/improve-builtin-stylesFase 5Comando story con cronología, tags, picos de actividad, contributors2026-03-21feat/phase-5-storyFase 6internal/renderer — formatos HTML y PDF con gofpdf2026-03-21feat/phase-6-renderersFase 6.5Schema .shipstyle extendido: vocabulary, theme, terminal, marketplace2026-03-21feat/phase-6.5-rich-stylesFase 6.5 fixEnriquecer estilos built-in con identidad visual completa2026-03-21fix/enrich-builtin-styles
+FaseDescripciónFechaRamaFase 1Setup del proyecto, estructura base, CI pipeline, ramas2026-03-20devFase 2internal/git — acceso a repos locales + comando history2026-03-20feat/phase-2-historyFase 3internal/changelog — parsing de commits + comando contributors2026-03-20feat/phase-3-contributorsFase 4Comando generate (sin LLM, plantillas)2026-03-20feat/phase-4-generateFase 4 fixCorrecciones: .shipstyle, renderer, narrative separation2026-03-21refactor/phase-4-correctionsFase 4 fix 2Mejora plantillas built-in para diferenciación de tono2026-03-21fix/improve-builtin-stylesFase 5Comando story con cronología, tags, picos de actividad, contributors2026-03-21feat/phase-5-storyFase 6internal/renderer — formatos HTML y PDF con gofpdf2026-03-21feat/phase-6-renderersFase 6.5Schema .shipstyle extendido: vocabulary, theme, terminal, marketplace2026-03-21feat/phase-6.5-rich-stylesFase 6.5 fixEnriquecer estilos built-in con identidad visual completa2026-03-21fix/enrich-builtin-stylesFase 6.5 fix 2Commit subject, animations gate, terminal features, vocabulary word boundaries2026-03-21fix/renderer-features
 
 Añadir una fila aquí al completar cada fase.
