@@ -27,7 +27,7 @@ Sustainable code — small functions, single responsibility, no shortcuts.
 Backend / CLI
 LayerTechnologyLanguageGo 1.22+CLI frameworkCobraConfig/flagsViperGitHub APIgo-githubLocal gitgo-gitHTMLhtml/template (stdlib)LLM (optional)Anthropic API / OpenAI API (configurable)Lintergolangci-lintTeststesting (stdlib) + testify
 Desktop App
-LayerTechnologyFrameworkWails v2FrontendSvelte + TypeScriptUI StylesTailwind CSS + shadcn-svelte (component base)BuildWails CLI (native binaries per platform)
+LayerTechnologyFrameworkWails v3 alphaFrontendSvelte + TypeScriptUI StylesTailwind CSS + shadcn-svelte (component base)Buildwails3 CLI (native binaries per platform)
 
 The desktop app backend fully reuses the internal/ packages.
 No duplicated logic.

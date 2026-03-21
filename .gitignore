@@ -27,6 +27,12 @@ go.work.sum
 # env file
 .env
 
+# Wails app build artifacts
+app/bin/
+app/frontend/node_modules/
+app/frontend/bindings/
+app/*.syso
+
 # Editor/IDE
 # .idea/
 # .vscode/
