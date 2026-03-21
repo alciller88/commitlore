@@ -17,16 +17,18 @@ func HasToken() bool {
 	return os.Getenv("GITHUB_TOKEN") != ""
 }
 
-func wrapAPIError(err error) error {
+func wrapAPIError(err error, owner, repo string) error {
+	ref := owner + "/" + repo
+
 	var ghErr *gh.ErrorResponse
 	if errors.As(err, &ghErr) {
 		switch ghErr.Response.StatusCode {
 		case http.StatusNotFound:
-			return fmt.Errorf("repository not found (check owner/repo or set GITHUB_TOKEN for private repos): %w", err)
+			return fmt.Errorf("repository not found: %s\n(check the name is correct or set GITHUB_TOKEN for private repos)", ref)
 		case http.StatusUnauthorized, http.StatusForbidden:
-			return fmt.Errorf("GitHub API authentication failed (check GITHUB_TOKEN): %w", err)
+			return fmt.Errorf("GitHub API authentication failed for %s\n(check that GITHUB_TOKEN is valid)", ref)
 		case http.StatusTooManyRequests:
-			return fmt.Errorf("GitHub API rate limit exceeded (authenticate with GITHUB_TOKEN for higher limits): %w", err)
+			return fmt.Errorf("GitHub API rate limit exceeded\n(authenticate with GITHUB_TOKEN for higher limits)")
 		}
 	}
 	return fmt.Errorf("GitHub API error: %w", err)
