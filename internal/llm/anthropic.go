@@ -23,11 +23,14 @@ type AnthropicProvider struct {
 }
 
 // NewAnthropic creates an Anthropic provider.
-func NewAnthropic(apiKey string, httpClient *http.Client) *AnthropicProvider {
+func NewAnthropic(apiKey, model string, httpClient *http.Client) *AnthropicProvider {
+	if model == "" {
+		model = anthropicDefaultModel
+	}
 	return &AnthropicProvider{
 		apiKey: apiKey,
 		url:    anthropicDefaultURL,
-		model:  anthropicDefaultModel,
+		model:  model,
 		client: httpClient,
 	}
 }

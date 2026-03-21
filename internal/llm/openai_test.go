@@ -38,7 +38,7 @@ func TestOpenAIEnrich_Success(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("test-key", server.URL, &http.Client{})
+	p := NewOpenAI("test-key", server.URL, "", &http.Client{})
 	result, err := p.Enrich(context.Background(), "Rewrite", "raw data")
 	require.NoError(t, err)
 	assert.Equal(t, "Enriched text", result)
@@ -52,7 +52,7 @@ func TestOpenAIEnrich_CustomBaseURL(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("key", server.URL, &http.Client{})
+	p := NewOpenAI("key", server.URL, "", &http.Client{})
 	result, err := p.Enrich(context.Background(), "prompt", "data")
 	require.NoError(t, err)
 	assert.Equal(t, "ok", result)
@@ -66,7 +66,7 @@ func TestOpenAIEnrich_NoAuthHeaderWithoutKey(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("", server.URL, &http.Client{})
+	p := NewOpenAI("", server.URL, "", &http.Client{})
 	result, err := p.Enrich(context.Background(), "prompt", "data")
 	require.NoError(t, err)
 	assert.Equal(t, "local", result)
@@ -79,7 +79,7 @@ func TestOpenAIEnrich_AuthError(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("bad-key", server.URL, &http.Client{})
+	p := NewOpenAI("bad-key", server.URL, "", &http.Client{})
 	_, err := p.Enrich(context.Background(), "prompt", "data")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "authentication failed")
@@ -93,7 +93,7 @@ func TestOpenAIEnrich_Timeout(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("key", server.URL, &http.Client{Timeout: 50 * time.Millisecond})
+	p := NewOpenAI("key", server.URL, "", &http.Client{Timeout: 50 * time.Millisecond})
 	_, err := p.Enrich(context.Background(), "prompt", "data")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "LLM error")
@@ -106,7 +106,7 @@ func TestOpenAIEnrich_EmptyResponse(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("key", server.URL, &http.Client{})
+	p := NewOpenAI("key", server.URL, "", &http.Client{})
 	_, err := p.Enrich(context.Background(), "prompt", "data")
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "empty response")
@@ -120,7 +120,7 @@ func TestOpenAIEnrich_TrailingSlashInURL(t *testing.T) {
 	}))
 	defer server.Close()
 
-	p := NewOpenAI("key", server.URL+"/", &http.Client{})
+	p := NewOpenAI("key", server.URL+"/", "", &http.Client{})
 	result, err := p.Enrich(context.Background(), "prompt", "data")
 	require.NoError(t, err)
 	assert.Equal(t, "ok", result)
