@@ -5,6 +5,11 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+- cmd/style: style command with subcommands list, show, create, import, export, delete (Phase 7)
+- internal/styles: user style management — load, save, list, delete, import from file/URL, export (Phase 7)
+- internal/styles: user styles directory at ~/.config/commitlore/styles/ with cross-platform support (Phase 7)
+
 ### Changed
 - assets/logo.svg: replaced with square scroll icon (400x400 viewBox, commit hashes only)
 - internal/renderer: header shows icon-only at 100x100px, removed "CommitLore" text

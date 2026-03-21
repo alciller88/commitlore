@@ -97,12 +97,16 @@ type TerminalDecorators struct {
 
 var builtinNames = []string{"formal", "patchnotes", "ironic", "epic"}
 
-// Load returns a style by name. Looks up built-in styles first.
+// Load returns a style by name. Looks up built-in styles first, then user styles.
 func Load(name string) (Style, error) {
 	if name == "" {
 		name = "formal"
 	}
-	return loadBuiltin(name)
+	s, err := loadBuiltin(name)
+	if err == nil {
+		return s, nil
+	}
+	return LoadUser(name)
 }
 
 func loadBuiltin(name string) (Style, error) {
