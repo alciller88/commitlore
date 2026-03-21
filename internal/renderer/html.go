@@ -206,5 +206,5 @@ func peakBarWidth(count, max int) int {
 }
 
 func writeHTMLFooter(buf *bytes.Buffer) {
-	fmt.Fprintf(buf, "<div class=\"footer\"><div class=\"footer-logo\">%s</div> CommitLore</div>\n", assets.LogoSVG)
+	buf.WriteString("<div class=\"footer\"></div>\n")
 }

@@ -75,13 +75,11 @@ func writeComponentCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf, ".date { color: %s; font-size: 0.85em; }\n", t.Colors.Text)
 	fmt.Fprintf(buf, ".footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid %s; color: %s; font-size: 0.85em; }\n", t.Colors.Border, t.Colors.Text)
 	fmt.Fprintf(buf, ".peak-bar { display: inline-block; background: %s; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }\n", t.Colors.Accent)
-	buf.WriteString(".logo { height: 48px; margin-right: 1rem; vertical-align: middle; }\n")
-	buf.WriteString(".logo-header { margin-bottom: 1rem; }\n")
+	buf.WriteString(".logo { height: 80px; width: 160px; margin-right: 1rem; }\n")
+	buf.WriteString(".logo-header { display: flex; justify-content: flex-start; align-items: center; padding: 1rem 0 1.5rem 0; }\n")
 	buf.WriteString(".logo-svg { display: inline-block; }\n")
-	buf.WriteString(".logo-svg svg { height: 48px; width: auto; }\n")
+	buf.WriteString(".logo-svg svg { height: 80px; width: 160px; }\n")
 	buf.WriteString(".header-image { width: 100%%; max-height: 200px; object-fit: cover; margin-bottom: 1rem; }\n")
-	buf.WriteString(".footer-logo { display: inline-block; vertical-align: middle; margin-right: 0.5rem; }\n")
-	buf.WriteString(".footer-logo svg { height: 24px; width: auto; }\n")
 }
 
 func writeCardStyleCSS(buf *strings.Builder, t styles.Theme) {
