@@ -20,7 +20,7 @@ Update this table at the start and completion of each phase.
 
 3. Technical Decisions Made
 These decisions are closed. They are not debated in each session.
-DecisionChoiceReasonLanguageGo 1.22+Cross-platform, native binaries, no runtimeCLI frameworkCobra + ViperDe facto standard in GoLocal gitgo-gitPure Go, no dependency on git binaryGitHub APIgo-githubMaintained by Google, typedDesktop appWails v2Native Go + OS WebView, no ChromiumFrontendSvelte + TypeScriptCompiles to vanilla JS, native performance in WailsUI stylesTailwind + shadcn-svelteComponent base without generic lookLintergolangci-lintGo standard, aggregates 50+ lintersTeststesting + testifyStdlib + readable assertionsVersioningSemver (vMAJOR.MINOR.PATCH)Universal standardBranchesmain + dev + feat/* / fix/*Clear flow, differentiated CI
+DecisionChoiceReasonLanguageGo 1.22+Cross-platform, native binaries, no runtimeCLI frameworkCobra + ViperDe facto standard in GoLocal gitgo-gitPure Go, no dependency on git binaryGitHub APIgo-githubMaintained by Google, typedDesktop appWails v3 alphaNative Go + OS WebView, no Chromium. Migrated from v2 for Go 1.26 compatibilityFrontendSvelte + TypeScriptCompiles to vanilla JS, native performance in WailsUI stylesTailwind + shadcn-svelteComponent base without generic lookLintergolangci-lintGo standard, aggregates 50+ lintersTeststesting + testifyStdlib + readable assertionsVersioningSemver (vMAJOR.MINOR.PATCH)Universal standardBranchesmain + dev + feat/* / fix/*Clear flow, differentiated CI
 
 4. Code Conventions
 Go

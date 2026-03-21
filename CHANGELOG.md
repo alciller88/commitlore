@@ -5,8 +5,13 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+- app/: migrated from Wails v2 to Wails v3 alpha for Go 1.26 compatibility
+- app/app.go: v3 API — application.New() with Services, Window.NewWithOptions(), AssetOptions.Handler
+- SPEC.md §3: Framework → Wails v3 alpha, Build → wails3 CLI
+
 ### Added
-- app/: Wails v2 desktop app base structure with Svelte + TypeScript frontend (Phase 10)
+- app/: Wails desktop app base structure with Svelte + TypeScript frontend (Phase 10)
 - app/app.go: main Wails entry point with Run(), binds all domain structs (Phase 10)
 - app/git_app.go: GitApp binding — History() and Contributors() for local and GitHub repos (Phase 10)
 - app/changelog_app.go: ChangelogApp binding — Generate() with optional LLM enrichment (Phase 10)

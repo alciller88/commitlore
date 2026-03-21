@@ -1,63 +1,41 @@
 package app
 
 import (
-	"context"
 	"embed"
 
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// App is the main application struct for Wails bindings.
-type App struct {
-	ctx context.Context
-}
-
-// NewApp creates a new App instance.
-func NewApp() *App {
-	return &App{}
-}
-
-func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
-}
-
-// Run starts the Wails application with all bindings registered.
+// Run starts the Wails v3 application with all services registered.
 func Run() error {
-	app := NewApp()
 	gitApp := NewGitApp()
 	changelogApp := NewChangelogApp()
 	storyApp := NewStoryApp()
 	styleApp := NewStyleApp()
 
-	return wails.Run(createOptions(app, gitApp, changelogApp, storyApp, styleApp))
-}
+	app := application.New(application.Options{
+		Name: "CommitLore",
+		Services: []application.Service{
+			application.NewService(gitApp),
+			application.NewService(changelogApp),
+			application.NewService(storyApp),
+			application.NewService(styleApp),
+		},
+		Assets: application.AssetOptions{
+			Handler: application.AssetFileServerFS(assets),
+		},
+	})
 
-func createOptions(
-	app *App,
-	gitApp *GitApp,
-	changelogApp *ChangelogApp,
-	storyApp *StoryApp,
-	styleApp *StyleApp,
-) *options.App {
-	return &options.App{
-		Title:  "CommitLore",
-		Width:  1200,
-		Height: 800,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		OnStartup: app.startup,
-		Bind: []interface{}{
-			app,
-			gitApp,
-			changelogApp,
-			storyApp,
-			styleApp,
-		},
-	}
+	app.Window.NewWithOptions(application.WebviewWindowOptions{
+		Title:            "CommitLore",
+		Width:            1200,
+		Height:           800,
+		URL:              "/",
+		BackgroundColour: application.NewRGB(13, 17, 23),
+	})
+
+	return app.Run()
 }
