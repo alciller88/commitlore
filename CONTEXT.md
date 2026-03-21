@@ -203,6 +203,12 @@ Add a row here when completing each phase.
 
 12. Pending design decisions for future phases
 
+### Phase 10/11 — contributors --with-files
+
+- **Remote file diffs**: For remote repos, the `--with-files` flag will make an additional API call
+  per commit to obtain file diffs. Disabled by default due to rate limit cost. Without the flag,
+  the TOP FILES column remains empty for remote repos.
+
 ### Phase 11 — Wails UI
 
 - **Per-style logos**: Each .shipstyle can define its own logo via the `theme.logo` field.
