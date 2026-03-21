@@ -10,10 +10,10 @@ import (
 
 // storyData is the top-level template context for story_intro and story_footer.
 type storyData struct {
-	FirstCommitDate    string
-	FirstAuthor        string
-	TotalCommits       int
-	TotalContributors  int
+	FirstCommitDate   string
+	FirstAuthor       string
+	TotalCommits      int
+	TotalContributors int
 }
 
 // milestoneData is the template context for story_milestone.

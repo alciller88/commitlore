@@ -24,7 +24,22 @@
       "Read(//c/Users/alcil/MyProjects/commitlore/$LOCALAPPDATA/GitHub CLI/**)",
       "Bash(export PATH=\"$PATH:/c/Program Files/GitHub CLI:$LOCALAPPDATA/Programs/GitHub CLI\")",
       "Bash(gh --version)",
-      "Bash(gofmt -w main.go cmd/ internal/)"
+      "Bash(gofmt -w main.go cmd/ internal/)",
+      "Bash(gh run:*)",
+      "Bash(rm internal/narrative/json.go)",
+      "Bash(rm -rf internal/narrative/templates/)",
+      "Bash(./commitlore.exe generate:*)",
+      "Bash(git checkout:*)",
+      "Bash(where go.exe)",
+      "Bash(\"/c/Program Files/Go/bin/go.exe\" test ./internal/git/ -count=1 -v)",
+      "Bash(\"/c/Program Files/Go/bin/go.exe\" test ./internal/narrative/ -count=1 -v)",
+      "Bash(\"/c/Program Files/Go/bin/go.exe\" build ./...)",
+      "Bash(\"/c/Program Files/Go/bin/go.exe\" test ./... -count=1)",
+      "Bash(where golangci-lint.exe)",
+      "Read(//c/Users/alcil/go/bin/**)",
+      "Bash(/c/Users/alcil/go/bin/golangci-lint.exe run:*)",
+      "Bash(PATH=\"/c/Program Files/Go/bin:$PATH\" /c/Users/alcil/go/bin/golangci-lint.exe run ./...)",
+      "Bash(PATH=\"/c/Program Files/Go/bin:$PATH\" gofmt -w cmd/ internal/)"
     ]
   }
 }

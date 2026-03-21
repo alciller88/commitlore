@@ -32,10 +32,10 @@ func renderStoryJSON(ch git.Chronology) (string, error) {
 }
 
 type jsonStory struct {
-	FirstCommit  jsonStoryCommit  `json:"first_commit"`
-	TotalCommits int              `json:"total_commits"`
-	Tags         []jsonTag        `json:"tags"`
-	Peaks        []jsonPeak       `json:"activity_peaks"`
+	FirstCommit  jsonStoryCommit   `json:"first_commit"`
+	TotalCommits int               `json:"total_commits"`
+	Tags         []jsonTag         `json:"tags"`
+	Peaks        []jsonPeak        `json:"activity_peaks"`
 	Contributors []jsonContributor `json:"contributors"`
 }
 
