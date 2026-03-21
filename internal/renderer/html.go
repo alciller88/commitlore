@@ -139,28 +139,33 @@ func buildHTMLDocument(title, css, body string, theme styles.Theme) string {
 	fmt.Fprintf(&buf, "<title>%s</title>\n", template.HTMLEscapeString(title))
 	fmt.Fprintf(&buf, "<style>\n%s\n</style>\n", css)
 	buf.WriteString("</head>\n<body>\n")
-	writeLogoAndHeader(&buf, theme)
+	writeSiteHeader(&buf, theme)
+	buf.WriteString("<div class=\"content\">\n")
 	buf.WriteString(body)
-	buf.WriteString("\n</body>\n</html>")
+	buf.WriteString("</div>\n")
+	buf.WriteString("</body>\n</html>")
 	return buf.String()
 }
 
-func writeLogoAndHeader(buf *bytes.Buffer, theme styles.Theme) {
+func writeSiteHeader(buf *bytes.Buffer, theme styles.Theme) {
 	if theme.HeaderImage != "" {
 		fmt.Fprintf(buf, "<img class=\"header-image\" src=\"%s\" alt=\"header\">\n",
 			template.HTMLEscapeString(theme.HeaderImage))
 	}
-	writeLogo(buf, theme)
+	buf.WriteString("<header class=\"site-header\">\n")
+	writeSiteHeaderLogo(buf, theme)
+	buf.WriteString("<span class=\"site-name\">CommitLore</span>\n")
+	buf.WriteString("</header>\n")
 }
 
-func writeLogo(buf *bytes.Buffer, theme styles.Theme) {
+func writeSiteHeaderLogo(buf *bytes.Buffer, theme styles.Theme) {
 	if theme.Logo != "" {
-		fmt.Fprintf(buf, "<div class=\"logo-header\"><img class=\"logo\" src=\"%s\" alt=\"logo\"></div>\n",
+		fmt.Fprintf(buf, "<img class=\"logo\" src=\"%s\" alt=\"logo\">\n",
 			template.HTMLEscapeString(theme.Logo))
 		return
 	}
-	logoSVG := strings.ReplaceAll(assets.LogoSVG, `width="100%"`, `width="160" height="80"`)
-	fmt.Fprintf(buf, "<div class=\"logo-header\"><div class=\"logo-svg\">%s</div></div>\n", logoSVG)
+	logoSVG := strings.ReplaceAll(assets.LogoSVG, `width="100%"`, `width="120" height="60"`)
+	fmt.Fprintf(buf, "<div class=\"logo-svg\">%s</div>\n", logoSVG)
 }
 
 func shortHash(hash string) string {

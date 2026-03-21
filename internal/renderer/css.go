@@ -51,14 +51,25 @@ func def(field *string, fallback string) {
 
 func writeBaseCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf,
-		"body { font-family: %s; font-size: %s; max-width: 800px; margin: 0 auto; padding: 2rem; background: %s; color: %s; }\n",
+		"body { font-family: %s; font-size: %s; margin: 0; padding: 0; background: %s; color: %s; }\n",
 		t.Typography.FontFamily, t.Typography.FontSizeBase, t.Colors.Background, t.Colors.Text)
+	fmt.Fprintf(buf, ".content { max-width: 800px; margin: 0 auto; padding: 2rem; }\n")
+	writeSiteHeaderCSS(buf, t)
 	fmt.Fprintf(buf,
 		"h1 { color: %s; border-bottom: 1px solid %s; padding-bottom: 0.5rem; font-size: %s; }\n",
 		t.Colors.Primary, t.Colors.Border, t.Typography.FontSizeH)
 	fmt.Fprintf(buf, "h2 { color: %s; margin-top: 1.5rem; }\n", t.Colors.Secondary)
 	fmt.Fprintf(buf, "ul { list-style: none; padding-left: 0; }\n")
 	fmt.Fprintf(buf, "li { padding: 0.3rem 0; border-bottom: 1px solid %s; }\n", t.Colors.Surface)
+}
+
+func writeSiteHeaderCSS(buf *strings.Builder, t styles.Theme) {
+	fmt.Fprintf(buf,
+		".site-header { width: 100%%; padding: 1rem 2rem; box-sizing: border-box; display: flex; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid %s; }\n",
+		t.Colors.Border)
+	buf.WriteString(".site-header .logo-svg { display: inline-block; width: 120px; flex-shrink: 0; }\n")
+	buf.WriteString(".site-header .logo-svg svg { width: 120px !important; height: 60px !important; }\n")
+	buf.WriteString(".site-name { font-family: 'Courier New', monospace; font-size: 16px; font-weight: 600; letter-spacing: 2px; margin-left: 12px; opacity: 0.8; }\n")
 }
 
 func writeTypeBadgeCSS(buf *strings.Builder, t styles.Theme) {
@@ -75,10 +86,7 @@ func writeComponentCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf, ".date { color: %s; font-size: 0.85em; }\n", t.Colors.Text)
 	fmt.Fprintf(buf, ".footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid %s; color: %s; font-size: 0.85em; }\n", t.Colors.Border, t.Colors.Text)
 	fmt.Fprintf(buf, ".peak-bar { display: inline-block; background: %s; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }\n", t.Colors.Accent)
-	buf.WriteString(".logo { height: 80px; width: 160px; margin-right: 1rem; }\n")
-	buf.WriteString(".logo-header { display: flex; justify-content: flex-start; align-items: center; padding: 1.5rem 0 1.5rem 0; margin-bottom: 1rem; }\n")
-	buf.WriteString(".logo-svg { display: inline-block; width: 160px; height: 80px; flex-shrink: 0; }\n")
-	buf.WriteString(".logo-svg svg { width: 160px !important; height: 80px !important; }\n")
+	buf.WriteString(".logo { height: 60px; width: 120px; margin-right: 1rem; }\n")
 	buf.WriteString(".header-image { width: 100%%; max-height: 200px; object-fit: cover; margin-bottom: 1rem; }\n")
 }
 
