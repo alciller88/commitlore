@@ -72,16 +72,16 @@ func TestRender_jsonCommitFields(t *testing.T) {
 	assert.Equal(t, "feat", c.Type)
 }
 
-func TestRender_htmlNotImplemented(t *testing.T) {
-	_, err := Render("", changelog.Changelog{}, FormatHTML)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "not implemented")
+func TestRender_htmlReturnsHTML(t *testing.T) {
+	out, err := Render("", sampleChangelog(), FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<html")
 }
 
-func TestRender_pdfNotImplemented(t *testing.T) {
-	_, err := Render("", changelog.Changelog{}, FormatPDF)
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "not implemented")
+func TestRender_pdfReturnsPDF(t *testing.T) {
+	out, err := Render("", sampleChangelog(), FormatPDF)
+	require.NoError(t, err)
+	assert.Contains(t, out, "%PDF")
 }
 
 func TestRender_unknownFormatPassesThrough(t *testing.T) {
