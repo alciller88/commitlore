@@ -9,6 +9,11 @@ Versionado siguiendo Semantic Versioning.
 - Formato PDF eliminado en favor de HTML (mejor calidad visual, compatible con impresión desde navegador)
 
 ### Added
+- internal/styles: schema .shipstyle extendido con vocabulary, theme, terminal y metadatos marketplace (Fase 6.5)
+- internal/renderer: HTML dinámico con colores, tipografía, card_style y custom_css del tema (Fase 6.5)
+- internal/renderer: terminal.go con colores ANSI y decoradores del estilo (Fase 6.5)
+- internal/narrative: ApplyVocabulary() para sustituciones de palabras sin LLM (Fase 6.5)
+- internal/styles: validación de card_style, density y mode (Fase 6.5)
 - internal/renderer: formato HTML autocontenido con dark theme, badges por tipo y barras de actividad (Fase 6)
 - cmd/story: comando story con flags --repo, --from, --style, --format, --output (Fase 5)
 - internal/git: chronology, tags, and activity peaks for story command (Fase 5)

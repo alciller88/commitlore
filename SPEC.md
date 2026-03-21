@@ -73,33 +73,63 @@ shiplog style <subcommand> [flags]
 SubcomandoDescripciónlistLista los estilos disponibles (built-in + instalados)showMuestra la definición de un estilocreateCrea un nuevo estilo (wizard interactivo o flags)importImporta un estilo desde URL o ruta localexportExporta un estilo a archivo .shipstyledeleteElimina un estilo instalado (no elimina built-ins)
 
 6. Sistema de estilos modular
-Los estilos son archivos .shipstyle en formato YAML que definen el tono
-y las plantillas de texto. Se almacenan en ~/.config/shiplog/styles/.
-Estructura de un archivo .shipstyle
-yamlname: patchnotes
-version: 1.0.0
-description: "Estilo patch notes de videojuego"
-author: "shiplog"
-llm_prompt: |
-  Escribe el changelog como si fuera las patch notes de un videojuego.
-  Usa términos como "fixed", "nerfed", "buffed", "added to the game".
-  Sé épico pero conciso.
-templates:
-  header: "⚔️  PATCH {{.Version}} — {{.Title}}"
-  feature: "  ✨ Unlocked: {{.Message}}"
-  fix: "  🛡️  Patched: {{.Message}}"
-  breaking: "  💀 Removed from the game: {{.Message}}"
-  footer: "  — End of patch notes —"
+Los estilos son archivos .shipstyle en formato YAML que definen el tono,
+las plantillas de texto y toda la identidad visual del output.
+Se almacenan en ~/.config/shiplog/styles/.
+
+Estructura completa de un archivo .shipstyle:
+
+  name: "nombre"
+  version: "1.0.0"
+  description: "descripción"
+  author: "autor"
+  tags: []                    # metadatos marketplace
+  preview_url: ""             # URL de preview
+  homepage: ""                # URL del proyecto
+
+  llm_prompt: |               # prompt para LLM (opcional)
+    ...
+
+  templates:                  # plantillas de texto
+    header, feature, fix, breaking, footer
+    story_intro, story_milestone, story_peak, story_contributor, story_footer
+
+  vocabulary:                 # sustituciones sin LLM (map[string]string)
+    bug: "heresy"
+    fix: "purge"
+
+  theme:                      # identidad visual HTML
+    mode: "dark"              # dark | light
+    colors:
+      primary, secondary, background, surface, text, accent, border
+    typography:
+      font_family, font_size_base, font_size_header, font_size_code
+    header_image: ""          # URL o base64
+    logo: ""                  # URL o base64
+    card_style: "bordered"    # minimal | bordered | glassmorphism
+    animations: true
+    custom_css: ""            # CSS adicional inyectado al final
+
+  terminal:                   # identidad visual terminal
+    colors:
+      header, feature, fix, breaking, footer   # nombres de color ANSI
+    decorators:
+      separator, bullet, indent
+    density: "normal"         # compact | normal | verbose
+
+Todos los campos de vocabulary, theme y terminal son opcionales con
+valores zero-value sensatos.
+
 Estilos built-in (v1)
 
-formal — técnico y profesional
-patchnotes — estilo videojuego
-ironic — humor seco
-epic — narrativo y grandilocuente
+formal — técnico y profesional, colores neutros
+patchnotes — estilo videojuego, púrpura/dorado, animaciones
+ironic — humor seco, colores apagados, minimalista
+epic — narrativo grandilocuente, dorado/oscuro, ornamentado
 
 Comportamiento
 
-Sin LLM: se usan los campos templates del .shipstyle.
+Sin LLM: se usan los campos templates y vocabulary del .shipstyle.
 Con LLM: se usa el campo llm_prompt para instruir al modelo; templates como fallback.
 Los estilos built-in no son modificables ni eliminables.
 
