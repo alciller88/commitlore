@@ -8,6 +8,7 @@ import (
 
 	"github.com/alciller88/commitlore/internal/git"
 	ghpkg "github.com/alciller88/commitlore/internal/github"
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 // GitApp exposes git history and contributor data to the frontend.
@@ -16,6 +17,26 @@ type GitApp struct{}
 // NewGitApp creates a new GitApp instance.
 func NewGitApp() *GitApp {
 	return &GitApp{}
+}
+
+// OpenFolderPicker opens a native folder selection dialog.
+// Returns the selected path or empty string if cancelled.
+func (g *GitApp) OpenFolderPicker() string {
+	app := application.Get()
+	if app == nil {
+		return ""
+	}
+
+	path, err := app.Dialog.OpenFile().
+		CanChooseFiles(false).
+		CanChooseDirectories(true).
+		SetTitle("Select Repository Folder").
+		PromptForSingleSelection()
+	if err != nil {
+		return ""
+	}
+
+	return path
 }
 
 // History returns commits as JSON, supporting local and GitHub repos.

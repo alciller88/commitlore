@@ -21,6 +21,7 @@ func run() error {
 	changelogApp := NewChangelogApp()
 	storyApp := NewStoryApp()
 	styleApp := NewStyleApp()
+	configApp := NewConfigApp()
 
 	app := application.New(application.Options{
 		Name: "CommitLore",
@@ -29,6 +30,7 @@ func run() error {
 			application.NewService(changelogApp),
 			application.NewService(storyApp),
 			application.NewService(styleApp),
+			application.NewService(configApp),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
