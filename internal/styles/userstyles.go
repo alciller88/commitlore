@@ -142,11 +142,22 @@ func ImportFromURL(url string) (Style, error) {
 }
 
 func downloadStyle(url string) ([]byte, error) {
-	resp, err := http.Get(url) //nolint:gosec // user-provided URL is validated by caller
+	resp, err := http.Get(url) //nolint:gosec,noctx // user-provided URL, no context needed
 	if err != nil {
 		return nil, fmt.Errorf("downloading style from %s: %w", url, err)
 	}
-	defer resp.Body.Close()
+	data, readErr := readResponse(resp)
+	closeErr := resp.Body.Close()
+	if readErr != nil {
+		return nil, readErr
+	}
+	if closeErr != nil {
+		return nil, fmt.Errorf("closing response: %w", closeErr)
+	}
+	return data, nil
+}
+
+func readResponse(resp *http.Response) ([]byte, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("downloading style: HTTP %d", resp.StatusCode)
 	}
