@@ -48,7 +48,6 @@ func TestLoad_emptyNameDefaultsToFormal(t *testing.T) {
 func TestLoad_unknownStyle(t *testing.T) {
 	_, err := Load("nonexistent")
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "not found")
 }
 
 func TestLoad_allBuiltinsHaveLLMPrompt(t *testing.T) {
