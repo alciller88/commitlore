@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/alciller88/commitlore/internal/changelog"
-	"github.com/alciller88/commitlore/internal/git"
+	ghpkg "github.com/alciller88/commitlore/internal/github"
 	"github.com/alciller88/commitlore/internal/narrative"
 	"github.com/alciller88/commitlore/internal/renderer"
 	"github.com/alciller88/commitlore/internal/styles"
@@ -24,15 +24,11 @@ func newGenerateCmd() *cobra.Command {
 		Use:   "generate",
 		Short: "Generate a changelog from commits",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if includePRs {
-				// TODO(fase8): implement PR inclusion via GitHub API
-				fmt.Fprintln(os.Stderr, "Warning: --include-prs is not yet implemented, ignoring flag.")
-			}
-			return runGenerate(repoPath, since, until, style, format, output)
+			return runGenerate(repoPath, since, until, style, format, output, includePRs)
 		},
 	}
 
-	cmd.Flags().StringVar(&repoPath, "repo", ".", "Path to local git repository")
+	cmd.Flags().StringVar(&repoPath, "repo", ".", "Local path or GitHub repo (owner/repo)")
 	cmd.Flags().StringVar(&since, "since", "", "Show commits since date (YYYY-MM-DD)")
 	cmd.Flags().StringVar(&until, "until", "", "Show commits until date (YYYY-MM-DD)")
 	cmd.Flags().BoolVar(&includePRs, "include-prs", false, "Include PR info (requires GitHub token)")
@@ -43,13 +39,13 @@ func newGenerateCmd() *cobra.Command {
 	return cmd
 }
 
-func runGenerate(repoPath, since, until, styleName, format, output string) error {
+func runGenerate(repoPath, since, until, styleName, format, output string, includePRs bool) error {
 	opts, err := buildLogOptions("", since, until, 0)
 	if err != nil {
 		return err
 	}
 
-	commits, err := fetchCommits(repoPath, opts)
+	commits, err := fetchCommitsFromSource(repoPath, opts)
 	if err != nil {
 		return err
 	}
@@ -60,15 +56,31 @@ func runGenerate(repoPath, since, until, styleName, format, output string) error
 	}
 
 	cl := changelog.GroupCommits(commits)
+
+	if includePRs && ghpkg.IsRemoteRepo(repoPath) {
+		prs, prErr := fetchRemotePRs(repoPath, opts.Since, opts.Until)
+		if prErr != nil {
+			return prErr
+		}
+		if len(prs) > 0 {
+			appendPRsToChangelog(&cl, prs)
+		}
+	} else if includePRs && !ghpkg.IsRemoteRepo(repoPath) {
+		fmt.Fprintln(os.Stderr, "Warning: --include-prs requires --repo in owner/repo format. Ignoring flag.")
+	}
+
 	return generateOutput(cl, styleName, format, output)
 }
 
-func fetchCommits(repoPath string, opts git.LogOptions) ([]git.Commit, error) {
-	repo, err := git.Open(repoPath)
-	if err != nil {
-		return nil, err
+func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
+	for _, pr := range prs {
+		msg := fmt.Sprintf("PR #%d: %s (by @%s)", pr.Number, pr.Title, pr.Author)
+		cl.AppendCommit(changelog.ParsedCommit{
+			Hash:    fmt.Sprintf("pr-%d", pr.Number),
+			Message: msg,
+			Type:    changelog.InferTypeFromMessage(msg),
+		})
 	}
-	return repo.Log(opts)
 }
 
 func generateOutput(cl changelog.Changelog, styleName, format, output string) error {

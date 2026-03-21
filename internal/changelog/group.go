@@ -58,3 +58,22 @@ func toChangelog(groups map[CommitType][]ParsedCommit) Changelog {
 	}
 	return cl
 }
+
+// AppendCommit adds a parsed commit to the appropriate group.
+func (cl *Changelog) AppendCommit(pc ParsedCommit) {
+	for i, g := range cl.Groups {
+		if g.Type == pc.Type {
+			cl.Groups[i].Commits = append(cl.Groups[i].Commits, pc)
+			return
+		}
+	}
+	cl.Groups = append(cl.Groups, ChangelogGroup{
+		Type:    pc.Type,
+		Commits: []ParsedCommit{pc},
+	})
+}
+
+// InferTypeFromMessage returns the commit type inferred from a message.
+func InferTypeFromMessage(message string) CommitType {
+	return ParseType(message)
+}

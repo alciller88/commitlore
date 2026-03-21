@@ -36,7 +36,7 @@ func newHistoryCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&repoPath, "repo", ".", "Path to local git repository")
+	cmd.Flags().StringVar(&repoPath, "repo", ".", "Local path or GitHub repo (owner/repo)")
 	cmd.Flags().StringVar(&author, "author", "", "Filter by author name or email")
 	cmd.Flags().StringVar(&since, "since", "", "Show commits since date (YYYY-MM-DD)")
 	cmd.Flags().StringVar(&until, "until", "", "Show commits until date (YYYY-MM-DD)")
@@ -68,12 +68,7 @@ func buildLogOptions(author, since, until string, limit int) (git.LogOptions, er
 }
 
 func runHistory(repoPath string, opts git.LogOptions) error {
-	repo, err := git.Open(repoPath)
-	if err != nil {
-		return err
-	}
-
-	commits, err := repo.Log(opts)
+	commits, err := fetchCommitsFromSource(repoPath, opts)
 	if err != nil {
 		return err
 	}

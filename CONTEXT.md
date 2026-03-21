@@ -13,7 +13,7 @@ a modular style system (.shipstyle files).
 See SPEC.md for the complete specification.
 
 2. Current State
-FieldValueCurrent phasePhase 7 — CompletedLatest branchdevVersionv0.0.0Tests passingYes (132 tests: 22 git, 27 changelog, 27 narrative, 19 renderer, 32 styles + 5 cmd)Lint cleanYes
+FieldValueCurrent phasePhase 8 — CompletedLatest branchdevVersionv0.0.0Tests passingYes (164 tests: 22 git, 27 changelog, 32 github, 27 narrative, 19 renderer, 37 styles)Lint cleanYes
 
 Update this table at the start and completion of each phase.
 

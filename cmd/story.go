@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alciller88/commitlore/internal/git"
+	ghpkg "github.com/alciller88/commitlore/internal/github"
 	"github.com/alciller88/commitlore/internal/narrative"
 	"github.com/alciller88/commitlore/internal/renderer"
 	"github.com/alciller88/commitlore/internal/styles"
@@ -29,7 +30,7 @@ func newStoryCmd() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&repoPath, "repo", ".", "Path to local git repository")
+	cmd.Flags().StringVar(&repoPath, "repo", ".", "Local path or GitHub repo (owner/repo)")
 	cmd.Flags().StringVar(&from, "from", "", "Start from commit or tag (default: first commit)")
 	cmd.Flags().StringVar(&style, "style", "formal", "Style: formal, patchnotes, ironic, epic")
 	cmd.Flags().StringVar(&format, "format", "terminal", "Format: terminal, md, json, html")
@@ -39,6 +40,13 @@ func newStoryCmd() *cobra.Command {
 }
 
 func runStory(repoPath, from, styleName, format, output string) error {
+	if ghpkg.IsRemoteRepo(repoPath) {
+		return runRemoteStory(repoPath, from, styleName, format, output)
+	}
+	return runLocalStory(repoPath, from, styleName, format, output)
+}
+
+func runLocalStory(repoPath, from, styleName, format, output string) error {
 	repo, err := git.Open(repoPath)
 	if err != nil {
 		return err
@@ -59,6 +67,30 @@ func runStory(repoPath, from, styleName, format, output string) error {
 		return err
 	}
 
+	return renderStory(ch, styleName, format, output)
+}
+
+func runRemoteStory(repoRef, from, styleName, format, output string) error {
+	opts := git.LogOptions{}
+	if from != "" {
+		t, err := time.Parse(dateLayout, from)
+		if err != nil {
+			return fmt.Errorf("invalid --from value %q: use YYYY-MM-DD", from)
+		}
+		opts.Since = t
+	}
+
+	commits, err := fetchRemoteCommits(repoRef, opts)
+	if err != nil {
+		return err
+	}
+
+	if len(commits) == 0 {
+		fmt.Fprintln(os.Stderr, "No commits found in this repository.")
+		return nil
+	}
+
+	ch := git.BuildChronology(commits, nil, topPeaks)
 	return renderStory(ch, styleName, format, output)
 }
 
