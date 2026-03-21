@@ -1,45 +1,70 @@
 name: ironic
 version: 1.0.0
-description: "Dry humor changelog style"
+description: "Dry humor changelog — self-deprecating, resigned, oddly honest"
 author: "commitlore"
+tags: ["humor", "sarcastic", "dry", "developer", "honest", "minimal"]
+preview_url: ""
+homepage: ""
 llm_prompt: |
-  Write the changelog with dry, sarcastic humor. Be self-deprecating
-  about the codebase. Acknowledge tech debt casually. Act surprised
-  that anything works at all. Never be mean to contributors — direct
-  the humor at the code itself, the process, and the industry.
-  End with something like "Ship it. What could go wrong?"
+  You are a tired but brilliant developer writing a changelog at 2 AM
+  after a long sprint. Your tone is dry, sarcastic, and self-deprecating
+  — but never mean to contributors. Direct all humor at the code itself,
+  the process, and the software industry. Rules:
+  - Act mildly surprised that anything works at all
+  - Acknowledge tech debt casually, like an old friend
+  - Downplay achievements: "we finally added X (yes, this was missing)"
+  - Treat bug fixes as inevitable: "fixed X (it was broken, obviously)"
+  - Breaking changes are "things we broke on purpose. Probably."
+  - Use lowercase for emphasis, not uppercase
+  - No emojis. Emojis are for people who still have hope.
+  - End with something like "Ship it. What could go wrong?" or
+    "Anyway, it compiles. That counts as working, right?"
+  - Keep entries short. Brevity is the soul of changelog.
 templates:
   header: "Another release. Somehow it works."
-  feature: "  - We added {{.Message}} (yes, this was missing)"
-  fix: "  - Fixed {{.Message}} (it was broken, obviously)"
+  feature: "  - We added {{.Message}}. Yes, this was missing."
+  fix: "  - Fixed {{.Message}}. It was broken, obviously."
   breaking: "  - We broke {{.Message}} on purpose. Probably."
-  footer: "Ship it. You're welcome."
-  story_intro: "A story nobody asked for.\n\nSomeone thought it was a good idea to start this repo on {{.FirstCommitDate}}.\n{{.FirstAuthor}} pressed git init and here we are. {{.TotalCommits}} commits later, {{.TotalContributors}} people are involved."
+  footer: "Ship it. What could go wrong?"
+  story_intro: "A story nobody asked for.\n\nSomeone thought it was a good idea to start this repo on {{.FirstCommitDate}}. That someone was {{.FirstAuthor}}. They pressed git init and here we are, {{.TotalCommits}} commits later. {{.TotalContributors}} people are now involved. Nobody knows why."
   story_milestone: "  - {{.Name}} was tagged on {{.Date}}. Progress, apparently."
-  story_peak: "  - {{.Month}}: {{.Count}} commits. Someone was busy."
-  story_contributor: "  - {{.Name}} showed up on {{.Date}}. One of us now."
-  story_footer: "And that's the story. You're welcome."
+  story_peak: "  - {{.Month}}: {{.Count}} commits. Someone was either very productive or very stressed."
+  story_contributor: "  - {{.Name}} showed up on {{.Date}}. One of us now. No going back."
+  story_footer: "And that's the story. You're welcome. Now close this tab."
 vocabulary:
+  bug: "surprise feature"
+  fix: "duct-taped"
   feature: "thing we forgot to build"
-  added: "finally added"
-  updated: "tweaked (again)"
+  added: "somehow added"
+  removed: "finally killed"
+  updated: "touched and prayed"
+  commit: "confession"
+  merge: "Frankenstein'd together"
+  error: "expected behavior"
+  refactor: "moved things around"
 theme:
   mode: "dark"
   colors:
-    primary: "#a0a0a0"
-    secondary: "#808080"
-    background: "#1a1a1a"
-    surface: "#252525"
-    text: "#b0b0b0"
-    accent: "#666666"
-    border: "#333333"
+    primary: "#6B7280"
+    secondary: "#9CA3AF"
+    background: "#111111"
+    surface: "#1A1A1A"
+    text: "#A3A3A3"
+    accent: "#D97706"
+    border: "#2A2A2A"
   typography:
-    font_family: "'SF Mono', 'Fira Code', monospace"
+    font_family: "'IBM Plex Mono', 'SF Mono', 'Fira Code', monospace"
     font_size_base: "13px"
-    font_size_header: "20px"
+    font_size_header: "18px"
     font_size_code: "12px"
   card_style: "minimal"
   animations: false
+  custom_css: |
+    body { letter-spacing: 0.01em; }
+    h1 { font-weight: 400; font-style: italic; }
+    h2 { font-weight: 400; opacity: 0.8; }
+    li { opacity: 0.9; }
+    .footer { font-style: italic; opacity: 0.6; }
 terminal:
   colors:
     header: "white"
@@ -48,7 +73,7 @@ terminal:
     breaking: "yellow"
     footer: "white"
   decorators:
-    separator: "- - - - - - - - - - - - - - -"
-    bullet: "-"
+    separator: "· · · · · · · · · · · · · · · · · · · ·"
+    bullet: "¯\\_(ツ)_/¯"
     indent: "  "
   density: "compact"

@@ -1,41 +1,54 @@
 name: formal
 version: 1.0.0
-description: "Technical and professional changelog style"
+description: "Technical and professional changelog — clean, precise, no frills"
 author: "commitlore"
+tags: ["professional", "technical", "corporate", "clean", "minimal"]
+preview_url: ""
+homepage: ""
 llm_prompt: |
-  Write the changelog in a technical, professional tone.
-  Be concise and precise. Use past tense. Group changes by type.
-  Each entry should state what changed and why, without embellishment.
-  Use active voice: "Added X", "Fixed Y", "Removed Z".
+  You are a senior technical writer producing a changelog for a professional
+  software project. Write in a precise, neutral, corporate tone. Use past
+  tense and active voice throughout. Every entry must state exactly what
+  changed and why, with zero embellishment. No emojis, no humor, no
+  metaphors. Structure: group by type (Added, Fixed, Breaking), then list
+  entries as bullet points. End with a brief summary of the release scope.
+  If there are breaking changes, lead with them and explain migration steps.
+  Keep sentences under 20 words. Prefer "Added X" over "We added X".
 templates:
   header: "# Changelog"
   feature: "- Added: {{.Message}} ({{.Hash | short}}, {{.Author}})"
   fix: "- Fixed: {{.Message}} ({{.Hash | short}}, {{.Author}})"
-  breaking: "- ⚠ BREAKING: {{.Message}} ({{.Hash | short}}, {{.Author}})"
+  breaking: "- BREAKING: {{.Message}} ({{.Hash | short}}, {{.Author}})"
   footer: ""
-  story_intro: "# Repository Story\n\nThis repository was created on {{.FirstCommitDate}} by {{.FirstAuthor}}.\nTotal commits: {{.TotalCommits}}. Contributors: {{.TotalContributors}}."
-  story_milestone: "- Tag {{.Name}} released on {{.Date}}"
-  story_peak: "- {{.Month}}: {{.Count}} commits"
-  story_contributor: "- {{.Name}}, first commit on {{.Date}}"
+  story_intro: "# Repository Story\n\nThis repository was initialized on {{.FirstCommitDate}} by {{.FirstAuthor}}.\nTotal commits analyzed: {{.TotalCommits}}. Distinct contributors: {{.TotalContributors}}."
+  story_milestone: "- Release {{.Name}} published on {{.Date}}"
+  story_peak: "- {{.Month}}: {{.Count}} commits recorded"
+  story_contributor: "- {{.Name}}, first contribution on {{.Date}}"
   story_footer: ""
 vocabulary: {}
 theme:
-  mode: "dark"
+  mode: "light"
   colors:
-    primary: "#58a6ff"
-    secondary: "#79c0ff"
-    background: "#0d1117"
-    surface: "#161b22"
-    text: "#c9d1d9"
-    accent: "#1f6feb"
-    border: "#30363d"
+    primary: "#2563EB"
+    secondary: "#1E40AF"
+    background: "#F8FAFC"
+    surface: "#FFFFFF"
+    text: "#1E293B"
+    accent: "#3B82F6"
+    border: "#E2E8F0"
   typography:
-    font_family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    font_family: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
     font_size_base: "14px"
     font_size_header: "24px"
-    font_size_code: "12px"
+    font_size_code: "13px"
   card_style: "minimal"
   animations: false
+  custom_css: |
+    body { line-height: 1.6; }
+    h1 { font-weight: 700; letter-spacing: -0.02em; }
+    h2 { font-weight: 600; }
+    li { font-size: 0.95em; }
+    .hash { background: #F1F5F9; padding: 0.1em 0.3em; border-radius: 3px; }
 terminal:
   colors:
     header: "white"
@@ -44,7 +57,7 @@ terminal:
     breaking: "red"
     footer: "white"
   decorators:
-    separator: "────────────────────────────────────"
+    separator: "────────────────────────────────────────"
     bullet: "-"
     indent: "  "
   density: "normal"

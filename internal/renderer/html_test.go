@@ -61,8 +61,8 @@ func TestRender_htmlUsesThemeColors(t *testing.T) {
 	s := loadTestStyle(t, "epic")
 	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
-	assert.Contains(t, out, "#d4af37")
-	assert.Contains(t, out, "#0a0a0f")
+	assert.Contains(t, out, "#D4AF37")
+	assert.Contains(t, out, "#1A1209")
 }
 
 func TestRender_htmlUsesCustomCSS(t *testing.T) {

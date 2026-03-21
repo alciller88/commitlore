@@ -30,6 +30,7 @@ Versionado siguiendo Semantic Versioning.
 - internal/renderer: renderizado por formato (terminal, md, json) (Fase 4)
 
 ### Changed
+- Enriched built-in styles with full visual identity and creative templates
 - Estructura de plantillas migrada de .tmpl planos a formato .shipstyle (YAML)
 - Separación de responsabilidades entre internal/narrative y internal/renderer
 - Improved built-in style templates for clearer tone differentiation
