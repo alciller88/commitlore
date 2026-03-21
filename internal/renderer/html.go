@@ -154,7 +154,6 @@ func writeSiteHeader(buf *bytes.Buffer, theme styles.Theme) {
 	}
 	buf.WriteString("<header class=\"site-header\">\n")
 	writeSiteHeaderLogo(buf, theme)
-	buf.WriteString("<span class=\"site-name\">CommitLore</span>\n")
 	buf.WriteString("</header>\n")
 }
 
@@ -164,7 +163,7 @@ func writeSiteHeaderLogo(buf *bytes.Buffer, theme styles.Theme) {
 			template.HTMLEscapeString(theme.Logo))
 		return
 	}
-	logoSVG := strings.ReplaceAll(assets.LogoSVG, `width="100%"`, `width="120" height="60"`)
+	logoSVG := strings.Replace(assets.LogoSVG, "<svg ", `<svg width="100" height="100" `, 1)
 	fmt.Fprintf(buf, "<div class=\"logo-svg\">%s</div>\n", logoSVG)
 }
 

@@ -67,9 +67,8 @@ func writeSiteHeaderCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf,
 		".site-header { width: 100%%; padding: 1rem 2rem; box-sizing: border-box; display: flex; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid %s; }\n",
 		t.Colors.Border)
-	buf.WriteString(".site-header .logo-svg { display: inline-block; width: 120px; flex-shrink: 0; }\n")
-	buf.WriteString(".site-header .logo-svg svg { width: 120px !important; height: 60px !important; }\n")
-	buf.WriteString(".site-name { font-family: 'Courier New', monospace; font-size: 16px; font-weight: 600; letter-spacing: 2px; margin-left: 12px; opacity: 0.8; }\n")
+	buf.WriteString(".site-header .logo-svg { display: inline-block; width: 100px; height: 100px; flex-shrink: 0; }\n")
+	buf.WriteString(".site-header .logo-svg svg { width: 100px !important; height: 100px !important; }\n")
 }
 
 func writeTypeBadgeCSS(buf *strings.Builder, t styles.Theme) {
@@ -86,7 +85,7 @@ func writeComponentCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf, ".date { color: %s; font-size: 0.85em; }\n", t.Colors.Text)
 	fmt.Fprintf(buf, ".footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid %s; color: %s; font-size: 0.85em; }\n", t.Colors.Border, t.Colors.Text)
 	fmt.Fprintf(buf, ".peak-bar { display: inline-block; background: %s; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }\n", t.Colors.Accent)
-	buf.WriteString(".logo { height: 60px; width: 120px; margin-right: 1rem; }\n")
+	buf.WriteString(".logo { height: 100px; width: 100px; margin-right: 1rem; }\n")
 	buf.WriteString(".header-image { width: 100%%; max-height: 200px; object-fit: cover; margin-bottom: 1rem; }\n")
 }
 
