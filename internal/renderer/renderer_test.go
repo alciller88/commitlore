@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alciller88/commitlore/internal/changelog"
+	"github.com/alciller88/commitlore/internal/styles"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -31,21 +32,29 @@ func sampleChangelog() changelog.Changelog {
 	}
 }
 
+func loadTestStyle(t *testing.T, name string) styles.Style {
+	t.Helper()
+	s, err := styles.Load(name)
+	require.NoError(t, err)
+	return s
+}
+
 func TestRender_terminalAddsANSI(t *testing.T) {
-	out, err := Render("# Changelog\n## Features\n- item", changelog.Changelog{}, FormatTerminal)
+	s := loadTestStyle(t, "formal")
+	out, err := Render("# Changelog\n## Features\n- item", changelog.Changelog{}, s, FormatTerminal)
 	require.NoError(t, err)
 	assert.Contains(t, out, "\033[")
 }
 
 func TestRender_mdPassesThrough(t *testing.T) {
 	content := "# Changelog\n## Features\n- item"
-	out, err := Render(content, changelog.Changelog{}, FormatMD)
+	out, err := Render(content, changelog.Changelog{}, styles.Style{}, FormatMD)
 	require.NoError(t, err)
 	assert.Equal(t, content, out)
 }
 
 func TestRender_jsonValid(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatJSON)
+	out, err := Render("", sampleChangelog(), styles.Style{}, FormatJSON)
 	require.NoError(t, err)
 
 	var parsed jsonChangelog
@@ -57,7 +66,7 @@ func TestRender_jsonValid(t *testing.T) {
 }
 
 func TestRender_jsonCommitFields(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatJSON)
+	out, err := Render("", sampleChangelog(), styles.Style{}, FormatJSON)
 	require.NoError(t, err)
 
 	var parsed jsonChangelog
@@ -73,20 +82,21 @@ func TestRender_jsonCommitFields(t *testing.T) {
 }
 
 func TestRender_htmlReturnsHTML(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "<html")
 }
 
 func TestRender_pdfReturnsError(t *testing.T) {
-	_, err := Render("", sampleChangelog(), FormatPDF)
+	_, err := Render("", sampleChangelog(), styles.Style{}, FormatPDF)
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "removed")
 }
 
 func TestRender_unknownFormatPassesThrough(t *testing.T) {
 	content := "some text"
-	out, err := Render(content, changelog.Changelog{}, Format("unknown"))
+	out, err := Render(content, changelog.Changelog{}, styles.Style{}, Format("unknown"))
 	require.NoError(t, err)
 	assert.Equal(t, content, out)
 }

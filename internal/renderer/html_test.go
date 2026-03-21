@@ -11,7 +11,8 @@ import (
 )
 
 func TestRender_htmlChangelog(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "<!DOCTYPE html>")
 	assert.Contains(t, out, "<html")
@@ -20,7 +21,8 @@ func TestRender_htmlChangelog(t *testing.T) {
 }
 
 func TestRender_htmlContainsContent(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "Changelog")
 	assert.Contains(t, out, "Features")
@@ -29,7 +31,8 @@ func TestRender_htmlContainsContent(t *testing.T) {
 }
 
 func TestRender_htmlCommitBadges(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "type-feat")
 	assert.Contains(t, out, "type-fix")
@@ -47,15 +50,39 @@ func TestRender_htmlEscapesContent(t *testing.T) {
 			},
 		},
 	}
-	out, err := Render("", cl, FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", cl, s, FormatHTML)
 	require.NoError(t, err)
 	assert.NotContains(t, out, "<script>")
 	assert.Contains(t, out, "&lt;script&gt;")
 }
 
+func TestRender_htmlUsesThemeColors(t *testing.T) {
+	s := loadTestStyle(t, "epic")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "#d4af37")
+	assert.Contains(t, out, "#0a0a0f")
+}
+
+func TestRender_htmlUsesCustomCSS(t *testing.T) {
+	s := loadTestStyle(t, "epic")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "text-shadow")
+}
+
+func TestRender_htmlBorderedCardStyle(t *testing.T) {
+	s := loadTestStyle(t, "patchnotes")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "border-radius: 4px")
+}
+
 func TestRenderStory_html(t *testing.T) {
 	ch := sampleStoryChronology()
-	out, err := RenderStory("", ch, FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := RenderStory("", ch, s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "<!DOCTYPE html>")
 	assert.Contains(t, out, "<body>")
@@ -64,7 +91,8 @@ func TestRenderStory_html(t *testing.T) {
 
 func TestRenderStory_htmlContainsSections(t *testing.T) {
 	ch := sampleStoryChronology()
-	out, err := RenderStory("", ch, FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := RenderStory("", ch, s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "Milestones")
 	assert.Contains(t, out, "Activity Peaks")
@@ -74,7 +102,8 @@ func TestRenderStory_htmlContainsSections(t *testing.T) {
 }
 
 func TestRenderStory_htmlEmptyChronology(t *testing.T) {
-	out, err := RenderStory("", git.Chronology{}, FormatHTML)
+	s := loadTestStyle(t, "formal")
+	out, err := RenderStory("", git.Chronology{}, s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "<html")
 	assert.NotContains(t, out, "Milestones")

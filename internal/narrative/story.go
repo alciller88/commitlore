@@ -56,7 +56,7 @@ func GenerateStory(ch git.Chronology, style styles.Style) (string, error) {
 		return "", err
 	}
 
-	return buf.String(), nil
+	return ApplyVocabulary(buf.String(), style.Vocabulary), nil
 }
 
 func buildStoryData(ch git.Chronology) storyData {

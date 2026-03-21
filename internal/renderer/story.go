@@ -3,22 +3,22 @@ package renderer
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/alciller88/commitlore/internal/git"
+	"github.com/alciller88/commitlore/internal/styles"
 )
 
 // RenderStory formats story content according to the specified format.
-func RenderStory(content string, ch git.Chronology, format Format) (string, error) {
+func RenderStory(content string, ch git.Chronology, style styles.Style, format Format) (string, error) {
 	switch format {
 	case FormatJSON:
 		return renderStoryJSON(ch)
 	case FormatHTML:
-		return renderStoryHTML(content, ch)
+		return renderStoryHTML(content, ch, style)
 	case FormatPDF:
 		return "", fmt.Errorf("PDF format has been removed. Use --format html instead.")
 	case FormatTerminal:
-		return addStoryANSI(content), nil
+		return renderTerminal(content, style), nil
 	default:
 		return content, nil
 	}
@@ -108,17 +108,4 @@ func toJSONContributors(entries []git.ContributorEntry) []jsonContributor {
 		})
 	}
 	return result
-}
-
-func addStoryANSI(s string) string {
-	s = colorStoryHeaders(s)
-	s = strings.ReplaceAll(s, "\n- ", "\033[0m\n- ")
-	return s
-}
-
-func colorStoryHeaders(s string) string {
-	s = strings.ReplaceAll(s, "## Milestones", "\033[1;36m## Milestones\033[0m")
-	s = strings.ReplaceAll(s, "## Activity Peaks", "\033[1;36m## Activity Peaks\033[0m")
-	s = strings.ReplaceAll(s, "## Contributors", "\033[1;36m## Contributors\033[0m")
-	return s
 }

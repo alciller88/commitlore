@@ -19,3 +19,39 @@ templates:
   story_peak: "  🔥 HOT STREAK: {{.Month}} — {{.Count}} quests completed"
   story_contributor: "  🎮 NEW PLAYER: {{.Name}} joined the party on {{.Date}}"
   story_footer: "— The game continues, adventurer —"
+vocabulary:
+  bug: "glitch"
+  fix: "patch"
+  feature: "new ability"
+  added: "unlocked"
+  removed: "removed from the game"
+  updated: "buffed"
+theme:
+  mode: "dark"
+  colors:
+    primary: "#9b59b6"
+    secondary: "#d4af37"
+    background: "#1a0a2e"
+    surface: "#2d1b4e"
+    text: "#e8e0f0"
+    accent: "#8e44ad"
+    border: "#d4af37"
+  typography:
+    font_family: "'Press Start 2P', 'Courier New', monospace"
+    font_size_base: "13px"
+    font_size_header: "22px"
+    font_size_code: "11px"
+  card_style: "bordered"
+  animations: true
+terminal:
+  colors:
+    header: "magenta"
+    feature: "yellow"
+    fix: "cyan"
+    breaking: "red"
+    footer: "magenta"
+  decorators:
+    separator: "⚔═══════════════════════════════════⚔"
+    bullet: "⚔️"
+    indent: "  ║ "
+  density: "normal"

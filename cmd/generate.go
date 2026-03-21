@@ -82,7 +82,7 @@ func generateOutput(cl changelog.Changelog, styleName, format, output string) er
 		return err
 	}
 
-	rendered, err := renderer.Render(text, cl, renderer.Format(format))
+	rendered, err := renderer.Render(text, cl, style, renderer.Format(format))
 	if err != nil {
 		return err
 	}

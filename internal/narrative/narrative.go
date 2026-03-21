@@ -13,7 +13,11 @@ import (
 // Generate produces narrative text from a Changelog using the given Style.
 func Generate(cl changelog.Changelog, style styles.Style) (string, error) {
 	data := buildTemplateData(cl)
-	return renderWithStyle(data, style)
+	text, err := renderWithStyle(data, style)
+	if err != nil {
+		return "", err
+	}
+	return ApplyVocabulary(text, style.Vocabulary), nil
 }
 
 func renderWithStyle(data templateData, style styles.Style) (string, error) {
