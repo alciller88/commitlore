@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte'
   import { OpenFolderPicker, History } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
   import { GetRecentRepos, AddRecentRepo } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { Events } from '@wailsio/runtime'
 
   export let activeRepo = ''
 
@@ -12,9 +13,21 @@
   let error = ''
   let loading = false
   let repoSummary: {name: string, lastCommit: string, totalCommits: number, contributors: number} | null = null
-  let dragOver = false
+  let unsubFileDrop: (() => void) | null = null
 
-  onMount(loadRecentRepos)
+  onMount(() => {
+    loadRecentRepos()
+    unsubFileDrop = Events.On('file-dropped', (event: any) => {
+      const path = event.data
+      if (path && typeof path === 'string') {
+        selectRepo(path, 'local')
+      }
+    })
+  })
+
+  onDestroy(() => {
+    if (unsubFileDrop) unsubFileDrop()
+  })
 
   async function loadRecentRepos() {
     try {
@@ -77,26 +90,6 @@
     }
   }
 
-  function handleDrop(e: DragEvent) {
-    dragOver = false
-    e.preventDefault()
-    const items = e.dataTransfer?.items
-    if (items && items.length > 0) {
-      const item = items[0]
-      if (item.kind === 'file') {
-        const file = item.getAsFile()
-        if (file) {
-          selectRepo((file as any).path || file.name, 'local')
-        }
-      }
-    }
-  }
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault()
-    dragOver = true
-  }
-
   function shortenPath(p: string) {
     if (p.length <= 40) return p
     const parts = p.replace(/\\/g, '/').split('/')
@@ -132,10 +125,7 @@
 
       <div
         class="drop-zone"
-        class:drag-over={dragOver}
-        on:drop={handleDrop}
-        on:dragover={handleDragOver}
-        on:dragleave={() => dragOver = false}
+        data-file-drop-target="true"
         role="button"
         tabindex="0"
       >
@@ -256,7 +246,7 @@
     min-width: 160px;
     cursor: default;
   }
-  .drop-zone.drag-over { border-color: #58a6ff; background: #1c233322; }
+  .drop-zone:hover { border-color: #58a6ff; background: #1c233322; }
 
   .github-input {
     display: flex;
