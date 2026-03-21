@@ -32,7 +32,7 @@ func newStoryCmd() *cobra.Command {
 	cmd.Flags().StringVar(&repoPath, "repo", ".", "Path to local git repository")
 	cmd.Flags().StringVar(&from, "from", "", "Start from commit or tag (default: first commit)")
 	cmd.Flags().StringVar(&style, "style", "formal", "Style: formal, patchnotes, ironic, epic")
-	cmd.Flags().StringVar(&format, "format", "terminal", "Format: terminal, md, json, html, pdf")
+	cmd.Flags().StringVar(&format, "format", "terminal", "Format: terminal, md, json, html")
 	cmd.Flags().StringVar(&output, "output", "", "Output file path (default: stdout)")
 
 	return cmd

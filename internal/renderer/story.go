@@ -16,7 +16,7 @@ func RenderStory(content string, ch git.Chronology, format Format) (string, erro
 	case FormatHTML:
 		return renderStoryHTML(content, ch)
 	case FormatPDF:
-		return renderStoryPDF(content, ch)
+		return "", fmt.Errorf("PDF format has been removed. Use --format html instead.")
 	case FormatTerminal:
 		return addStoryANSI(content), nil
 	default:

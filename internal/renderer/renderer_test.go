@@ -78,10 +78,10 @@ func TestRender_htmlReturnsHTML(t *testing.T) {
 	assert.Contains(t, out, "<html")
 }
 
-func TestRender_pdfReturnsPDF(t *testing.T) {
-	out, err := Render("", sampleChangelog(), FormatPDF)
-	require.NoError(t, err)
-	assert.Contains(t, out, "%PDF")
+func TestRender_pdfReturnsError(t *testing.T) {
+	_, err := Render("", sampleChangelog(), FormatPDF)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "removed")
 }
 
 func TestRender_unknownFormatPassesThrough(t *testing.T) {

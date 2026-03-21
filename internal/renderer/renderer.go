@@ -29,7 +29,7 @@ func Render(content string, cl changelog.Changelog, format Format) (string, erro
 	case FormatHTML:
 		return renderChangelogHTML(content, cl)
 	case FormatPDF:
-		return renderChangelogPDF(content, cl)
+		return "", fmt.Errorf("PDF format has been removed. Use --format html instead.")
 	case FormatTerminal:
 		return addANSIColors(content), nil
 	default:

@@ -20,7 +20,7 @@ Actualizar esta tabla al iniciar y completar cada fase.
 
 3. Decisiones técnicas tomadas
 Estas decisiones están cerradas. No se debaten en cada sesión.
-DecisiónElecciónMotivoLenguajeGo 1.22+Multiplataforma, binarios nativos, sin runtimeCLI frameworkCobra + ViperEstándar de facto en GoGit localgo-gitPuro Go, sin dependencia del binario gitGitHub APIgo-githubMantenida por Google, tipadaApp escritorioWails v2Go nativo + WebView del OS, sin ChromiumFrontendSvelte + TypeScriptCompila a vanilla JS, rendimiento nativo en WailsEstilos UITailwind + shadcn-svelteBase de componentes sin look genéricoLintergolangci-lintEstándar en Go, agrupa 50+ lintersTeststesting + testifyStdlib + aserciones legiblesPDFgofpdfPuro Go, sin dependencias externasVersionadoSemver (vMAJOR.MINOR.PATCH)Estándar universalRamasmain + dev + feat/* / fix/*Flujo claro, CI diferenciado
+DecisiónElecciónMotivoLenguajeGo 1.22+Multiplataforma, binarios nativos, sin runtimeCLI frameworkCobra + ViperEstándar de facto en GoGit localgo-gitPuro Go, sin dependencia del binario gitGitHub APIgo-githubMantenida por Google, tipadaApp escritorioWails v2Go nativo + WebView del OS, sin ChromiumFrontendSvelte + TypeScriptCompila a vanilla JS, rendimiento nativo en WailsEstilos UITailwind + shadcn-svelteBase de componentes sin look genéricoLintergolangci-lintEstándar en Go, agrupa 50+ lintersTeststesting + testifyStdlib + aserciones legiblesVersionadoSemver (vMAJOR.MINOR.PATCH)Estándar universalRamasmain + dev + feat/* / fix/*Flujo claro, CI diferenciado
 
 4. Convenciones de código
 Go

@@ -37,7 +37,7 @@ func newGenerateCmd() *cobra.Command {
 	cmd.Flags().StringVar(&until, "until", "", "Show commits until date (YYYY-MM-DD)")
 	cmd.Flags().BoolVar(&includePRs, "include-prs", false, "Include PR info (requires GitHub token)")
 	cmd.Flags().StringVar(&style, "style", "formal", "Style: formal, patchnotes, ironic, epic")
-	cmd.Flags().StringVar(&format, "format", "terminal", "Format: terminal, md, json, html, pdf")
+	cmd.Flags().StringVar(&format, "format", "terminal", "Format: terminal, md, json, html")
 	cmd.Flags().StringVar(&output, "output", "", "Output file path (default: stdout)")
 
 	return cmd

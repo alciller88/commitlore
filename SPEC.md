@@ -25,7 +25,7 @@ Código sostenible — funciones pequeñas, responsabilidad única, sin atajos.
 
 3. Stack técnico
 Backend / CLI
-CapaTecnologíaLenguajeGo 1.22+CLI frameworkCobraConfig/flagsViperGitHub APIgo-githubGit localgo-gitPDFgofpdfHTMLhtml/template (stdlib)LLM (opcional)Anthropic API / OpenAI API (configurable)Lintergolangci-lintTeststesting (stdlib) + testify
+CapaTecnologíaLenguajeGo 1.22+CLI frameworkCobraConfig/flagsViperGitHub APIgo-githubGit localgo-gitHTMLhtml/template (stdlib)LLM (opcional)Anthropic API / OpenAI API (configurable)Lintergolangci-lintTeststesting (stdlib) + testify
 App de escritorio
 CapaTecnologíaFrameworkWails v2FrontendSvelte + TypeScriptEstilosTailwind CSS + shadcn-svelte (base componentes)BuildWails CLI (binarios nativos por plataforma)
 
@@ -105,7 +105,9 @@ Los estilos built-in no son modificables ni eliminables.
 
 
 7. Formatos de output
-FormatoDescripciónterminalTexto con color ANSI directo a stdoutmdMarkdown estándar, compatible con GitHubjsonEstructura de datos completa, apta para pipelineshtmlInforme HTML autocontenido con estilos inlinepdfInforme PDF generado desde la plantilla HTML
+FormatoDescripciónterminalTexto con color ANSI directo a stdoutmdMarkdown estándar, compatible con GitHubjsonEstructura de datos completa, apta para pipelineshtmlInforme HTML autocontenido con estilos inline
+
+PDF eliminado en favor de HTML. El HTML generado puede imprimirse a PDF desde cualquier navegador.
 
 8. LLM opcional
 

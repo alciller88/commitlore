@@ -5,9 +5,11 @@ Versionado siguiendo Semantic Versioning.
 
 ## [Unreleased]
 
+### Removed
+- Formato PDF eliminado en favor de HTML (mejor calidad visual, compatible con impresión desde navegador)
+
 ### Added
 - internal/renderer: formato HTML autocontenido con dark theme, badges por tipo y barras de actividad (Fase 6)
-- internal/renderer: formato PDF con gofpdf — informes A4 para changelog y story (Fase 6)
 - cmd/story: comando story con flags --repo, --from, --style, --format, --output (Fase 5)
 - internal/git: chronology, tags, and activity peaks for story command (Fase 5)
 - internal/narrative: GenerateStory() con plantillas story por estilo (Fase 5)

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog — commitlore</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; background: #0d1117; color: #c9d1d9; }
+h1 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+h2 { color: #79c0ff; margin-top: 1.5rem; }
+ul { list-style: none; padding-left: 0; }
+li { padding: 0.3rem 0; border-bottom: 1px solid #21262d; }
+.hash { color: #d2a8ff; font-family: monospace; font-size: 0.85em; }
+.author { color: #3fb950; }
+.date { color: #8b949e; font-size: 0.85em; }
+.type-badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.75em; font-weight: bold; margin-right: 0.3rem; }
+.type-feat { background: #1f6feb33; color: #58a6ff; }
+.type-fix { background: #3fb95033; color: #3fb950; }
+.type-breaking { background: #f8514933; color: #f85149; }
+.type-other { background: #30363d; color: #8b949e; }
+.footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #30363d; color: #8b949e; font-size: 0.85em; }
+.peak-bar { display: inline-block; background: #1f6feb; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }
+</style>
+</head>
+<body>
+<h1>Changelog</h1>
+<h2>Features</h2>
+<ul>
+<li><span class="type-badge type-feat">feat</span> feat: Phase 6 — HTML and PDF renderers (#8)
+
+* feat: implement HTML and PDF renderers for changelog and story
+
+HTML renderer generates self-contained reports with inline dark-theme
+CSS, commit type badges, and activity peak bars. PDF renderer uses
+gofpdf to build clean A4 reports programmatically. Both support
+changelog (Render) and story (RenderStory) output.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* test: add tests for HTML and PDF renderers
+
+HTML tests verify structure, content, badges, and XSS escaping for
+both changelog and story. PDF tests verify valid PDF header/trailer,
+font presence, and content size scaling. Updates old not-implemented
+tests to verify actual output.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* chore: update CHANGELOG.md with Phase 6 additions
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+---------
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">1958451</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: Phase 5 — story command with chronology narrative (#7)
+
+* feat: add story template fields to styles and .shipstyle files
+
+Add story_intro, story_milestone, story_peak, story_contributor, and
+story_footer fields to the Templates struct and all four built-in
+.shipstyle files with tone-appropriate content.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add chronology, tags, and activity peaks to internal/git
+
+Add Chronology struct with BuildChronology(), Tags(), activityPeaks(),
+and uniqueContributors() for the story command. Tags supports both
+lightweight and annotated tags. Activity peaks returns top N months
+sorted by commit count descending.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add GenerateStory for narrative generation from chronology
+
+GenerateStory() renders a repository story using Chronology data and
+style templates: intro, milestones, activity peaks, contributors, and
+footer. Each section adapts to the active .shipstyle tone.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add story command with chronology-based narrative
+
+Implements cmd/story.go with flags --repo, --from, --style, --format,
+--output. Adds RenderStory to renderer for terminal ANSI and JSON
+serialization of chronology data.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* chore: update CHANGELOG.md with Phase 5 additions
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* chore: fix gofmt formatting across all Go files
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+---------
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">700b9c4</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: phase 4 — generate command with template-based rendering (#4)
+
+* feat: add built-in style templates for changelog rendering
+
+Add formal, patchnotes, ironic, and epic templates using Go text/template
+syntax with custom functions (short, date, upper).
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add internal/narrative package for changelog rendering
+
+Implement Render() supporting terminal, md, json formats (html/pdf
+reserved for Phase 6). Uses embedded Go templates for 4 built-in styles:
+formal, patchnotes, ironic, epic. JSON output uses structured marshaling.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* test: add unit tests for internal/narrative package
+
+15 tests covering all 4 styles (formal, patchnotes, ironic, epic),
+JSON validity and field correctness, md syntax, ANSI terminal output,
+html/pdf not-implemented errors, style fallback, and empty changelog.
+Coverage: 88.5%.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add generate command with --repo, --since, --until, --style, --format, --output
+
+Implements the full generate pipeline: read commits (internal/git) -&gt;
+parse and group (internal/changelog) -&gt; render (internal/narrative).
+Supports terminal, md, json formats. html/pdf deferred to Phase 6.
+--include-prs flag reserved but not yet implemented.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* ci: update Go and golangci-lint versions in CI workflows
+
+Use go-version-file: go.mod instead of hardcoded Go 1.22 to match
+the project&#39;s go.mod (Go 1.24). Upgrade golangci-lint from v1.57.2
+to v1.64.8 for Go 1.24 compatibility.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+---------
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">75fa21e</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: phase 3 — internal/changelog and contributors command (#3)
+
+* feat: add internal/changelog package for commit parsing and grouping
+
+Implement ParseType() to extract commit types from Conventional Commits
+messages with fallback inference from keywords. Add GroupCommits() to
+organize commits into ordered ChangelogGroups by type.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* test: add unit tests for internal/changelog package
+
+27 tests covering conventional commit parsing, type inference from
+keywords, grouping by type, ordering, empty input, and data preservation.
+Coverage: 97.7%.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add CommitFiles method to internal/git for file diff stats
+
+Returns the list of file paths changed in a given commit by diffing
+against its parent tree. Needed by the contributors command.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add contributors command with --repo, --since, --top flags
+
+Shows contributor stats: commit count, activity period, and top modified
+files. Uses internal/git for all data access. ANSI-colored terminal output.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* chore: fix gofmt formatting across all Go files
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+---------
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">15a800b</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: phase 2 — internal/git package and history command (#2)
+
+* feat: add internal/git package for local repository access
+
+Implement Repo.Open() and Repo.Log() with filtering by author,
+date range, and commit limit using go-git.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* test: add unit tests for internal/git package
+
+12 tests covering Open, Log with author/date/limit filters,
+combined filters, commit field validation, and empty repo edge case.
+Coverage: 97%.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* feat: add Cobra CLI with shiplog history command
+
+Wire up Cobra root command and implement history subcommand with
+--repo, --author, --since, --until, --limit flags. Outputs a
+color-formatted ANSI table to terminal.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* chore: mark Phase 2 as completed in CONTEXT.md
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+---------
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">f5b7983</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-feat">feat</span> ci: add CI and release GitHub Actions workflows
+
+- ci.yml: lint + test + build on push to dev and PR to main
+- release.yml: build linux/amd64, darwin/arm64, windows/amd64 binaries
+  and create GitHub Release on v* tags
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">f7d4e96</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Bug Fixes</h2>
+<ul>
+<li><span class="type-badge type-fix">fix</span> fix: remove not-implemented guards for html and pdf formats
+
+Update story command format flag description to include html and pdf.
+The actual renderer guards were already removed in Phase 6.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">cc528fd</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: improve built-in style templates for clearer tone differentiation (#6)
+
+- formal: Added/Fixed/BREAKING prefixes, professional tone
+- patchnotes: emojis, UNLOCKED/PATCHED/REMOVED, game language
+- ironic: dry humor, self-deprecating, &#34;Ship it&#34; footer
+- epic: chronicle narrative, archaic language, quest metaphors
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">5123ea7</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+</ul>
+<h2>Refactoring</h2>
+<ul>
+<li><span class="type-badge type-other">refactor</span> refactor: Phase 4 corrections — styles, renderer, narrative separation (#5)
+
+* refactor: create internal/styles with .shipstyle YAML format and built-in styles
+
+Add Style struct with YAML parsing and validation. Embed 4 built-in
+.shipstyle files (formal, patchnotes, ironic, epic) from
+internal/styles/builtin/. Each has name, version, description, author,
+llm_prompt, and templates fields per SPEC section 6. 9 tests, all pass.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* refactor: create internal/renderer for format dispatch
+
+Move format dispatch (terminal ANSI, md passthrough, json marshaling,
+html/pdf not-implemented) out of narrative into its own package.
+7 tests, all pass.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* refactor: simplify internal/narrative to only generate text from style
+
+Remove format dispatch, JSON marshaling, and embedded .tmpl templates
+from narrative package. Now accepts a styles.Style and produces plain
+narrative text. Format-specific logic lives in internal/renderer.
+9 tests rewritten to use styles.Load(), all pass.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* refactor: update cmd/generate pipeline to use styles, narrative, renderer
+
+Pipeline is now: git -&gt; changelog -&gt; styles.Load() -&gt; narrative.Generate()
+-&gt; renderer.Render(). Clean separation of concerns per SPEC.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* chore: remove duplicate templates/ directory from project root
+
+Templates are now defined as .shipstyle YAML files embedded from
+internal/styles/builtin/. The root templates/ dir was a duplicate.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* docs: update SPEC.md and CONTEXT.md project structure
+
+Remove templates/ from project tree. Add internal/styles/builtin/ for
+embedded .shipstyle files. Add step 2.5 to Git workflow: update
+CHANGELOG.md before opening PR.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+* docs: update CHANGELOG.md with [Unreleased] section
+
+Add all changes from Phases 2-4 including the Phase 4 corrections.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt;
+
+---------
+
+Co-authored-by: Su Nombre &lt;tqrh9nrq6p@privaterelay.appleid.com&gt;
+Co-authored-by: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">d3b3c6f</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+</ul>
+<h2>Documentation</h2>
+<ul>
+<li><span class="type-badge type-other">docs</span> docs: require agent to ask before making architecture decisions
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">7a30d1d</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">docs</span> docs: add Git workflow section for agents to CONTEXT.md
+
+Add section 9 with mandatory PR/merge flow, strict rules for agents,
+and renumber history section to 10. Update branch status to dev after
+Phase 2 merge.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">0ea9da6</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Tests</h2>
+<ul>
+<li><span class="type-badge type-other">test</span> Create SPEC.md <span class="hash">67f594d</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Chores</h2>
+<ul>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 6 completed
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">a6a96ca</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 5 completed
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">f5d64a8</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — built-in styles improved
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">c9bdcaf</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 4 corrections completed
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">d1127db</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 4 completed
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">5d93d38</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> ci: run CI on pull requests to dev branch
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">4013e24</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 3 completed
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">00b0ab8</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: mark Phase 1 as completed in CONTEXT.md
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">037796e</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: add golangci-lint configuration
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">ee98559</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: scaffold project structure and initialize Go module
+
+Create directory layout per SPEC.md section 10 with .gitkeep files,
+add minimal main.go entry point, and initialize go.mod.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">d6a83b3</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md to Phase 1 — In progress
+
+Co-Authored-By: Claude Opus 4.6 (1M context) &lt;noreply@anthropic.com&gt; <span class="hash">669eb94</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Other</h2>
+<ul>
+<li><span class="type-badge type-other">other</span> Create CHANGELOG.md <span class="hash">adfd70e</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">other</span> Create CONTEXT.md <span class="hash">7508002</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">other</span> Initial commit <span class="hash">db33f62</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+</ul>
+<div class="footer">Generated by commitlore</div>
+
+</body>
+</html>
