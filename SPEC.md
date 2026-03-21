@@ -75,7 +75,7 @@ SubcommandDescriptionlistList available styles (built-in + installed)showShow a 
 6. Modular Style System
 Styles are .shipstyle files in YAML format that define tone, text
 templates, and the full visual identity of the output.
-Stored in ~/.config/commitlore/styles/.
+Stored in ~/.config/commitlore/styles/ (on Windows: %APPDATA%\commitlore\styles\).
 
 Complete structure of a .shipstyle file:
 
@@ -303,6 +303,7 @@ CommitLore is a READ-ONLY tool. It never performs write operations on any reposi
 
 16. Roadmap (out of scope v1)
 
+Interactive style create wizard — interactive stdin-based style creation (currently flags-only).
 Style marketplace — public repository of community .shipstyle files.
 GitLab support.
 VS Code / Cursor plugin.
