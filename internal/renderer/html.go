@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"strings"
 
 	"github.com/alciller88/commitlore/assets"
 	"github.com/alciller88/commitlore/internal/changelog"
@@ -158,7 +159,8 @@ func writeLogo(buf *bytes.Buffer, theme styles.Theme) {
 			template.HTMLEscapeString(theme.Logo))
 		return
 	}
-	fmt.Fprintf(buf, "<div class=\"logo-header\"><div class=\"logo-svg\">%s</div></div>\n", assets.LogoSVG)
+	logoSVG := strings.ReplaceAll(assets.LogoSVG, `width="100%"`, `width="160" height="80"`)
+	fmt.Fprintf(buf, "<div class=\"logo-header\"><div class=\"logo-svg\">%s</div></div>\n", logoSVG)
 }
 
 func shortHash(hash string) string {
