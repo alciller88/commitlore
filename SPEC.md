@@ -195,7 +195,10 @@ UI shows key status: configured / not configured.
 
 Visual Identity
 
-Dark palette by default, with light theme option.
+Frameless window with custom titlebar — macOS-style window controls in sidebar header.
+Dark palette by default, with light theme option via active style.
+Design system tokens for spacing, typography, radius, transitions (design.css).
+Compact sidebar (220px) with VIEWS/SYSTEM nav sections, 32px row height.
 Monospaced typography for outputs; sans-serif for navigation.
 Custom style built on shadcn-svelte as component base.
 No dependency on generic UI libraries (no Material, no Bootstrap).

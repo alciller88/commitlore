@@ -204,6 +204,7 @@ fix/markdown-renderNarrative markdown rendered as HTML via goldmark (not raw tex
 feat/p2-ui-themingActive style themes entire app via CSS variables, persisted in config.yml2026-03-22feat/p2-ui-theming
 fix/p2-style-cleanupRemoved style selectors from Generate/Story, added HTMLTheme override to renderer2026-03-22fix/p2-style-cleanup
 feat/p3-styles-screenStyles screen overhaul: two-column layout, 5-tab editor, GetStyleDetail/SaveStyleDetail bindings2026-03-22feat/p3-styles-screen
+feat/p3-visual-overhaulFrameless window, custom titlebar, design system, all screens redesigned2026-03-22feat/p3-visual-overhaul
 
 Add a row here when completing each phase.
 
@@ -265,11 +266,10 @@ Add a row here when completing each phase.
 
 ### P3 — Visual overhaul (priority order)
 
-#### P3.1 — Custom titlebar
-- Replace native Windows titlebar (white bar with minimize/maximize/close) with a
-  custom Wails titlebar that shares the app's visual identity
-- Titlebar background: var(--cl-background), controls styled to match active style
-- Use Wails v3 frameless window + custom drag region
+#### P3.1 — Custom titlebar (feat/p3-visual-overhaul) — COMPLETED 2026-03-22
+- ~~Replace native Windows titlebar~~ — implemented: Wails v3 Frameless: true
+- ~~Custom drag region~~ — implemented: sidebar is drag region, interactive elements excluded
+- ~~Window controls~~ — implemented: macOS-style circles (close/min/max) in sidebar header, hover colors
 
 #### P3.2 — Styles screen overhaul (feat/p3-styles-screen) — COMPLETED 2026-03-22
 - ~~Layout: style list on the left, full template editor on the right in tabs~~ — implemented
@@ -314,11 +314,10 @@ Add a row here when completing each phase.
 - Wordmark in report header: "Commit"(primary color) + "Lore"(accent color) + style logo
 - Each style should feel like a completely different report, not just a recolor
 
-#### P3.5 — General UI polish
-- Typography, spacing, iconography, micro-interactions
-- shadcn-svelte (already in SPEC) + DaisyUI for theme system
-- Every screen reviewed with product design criteria
-- Reference aesthetic: clean, modern, dark-first, personality per style
+#### P3.5 — General UI polish (feat/p3-visual-overhaul) — COMPLETED 2026-03-22
+- ~~Typography, spacing, iconography, micro-interactions~~ — implemented: design.css with --space-*, --text-*, --radius-*, --transition-* tokens
+- ~~Every screen reviewed~~ — implemented: Dashboard (entry cards + stat cards), Generate/Story (240px sidebar, accent buttons, dot LLM indicator), History (36px dense rows, alternating bg), Contributors (avatar initials, 4px activity bars), Settings (section headers, outline buttons)
+- Reference aesthetic: Linear density, Raycast sidebar, contextual density applied
 
 #### P3.6 — Internationalisation (i18n)
 - Language selector in Settings: English / Spanish (extensible for future languages)

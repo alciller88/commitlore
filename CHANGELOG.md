@@ -5,6 +5,17 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (P3.1 + P3.5 Visual overhaul)
+- app/app.go: frameless window (Wails v3 Frameless: true) for custom titlebar
+- app/frontend/src/lib/design.css: design system with --space-*, --text-*, --radius-*, --transition-* tokens, global reset, scrollbar styling, button micro-interactions
+- app/frontend/src/App.svelte: custom titlebar with macOS-style window controls (close/min/max circles), sidebar as drag region, VIEWS/SYSTEM nav sections, compact 220px sidebar with 32px nav items
+- app/frontend/src/screens/Dashboard.svelte: three entry cards (folder/drop/GitHub), stat cards (commits, contributors, last commit), dense recent repos list
+- app/frontend/src/screens/Generate.svelte: 240px sidebar with FILTERS label, accent action button, dot LLM indicator, right-aligned toolbar
+- app/frontend/src/screens/Story.svelte: same pattern as Generate
+- app/frontend/src/screens/History.svelte: single 40px filter row, 36px dense table rows with alternating background, monospace hash with click-to-copy
+- app/frontend/src/screens/Contributors.svelte: avatar initials circles (24px), 4px activity bars, 44px rows
+- app/frontend/src/screens/Settings.svelte: section headers with bottom borders, outline/primary button split, 20px color swatches
+
 ### Added (P3.2 Styles screen overhaul)
 - app/style_app.go: GetStyleDetail binding — returns all .shipstyle fields as typed StyleDetail struct
 - app/style_app.go: SaveStyleDetail binding — saves all fields, rejects built-in styles

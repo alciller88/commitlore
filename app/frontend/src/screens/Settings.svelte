@@ -113,8 +113,6 @@
 </script>
 
 <div class="screen">
-  <h1>Settings</h1>
-
   {#if error}
     <div class="banner error">{error}</div>
   {/if}
@@ -144,7 +142,6 @@
 
   <section>
     <h2>LLM Provider</h2>
-
     <div class="form">
       <div class="field">
         <label>Provider</label>
@@ -170,16 +167,16 @@
           {:else}
             <span class="status not-configured">&#10007; Not configured</span>
           {/if}
-          <button class="tool-btn" on:click={() => { showKeyModal = true; keyInput = '' }} disabled={!provider}>
+          <button class="btn-outline" on:click={() => { showKeyModal = true; keyInput = '' }} disabled={!provider}>
             Set key
           </button>
           {#if keyConfigured}
-            <button class="tool-btn danger" on:click={clearKey}>Clear key</button>
+            <button class="btn-outline danger" on:click={clearKey}>Clear key</button>
           {/if}
         </div>
       </div>
 
-      <button class="action-btn" on:click={saveConfig} disabled={loading}>
+      <button class="btn-primary" on:click={saveConfig} disabled={loading}>
         {loading ? 'Saving...' : 'Save configuration'}
       </button>
     </div>
@@ -188,8 +185,8 @@
   <section>
     <h2>About</h2>
     <div class="about">
-      <div class="about-row"><span class="label">Version:</span> 0.0.0 (Phase 11)</div>
-      <div class="about-row"><span class="label">Tagline:</span> Your repo has a story. CommitLore tells it.</div>
+      <div class="about-row"><span class="about-label">Version:</span> 0.0.0 (Phase 11)</div>
+      <div class="about-row"><span class="about-label">Tagline:</span> Your repo has a story. CommitLore tells it.</div>
     </div>
   </section>
 </div>
@@ -206,8 +203,8 @@
         on:keydown={(e) => e.key === 'Enter' && saveKey()}
       />
       <div class="modal-actions">
-        <button class="tool-btn" on:click={() => showKeyModal = false}>Cancel</button>
-        <button class="action-btn" on:click={saveKey} disabled={savingKey || !keyInput}>
+        <button class="btn-outline" on:click={() => showKeyModal = false}>Cancel</button>
+        <button class="btn-primary" on:click={saveKey} disabled={savingKey || !keyInput}>
           {savingKey ? 'Saving...' : 'Save key'}
         </button>
       </div>
@@ -216,79 +213,214 @@
 {/if}
 
 <style>
-  .screen { display: flex; flex-direction: column; gap: 24px; max-width: 600px; }
-  h1 { color: var(--cl-text, #e6edf3); font-size: 22px; margin: 0; }
-  h2 { color: var(--cl-text, #e6edf3); font-size: 16px; margin: 0 0 12px; }
-  h3 { color: var(--cl-text, #e6edf3); font-size: 16px; margin: 0 0 8px; }
+  .screen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: 600px;
+  }
 
   section {
-    padding: 20px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d); border-radius: 8px;
+    padding: var(--space-4);
+    background: var(--cl-surface);
+    border: 1px solid var(--cl-border);
+    border-radius: var(--radius-lg);
   }
 
-  .form { display: flex; flex-direction: column; gap: 14px; }
-  .field { display: flex; flex-direction: column; gap: 4px; }
-  .field label { color: var(--cl-secondary, #8b949e); font-size: 12px; text-transform: uppercase; }
+  h2 {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    color: var(--cl-secondary);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-3) 0;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--cl-surface);
+  }
+
+  h3 {
+    color: var(--cl-text);
+    font-size: var(--text-lg);
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .field label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    color: var(--cl-secondary);
+  }
 
   input, select {
-    padding: 8px 12px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 14px;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 var(--space-3);
+    background: var(--cl-background);
+    border: 1px solid var(--cl-border);
+    border-radius: var(--radius-md);
+    color: var(--cl-text);
+    font-size: var(--text-md);
     font-family: 'JetBrains Mono', monospace;
+    transition: border-color var(--transition-fast);
   }
-  input:focus, select:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
-  select { cursor: pointer; }
-
-  .key-status { display: flex; align-items: center; gap: 12px; }
-  .status { font-size: 14px; }
-  .configured { color: #3fb950; }
-  .not-configured { color: #f85149; }
-
-  .tool-btn {
-    padding: 6px 14px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 6px; color: var(--cl-text, #e6edf3); cursor: pointer; font-size: 13px; font-family: inherit;
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--cl-accent);
   }
-  .tool-btn:hover { border-color: var(--cl-accent, #58a6ff); }
-  .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .tool-btn.danger:hover { border-color: #da3634; color: #f85149; }
-
-  .action-btn {
-    padding: 10px 20px; background: #238636; border: none; border-radius: 6px;
-    color: #fff; font-size: 14px; cursor: pointer; align-self: flex-start; font-family: inherit;
+  select {
+    cursor: pointer;
   }
-  .action-btn:hover { background: #2ea043; }
-  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .about { font-size: 13px; }
-  .about-row { margin-bottom: 4px; }
-  .about-row .label { color: var(--cl-secondary, #8b949e); }
+  .key-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .status {
+    font-size: var(--text-md);
+  }
+  .configured {
+    color: #3fb950;
+  }
+  .not-configured {
+    color: #f85149;
+  }
+
+  .btn-outline {
+    padding: var(--space-1) var(--space-3);
+    background: transparent;
+    border: 1px solid var(--cl-accent);
+    border-radius: var(--radius-md);
+    color: var(--cl-accent);
+    cursor: pointer;
+    font-size: var(--text-base);
+    font-family: var(--cl-font-family);
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .btn-outline:hover {
+    background: color-mix(in srgb, var(--cl-accent) 10%, transparent);
+  }
+  .btn-outline:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-outline.danger {
+    border-color: #da3634;
+    color: #f85149;
+  }
+  .btn-outline.danger:hover {
+    background: color-mix(in srgb, #da3634 10%, transparent);
+  }
+
+  .btn-primary {
+    height: 36px;
+    padding: 0 var(--space-4);
+    background: var(--cl-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    color: #fff;
+    font-size: var(--text-base);
+    font-family: var(--cl-font-family);
+    cursor: pointer;
+    align-self: flex-start;
+    transition: opacity var(--transition-fast);
+  }
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .about {
+    font-size: var(--text-base);
+    color: var(--cl-text);
+  }
+  .about-row {
+    margin-bottom: var(--space-1);
+  }
+  .about-label {
+    color: var(--cl-secondary);
+  }
 
   .banner {
-    padding: 8px 12px; border-radius: 6px; font-size: 13px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
   }
   .banner.error {
-    background: #da363433; border: 1px solid #da3634; color: #f85149;
+    background: #da363433;
+    border: 1px solid #da3634;
+    color: #f85149;
   }
   .banner.success {
-    background: #23863633; border: 1px solid #238636; color: #3fb950;
+    background: #23863633;
+    border: 1px solid #238636;
+    color: #3fb950;
   }
 
   .modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6); display: flex;
-    align-items: center; justify-content: center; z-index: 100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
   }
   .modal {
-    background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d); border-radius: 12px;
-    padding: 24px; max-width: 400px; width: 100%;
-    display: flex; flex-direction: column; gap: 12px;
+    background: var(--cl-surface);
+    border: 1px solid var(--cl-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
   }
-  .modal-hint { color: var(--cl-secondary, #8b949e); font-size: 13px; margin: 0; }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+  .modal-hint {
+    color: var(--cl-secondary);
+    font-size: var(--text-base);
+    margin: 0;
+  }
+  .modal-actions {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+    margin-top: var(--space-2);
+  }
 
-  .style-selector { display: flex; align-items: center; gap: 10px; }
-  .style-selector select { flex: 1; }
-  .swatch-preview { display: flex; gap: 4px; }
+  .style-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .style-selector select {
+    flex: 1;
+  }
+  .swatch-preview {
+    display: flex;
+    gap: var(--space-1);
+  }
   .swatch {
-    width: 16px; height: 16px; border-radius: 3px;
-    border: 1px solid var(--cl-border, #30363d);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--cl-surface);
   }
 </style>

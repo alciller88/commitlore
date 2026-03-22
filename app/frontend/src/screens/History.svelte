@@ -55,30 +55,19 @@
   </div>
 {:else}
   <div class="screen">
-    <h1>Commit History</h1>
-
     {#if error}
       <div class="banner error">{error}</div>
     {/if}
 
     <div class="filters-row">
-      <div class="field">
-        <label>Author</label>
-        <input type="text" bind:value={author} placeholder="name or email" />
-      </div>
-      <div class="field">
-        <label>Since</label>
-        <input type="text" bind:value={since} placeholder="YYYY-MM-DD" />
-      </div>
-      <div class="field">
-        <label>Until</label>
-        <input type="text" bind:value={until} placeholder="YYYY-MM-DD" />
-      </div>
-      <div class="field limit-field">
-        <label>Limit: {limit}</label>
+      <input class="author-input" type="text" bind:value={author} placeholder="Author" />
+      <input class="date-input" type="text" bind:value={since} placeholder="Since" />
+      <input class="date-input" type="text" bind:value={until} placeholder="Until" />
+      <div class="limit-group">
         <input type="range" min="10" max="200" bind:value={limit} />
+        <span class="limit-value">{limit}</span>
       </div>
-      <button class="action-btn" on:click={fetchHistory} disabled={loading}>
+      <button class="fetch-btn" on:click={fetchHistory} disabled={loading}>
         {#if loading}
           <span class="spinner"></span>
         {:else}
@@ -92,23 +81,21 @@
         <table>
           <thead>
             <tr>
-              <th>Hash</th>
-              <th>Date</th>
-              <th>Author</th>
-              <th>Message</th>
+              <th class="col-hash">Hash</th>
+              <th class="col-date">Date</th>
+              <th class="col-author">Author</th>
+              <th class="col-message">Message</th>
             </tr>
           </thead>
           <tbody>
             {#each commits as commit}
               <tr>
-                <td>
-                  <button class="hash-btn" on:click={() => copyHash(commit.hash)} title="Click to copy full SHA">
-                    {shortHash(commit.hash)}
-                  </button>
+                <td class="cell-hash" on:click={() => copyHash(commit.hash)} title="Click to copy full SHA">
+                  {shortHash(commit.hash)}
                 </td>
-                <td class="date">{formatDate(commit.date)}</td>
-                <td class="author">{commit.author}</td>
-                <td class="message">{commit.message}</td>
+                <td class="cell-date">{formatDate(commit.date)}</td>
+                <td class="cell-author">{commit.author}</td>
+                <td class="cell-message">{commit.message}</td>
               </tr>
             {/each}
           </tbody>
@@ -125,80 +112,217 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 12px;
-    color: var(--cl-secondary, #8b949e);
+    gap: var(--space-3);
+    color: var(--cl-secondary);
   }
-  .no-repo p { margin: 0; font-size: 14px; }
+  .no-repo p {
+    margin: 0;
+    font-size: var(--text-md);
+  }
 
-  .screen { display: flex; flex-direction: column; gap: 16px; height: 100%; }
-  h1 { color: var(--cl-text, #e6edf3); font-size: 22px; margin: 0; }
+  .screen {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: var(--space-3);
+  }
 
   .filters-row {
     display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
-
-  .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 100px; }
-  .field label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; }
-  .limit-field { max-width: 160px; }
-
-  input[type="text"] {
-    padding: 7px 10px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  input[type="text"]:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
-
-  input[type="range"] {
-    -webkit-appearance: none; appearance: none; height: 6px;
-    background: var(--cl-border, #30363d); border-radius: 3px; outline: none;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
-    background: var(--cl-accent, #58a6ff); border-radius: 50%; cursor: pointer;
-  }
-
-  .action-btn {
-    padding: 8px 16px; background: #238636; border: none; border-radius: 6px;
-    color: #fff; font-size: 13px; cursor: pointer; display: flex;
-    align-items: center; gap: 6px; font-family: inherit; height: fit-content;
+    gap: var(--space-2);
+    align-items: center;
+    height: 40px;
     flex-shrink: 0;
   }
-  .action-btn:hover { background: #2ea043; }
-  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .author-input {
+    flex: 1;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 var(--space-2);
+    background: var(--cl-background);
+    border: 1px solid var(--cl-border);
+    border-radius: var(--radius-md);
+    color: var(--cl-text);
+    font-size: var(--text-base);
+    font-family: 'JetBrains Mono', monospace;
+    transition: border-color var(--transition-fast);
+  }
+  .author-input:focus {
+    outline: none;
+    border-color: var(--cl-accent);
+  }
+
+  .date-input {
+    width: 120px;
+    height: 36px;
+    box-sizing: border-box;
+    padding: 0 var(--space-2);
+    background: var(--cl-background);
+    border: 1px solid var(--cl-border);
+    border-radius: var(--radius-md);
+    color: var(--cl-text);
+    font-size: var(--text-base);
+    font-family: 'JetBrains Mono', monospace;
+    transition: border-color var(--transition-fast);
+  }
+  .date-input:focus {
+    outline: none;
+    border-color: var(--cl-accent);
+  }
+
+  .limit-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    width: 100px;
+  }
+  .limit-group input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--cl-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+  }
+  .limit-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--cl-accent);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .limit-value {
+    font-size: var(--text-xs);
+    color: var(--cl-secondary);
+    min-width: 24px;
+    text-align: right;
+  }
+
+  .fetch-btn {
+    width: 80px;
+    height: 36px;
+    background: var(--cl-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    color: #fff;
+    font-size: var(--text-base);
+    font-family: var(--cl-font-family);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    flex-shrink: 0;
+    transition: opacity var(--transition-fast);
+  }
+  .fetch-btn:hover {
+    opacity: 0.9;
+  }
+  .fetch-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
   .spinner {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid #ffffff44; border-top-color: #fff;
-    border-radius: 50%; animation: spin 0.6s linear infinite;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #ffffff44;
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .table-container { overflow: auto; flex: 1; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead { position: sticky; top: 0; }
+  .table-container {
+    overflow: auto;
+    flex: 1;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    position: sticky;
+    top: 0;
+  }
+
   th {
-    text-align: left; padding: 8px 12px; color: var(--cl-secondary, #8b949e);
-    border-bottom: 1px solid var(--cl-border, #30363d); background: var(--cl-background, #0d1117);
-    font-size: 11px; text-transform: uppercase;
+    text-align: left;
+    padding: 0 var(--space-3);
+    height: 28px;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    color: var(--cl-secondary);
+    opacity: 0.6;
+    font-weight: 500;
+    border-bottom: 1px solid var(--cl-border);
+    background: var(--cl-background);
   }
+
+  tr {
+    height: 36px;
+    transition: background var(--transition-fast);
+  }
+  tbody tr:nth-child(odd) {
+    background: color-mix(in srgb, var(--cl-surface) 30%, transparent);
+  }
+  tbody tr:hover {
+    background: var(--cl-surface);
+  }
+
   td {
-    padding: 6px 12px; border-bottom: 1px solid var(--cl-border, #30363d);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;
+    padding: 0 var(--space-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .hash-btn {
-    background: none; border: none; color: var(--cl-accent, #58a6ff); cursor: pointer;
-    font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 0;
+
+  .col-hash { width: 80px; }
+  .col-date { width: 100px; }
+  .col-author { width: 140px; }
+  .col-message { }
+
+  .cell-hash {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: var(--text-sm);
+    color: var(--cl-accent);
+    cursor: pointer;
   }
-  .hash-btn:hover { text-decoration: underline; }
-  .date { color: var(--cl-secondary, #8b949e); }
-  .author { color: var(--cl-text, #e6edf3); }
-  .message { color: var(--cl-text, #e6edf3); font-family: 'JetBrains Mono', monospace; }
+  .cell-hash:hover {
+    text-decoration: underline;
+  }
+
+  .cell-date {
+    font-size: var(--text-xs);
+    color: var(--cl-secondary);
+  }
+
+  .cell-author {
+    font-size: var(--text-sm);
+    color: var(--cl-text);
+  }
+
+  .cell-message {
+    font-size: var(--text-base);
+    color: var(--cl-text);
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   .banner.error {
-    background: #da363433; border: 1px solid #da3634; color: #f85149;
-    padding: 8px 12px; border-radius: 6px; font-size: 13px;
+    background: #da363433;
+    border: 1px solid #da3634;
+    color: #f85149;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
   }
 </style>
