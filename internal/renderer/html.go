@@ -6,6 +6,9 @@ import (
 	"html/template"
 	"strings"
 
+	"github.com/yuin/goldmark"
+	goldhtml "github.com/yuin/goldmark/renderer/html"
+
 	"github.com/alciller88/commitlore/assets"
 	"github.com/alciller88/commitlore/internal/changelog"
 	"github.com/alciller88/commitlore/internal/git"
@@ -186,15 +189,26 @@ func writeSiteHeaderLogo(buf *bytes.Buffer, theme styles.Theme) {
 	fmt.Fprintf(buf, "<div class=\"logo-svg\">%s</div>\n", logoSVG)
 }
 
-func writeNarrativeHTML(buf *bytes.Buffer, content string) {
-	lines := strings.Split(strings.TrimSpace(content), "\n")
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if trimmed == "" {
-			continue
-		}
-		fmt.Fprintf(buf, "<p>%s</p>\n", template.HTMLEscapeString(trimmed))
+func markdownToHTML(s string) string {
+	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			goldhtml.WithHardWraps(),
+			goldhtml.WithXHTML(),
+		),
+	)
+	var buf bytes.Buffer
+	if err := md.Convert([]byte(s), &buf); err != nil {
+		return template.HTMLEscapeString(s)
 	}
+	return buf.String()
+}
+
+func writeNarrativeHTML(buf *bytes.Buffer, content string) {
+	trimmed := strings.TrimSpace(content)
+	if trimmed == "" {
+		return
+	}
+	buf.WriteString(markdownToHTML(trimmed))
 }
 
 func shortHash(hash string) string {

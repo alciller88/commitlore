@@ -130,6 +130,28 @@ func TestRender_htmlIncludesNarrativeContent(t *testing.T) {
 	assert.Contains(t, out, "class=\"narrative\"")
 }
 
+func TestRenderStory_htmlRendersMarkdown(t *testing.T) {
+	ch := sampleStoryChronology()
+	s := loadTestStyle(t, "formal")
+	narrative := "## The Beginning\n\nThe project started with a **bold** vision.\n\n* First item\n* Second item"
+	out, err := RenderStory(narrative, ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<h2>The Beginning</h2>")
+	assert.Contains(t, out, "<strong>bold</strong>")
+	assert.Contains(t, out, "<li>First item</li>")
+	assert.NotContains(t, out, "## The Beginning")
+}
+
+func TestRenderChangelog_htmlRendersMarkdown(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	narrative := "## Added\n\n* New login feature\n* Dashboard redesign"
+	out, err := Render(narrative, sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<h2>Added</h2>")
+	assert.Contains(t, out, "<li>New login feature</li>")
+	assert.NotContains(t, out, "## Added")
+}
+
 func TestRenderStory_htmlNarrativeEscapesHTML(t *testing.T) {
 	ch := sampleStoryChronology()
 	s := loadTestStyle(t, "formal")
@@ -137,7 +159,7 @@ func TestRenderStory_htmlNarrativeEscapesHTML(t *testing.T) {
 	out, err := RenderStory(narrative, ch, s, FormatHTML)
 	require.NoError(t, err)
 	assert.NotContains(t, out, "<script>alert")
-	assert.Contains(t, out, "&lt;script&gt;")
+	assert.NotContains(t, out, "alert('xss')")
 }
 
 func sampleStoryChronology() git.Chronology {
