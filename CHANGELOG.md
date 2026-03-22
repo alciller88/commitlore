@@ -5,6 +5,10 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (P3 UI bugs round 2)
+- History: replaced CSS class layout with inline styles (flex:1; min-height:0; overflow-y:auto) — guarantees scroll containment with no style conflicts
+- Window controls: wired to Wails v3 runtime (Window.Minimise/ToggleMaximise/Close) — were previously no-ops via (window as any).wails calls
+
 ### Fixed (P3 UI bugs)
 - History: scrollbar no longer overlaps Fetch button — overflow: hidden on container, min-height: 0 on table
 - App.svelte: repo indicator moved from sidebar bottom to 32px content topbar (always visible, all screens)

@@ -206,6 +206,7 @@ fix/p2-style-cleanupRemoved style selectors from Generate/Story, added HTMLTheme
 feat/p3-styles-screenStyles screen overhaul: two-column layout, 5-tab editor, GetStyleDetail/SaveStyleDetail bindings2026-03-22feat/p3-styles-screen
 feat/p3-visual-overhaulFrameless window, custom titlebar, design system, all screens redesigned2026-03-22feat/p3-visual-overhaul
 fix/p3-ui-bugsHistory scroll fix, repo topbar, no scroll SVG, per-style window controls2026-03-22fix/p3-ui-bugs
+fix/p3-ui-bugs-2History inline scroll fix, window controls wired to Wails runtime2026-03-22fix/p3-ui-bugs-2
 
 Add a row here when completing each phase.
 

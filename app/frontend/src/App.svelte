@@ -13,6 +13,7 @@
   import { History as HistoryBinding } from '../bindings/github.com/alciller88/commitlore/app/gitapp.js'
   import { applyTheme, getTheme } from './lib/theme'
   import type { ThemeVars } from './lib/theme'
+  import { Window } from '@wailsio/runtime'
 
   const viewScreens = [
     { name: 'Dashboard', icon: 'dashboard' },
@@ -74,9 +75,9 @@
     return parts[0] + '/\u2026/' + parts.slice(-2).join('/')
   }
 
-  function winMinimize() { (window as any).wails?.Window?.Minimise?.() }
-  function winMaximize() { (window as any).wails?.Window?.ToggleMaximise?.() }
-  function winClose() { (window as any).wails?.Window?.Close?.() }
+  function winMinimize() { Window.Minimise() }
+  function winMaximize() { Window.ToggleMaximise() }
+  function winClose() { Window.Close() }
 
   const components: Record<string, any> = { Dashboard, Generate, Story, History, Contributors, Styles, Settings }
 </script>
