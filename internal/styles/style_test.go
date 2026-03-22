@@ -21,8 +21,21 @@ func TestLoad_patchnotes(t *testing.T) {
 	s, err := Load("patchnotes")
 	require.NoError(t, err)
 	assert.Equal(t, "patchnotes", s.Name)
+	assert.Equal(t, "2.0.0", s.Version)
 	assert.NotEmpty(t, s.Templates.Header)
-	assert.Contains(t, s.Templates.Header, "PATCH NOTES")
+	assert.Contains(t, s.Templates.Header, "Patch Notes")
+}
+
+func TestLoad_patchnotes_uiLabels(t *testing.T) {
+	s, err := Load("patchnotes")
+	require.NoError(t, err)
+	assert.Equal(t, "Hub", s.UILabels.Dashboard)
+	assert.Equal(t, "Patch Notes", s.UILabels.Generate)
+	assert.Equal(t, "Dev Diary", s.UILabels.Story)
+	assert.Equal(t, "Commit Log", s.UILabels.History)
+	assert.Equal(t, "Dev Team", s.UILabels.Contributors)
+	assert.Equal(t, "Themes", s.UILabels.Styles)
+	assert.Equal(t, "Options", s.UILabels.Settings)
 }
 
 func TestLoad_ironic(t *testing.T) {

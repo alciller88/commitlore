@@ -51,7 +51,7 @@ func TestGenerate_patchnotes(t *testing.T) {
 	out, err := Generate(sampleChangelog(), loadStyle(t, "patchnotes"))
 	require.NoError(t, err)
 	assert.NotEmpty(t, out)
-	assert.Contains(t, out, "PATCH NOTES")
+	assert.Contains(t, out, "Patch Notes")
 }
 
 func TestGenerate_ironic(t *testing.T) {

@@ -23,9 +23,31 @@ func TestGetStyleTheme_patchnotes(t *testing.T) {
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("patchnotes")
 	require.NoError(t, err)
-	assert.Equal(t, "#7C3AED", theme.Primary)
-	assert.Equal(t, "#0D0D0D", theme.Background)
+	assert.Equal(t, "#7C6FCD", theme.Primary)
+	assert.Equal(t, "#1A1B2E", theme.Background)
 	assert.Equal(t, "dark", theme.Mode)
+}
+
+func TestGetStyleTheme_uiLabels_patchnotes(t *testing.T) {
+	s := NewStyleApp()
+	theme, err := s.GetStyleTheme("patchnotes")
+	require.NoError(t, err)
+	assert.Equal(t, "Hub", theme.UILabels.Dashboard)
+	assert.Equal(t, "Patch Notes", theme.UILabels.Generate)
+	assert.Equal(t, "Dev Diary", theme.UILabels.Story)
+}
+
+func TestGetStyleTheme_uiLabels_fallback(t *testing.T) {
+	s := NewStyleApp()
+	theme, err := s.GetStyleTheme("formal")
+	require.NoError(t, err)
+	assert.Equal(t, "Dashboard", theme.UILabels.Dashboard)
+	assert.Equal(t, "Generate", theme.UILabels.Generate)
+	assert.Equal(t, "Story", theme.UILabels.Story)
+	assert.Equal(t, "History", theme.UILabels.History)
+	assert.Equal(t, "Contributors", theme.UILabels.Contributors)
+	assert.Equal(t, "Styles", theme.UILabels.Styles)
+	assert.Equal(t, "Settings", theme.UILabels.Settings)
 }
 
 func TestGetStyleTheme_missingFields(t *testing.T) {

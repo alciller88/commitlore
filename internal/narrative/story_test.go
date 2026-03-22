@@ -48,8 +48,8 @@ func TestGenerateStory_formal(t *testing.T) {
 func TestGenerateStory_patchnotes(t *testing.T) {
 	out, err := GenerateStory(sampleChronology(), loadStyle(t, "patchnotes"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "LEGEND BEGINS")
-	assert.Contains(t, out, "ACHIEVEMENT UNLOCKED")
+	assert.Contains(t, out, "Dev Diary")
+	assert.Contains(t, out, "2025-01-01")
 }
 
 func TestGenerateStory_ironic(t *testing.T) {

@@ -1,89 +1,90 @@
-name: patchnotes
-version: 1.0.0
-description: "Video game patch notes — dramatic, celebratory, ALL CAPS energy"
-author: "commitlore"
-tags: ["gaming", "videogame", "rpg", "dramatic", "fun", "emojis"]
+name: "patchnotes"
+version: "2.0.0"
+description: "Game studio patch notes. Professional gaming aesthetic, purple and gold."
+author: "CommitLore"
+tags: ["gaming", "videogame", "rpg", "dramatic", "fun"]
 preview_url: ""
 homepage: ""
-llm_prompt: |
-  You are the lead community manager for the most anticipated video game
-  of the decade. You are writing official patch notes that will be read
-  by millions of passionate players. Your tone is DRAMATIC, CELEBRATORY,
-  and HYPE. Rules:
-  - Use ALL CAPS for section headers and key terms
-  - Every feature is an UNLOCKED ability, every fix is a HOTFIXED exploit
-  - Call the reader "Adventurer" or "Hero"
-  - Use gaming terminology: buffed, nerfed, unlocked, patched, exploit,
-    hotfix, loot, quest, achievement, spawn, respawn
-  - Add emojis generously: ⚔️ ✨ 🛡️ 💀 🏆 🔥 🎮 ⚡
-  - End with a motivational sendoff like a game loading screen tip
-  - Every breaking change is something "REMOVED FROM THE GAME"
-  - Treat the changelog like a major expansion announcement
-templates:
-  header: "⚔️  PATCH NOTES — NEW UPDATE DEPLOYED"
-  feature: "  ✨ UNLOCKED: {{.Message}} [{{.Author}}]"
-  fix: "  🛡️  HOTFIXED: {{.Message}} [{{.Author}}]"
-  breaking: "  💀 REMOVED FROM THE GAME: {{.Message}} [{{.Author}}]"
-  footer: "⚔️ Stay strong, Adventurer. The next raid awaits. ⚔️"
-  story_intro: "⚔️  THE LEGEND BEGINS\n\nOn {{.FirstCommitDate}}, the hero known as {{.FirstAuthor}} spawned into the world and initialized the sacred repository.\n\n🏆 STATS:\n  Quests completed: {{.TotalCommits}}\n  Heroes recruited: {{.TotalContributors}}"
-  story_milestone: "  🏆 ACHIEVEMENT UNLOCKED: {{.Name}} — {{.Date}}"
-  story_peak: "  🔥 HOT STREAK: {{.Month}} — {{.Count}} quests completed in a single moon"
-  story_contributor: "  🎮 NEW PLAYER HAS ENTERED: {{.Name}} joined the party on {{.Date}}"
-  story_footer: "⚔️ The game is far from over. New content incoming. Stay tuned, Hero. ⚔️"
-vocabulary:
-  bug: "exploit"
-  fix: "hotfix"
-  feature: "new ability"
-  added: "unlocked"
-  removed: "nerfed"
-  updated: "buffed"
-  commit: "quest"
-  merge: "party merge"
-  error: "game crash"
-  refactor: "rebalance"
+
 theme:
   mode: "dark"
   colors:
-    primary: "#7C3AED"
-    secondary: "#F59E0B"
-    background: "#0D0D0D"
-    surface: "#1A1033"
-    text: "#EDE9FE"
-    accent: "#8B5CF6"
-    border: "#F59E0B"
+    primary: "#7C6FCD"
+    secondary: "#9B8EC4"
+    background: "#1A1B2E"
+    surface: "#242640"
+    text: "#E8E8F0"
+    accent: "#F0A500"
+    border: "#3D3B6E"
   typography:
-    font_family: "'JetBrains Mono', 'Fira Code', 'Courier New', monospace"
+    font_family: "'Rajdhani', system-ui, sans-serif"
     font_size_base: "13px"
     font_size_header: "22px"
     font_size_code: "12px"
+  logo: |
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M208,64H48A40,40,0,0,0,8,104v56a40,40,0,0,0,40,40H208a40,40,0,0,0,40-40V104A40,40,0,0,0,208,64ZM96,152H80v16a8,8,0,0,1-16,0V152H48a8,8,0,0,1,0-16H64V120a8,8,0,0,1,16,0v16H96a8,8,0,0,1,0,16Zm72,8a12,12,0,1,1,12-12A12,12,0,0,1,168,160Zm32-32a12,12,0,1,1,12-12A12,12,0,0,1,200,128Z"/></svg>
+  header_image: ""
   card_style: "bordered"
   animations: true
+  custom_css: ""
   window_controls:
-    default: "#4C3A6E"
-    close: "#FF5F57"
-    minimize: "#F59E0B"
-    maximize: "#7C3AED"
-  custom_css: |
-    h1, h2 {
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 5px rgba(124, 58, 237, 0.3); }
-      to { text-shadow: 0 0 15px rgba(124, 58, 237, 0.6), 0 0 30px rgba(245, 158, 11, 0.2); }
-    }
-    li { transition: transform 0.1s; }
-    li:hover { transform: translateX(4px); }
+    default: "#3D3B6E"
+    close: "#FF4444"
+    minimize: "#F0A500"
+    maximize: "#7C6FCD"
+
 terminal:
   colors:
     header: "magenta"
-    feature: "yellow"
-    fix: "cyan"
+    feature: "cyan"
+    fix: "green"
     breaking: "red"
-    footer: "magenta"
+    footer: "white"
   decorators:
-    separator: "⚔═══════════════════════════════════════⚔"
-    bullet: "⚔️"
-    indent: "  ║ "
+    separator: "═══════════════════════════════════════"
+    bullet: "▸"
+    indent: "  "
   density: "normal"
+
+llm_prompt: |
+  You are writing patch notes for a video game update in the style of a
+  professional game studio like Riot Games or Blizzard.
+  Group changes by category: Gameplay, UI, Performance, Bug Fixes.
+  Be clear and player-friendly. Highlight balance changes and bug fixes prominently.
+  Use gaming conventions — "fixed", "added", "adjusted", "improved".
+  Do not use corporate jargon. Tone: professional but approachable.
+  Output clean markdown.
+
+vocabulary:
+  bug: "issue"
+  fix: "fixed"
+  feature: "added"
+  breaking: "IMPORTANT"
+  error: "problem"
+
+ui_labels:
+  dashboard: "Hub"
+  generate: "Patch Notes"
+  story: "Dev Diary"
+  history: "Commit Log"
+  contributors: "Dev Team"
+  styles: "Themes"
+  settings: "Options"
+
+templates:
+  header: |
+    # Patch Notes — {{.Version}}
+    *Released {{.Date}}*
+  feature: "- **Added:** {{.Message}}"
+  fix: "- **Fixed:** {{.Message}}"
+  breaking: "- ⚠ **IMPORTANT:** {{.Message}}"
+  footer: |
+    ---
+    *Patch notes generated by CommitLore*
+  story_intro: |
+    ## Dev Diary
+    From {{.FirstCommitDate}} — {{.TotalContributors}} developers on the team.
+  story_milestone: "- {{.Name}} (`{{.Hash | short}}`)"
+  story_peak: "Peak development: {{.Month}} — {{.Count}} commits"
+  story_contributor: "- **{{.Name}}** — joined {{.Date}}"
+  story_footer: "*End of dev diary — CommitLore*"
