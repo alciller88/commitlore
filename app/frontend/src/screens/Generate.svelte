@@ -146,7 +146,7 @@
     justify-content: center;
     height: 100%;
     gap: 12px;
-    color: #484f58;
+    color: var(--cl-secondary, #8b949e);
   }
   .no-repo p { margin: 0; font-size: 14px; }
 
@@ -164,22 +164,22 @@
     gap: 12px;
   }
 
-  h2 { color: #e6edf3; font-size: 18px; margin: 0 0 4px 0; }
+  h2 { color: var(--cl-text, #e6edf3); font-size: 18px; margin: 0 0 4px 0; }
 
   .field { display: flex; flex-direction: column; gap: 4px; }
-  .field label { color: #8b949e; font-size: 11px; text-transform: uppercase; }
+  .field label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; }
 
   input, select {
-    padding: 7px 10px; background: #0d1117; border: 1px solid #30363d;
-    border-radius: 6px; color: #e6edf3; font-size: 13px;
+    padding: 7px 10px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
   }
-  input:focus, select:focus { outline: none; border-color: #58a6ff; }
+  input:focus, select:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
   select { cursor: pointer; }
 
   .llm-indicator {
     display: flex; align-items: center; gap: 6px;
-    color: #8b949e; font-size: 11px;
+    color: var(--cl-secondary, #8b949e); font-size: 11px;
   }
 
   .action-btn {
@@ -208,13 +208,13 @@
 
   .result-toolbar { display: flex; gap: 8px; }
   .tool-btn {
-    padding: 5px 10px; background: #21262d; border: 1px solid #30363d;
-    border-radius: 6px; color: #e6edf3; cursor: pointer; font-size: 12px; font-family: inherit;
+    padding: 5px 10px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 6px; color: var(--cl-text, #e6edf3); cursor: pointer; font-size: 12px; font-family: inherit;
   }
-  .tool-btn:hover { border-color: #58a6ff; }
+  .tool-btn:hover { border-color: var(--cl-accent, #58a6ff); }
 
   .preview {
-    flex: 1; border: 1px solid #30363d; border-radius: 6px;
+    flex: 1; border: 1px solid var(--cl-border, #30363d); border-radius: 6px;
     background: #fff; min-height: 200px;
   }
 
@@ -223,10 +223,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px dashed #30363d;
+    border: 1px dashed var(--cl-border, #30363d);
     border-radius: 6px;
   }
-  .empty-text { color: #484f58; font-size: 13px; }
+  .empty-text { color: var(--cl-secondary, #8b949e); font-size: 13px; }
 
   .banner.error {
     background: #da363433; border: 1px solid #da3634; color: #f85149;

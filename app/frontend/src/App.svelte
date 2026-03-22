@@ -7,11 +7,12 @@
   import Contributors from './screens/Contributors.svelte'
   import Styles from './screens/Styles.svelte'
   import Settings from './screens/Settings.svelte'
-  import { activeRepo } from './lib/store'
+  import { activeRepo, repoSummary, activeStyle } from './lib/store'
   import type { ActiveRepo } from './lib/store'
-  import { GetRecentRepos } from '../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { GetRecentRepos, GetActiveStyle } from '../bindings/github.com/alciller88/commitlore/app/configapp.js'
   import { History as HistoryBinding } from '../bindings/github.com/alciller88/commitlore/app/gitapp.js'
-  import { repoSummary } from './lib/store'
+  import { applyTheme, getTheme } from './lib/theme'
+  import type { ThemeVars } from './lib/theme'
 
   const screens = [
     { name: 'Dashboard', icon: 'dashboard' },
@@ -25,10 +26,18 @@
 
   let activeScreen = 'Dashboard'
   let currentRepo: ActiveRepo | null = null
+  let theme: ThemeVars = getTheme()
 
   activeRepo.subscribe(value => { currentRepo = value })
+  activeStyle.subscribe(async (styleName) => {
+    theme = await applyTheme(styleName)
+  })
 
   onMount(async () => {
+    try {
+      const styleName = await GetActiveStyle()
+      activeStyle.set(styleName)
+    } catch {}
     try {
       const recents = await GetRecentRepos()
       if (recents && recents.length > 0) {
@@ -75,6 +84,8 @@
     return p.substring(0, maxLen - 1) + '\u2026'
   }
 
+  const LOGO_SVG = `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" width="32" height="32"><defs><clipPath id="c"><rect x="110" y="100" width="180" height="182"/></clipPath></defs><rect fill="currentColor" opacity="0.15" x="108" y="92" width="192" height="220" rx="4"/><rect fill="none" stroke="currentColor" stroke-width="6" x="100" y="86" width="200" height="220" rx="4" opacity="0.5"/><rect fill="none" stroke="currentColor" stroke-width="5" x="80" y="64" width="240" height="40" rx="20" opacity="0.6"/><rect fill="none" stroke="currentColor" stroke-width="5" x="80" y="292" width="240" height="40" rx="20" opacity="0.6"/><g clip-path="url(#c)" font-family="monospace" text-anchor="middle" fill="currentColor"><text x="200" y="132" font-size="16" opacity="0.9">a3f9c2e</text><text x="200" y="158" font-size="16" opacity="0.7">7b1d4f8</text><text x="200" y="184" font-size="16" opacity="0.45">2c8e6a1</text><text x="200" y="210" font-size="16" opacity="0.25">f1e8b3d</text></g></svg>`
+
   const components: Record<string, any> = {
     Dashboard, Generate, Story, History, Contributors, Styles, Settings,
   }
@@ -82,7 +93,20 @@
 
 <div class="layout">
   <nav class="sidebar">
-    <div class="sidebar-header">CommitLore</div>
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        {#if theme.logo}
+          <img src={theme.logo} alt="style logo" width="32" height="32" class="brand-img" />
+        {:else}
+          <span class="brand-svg">{@html LOGO_SVG}</span>
+        {/if}
+      </div>
+      <div class="brand-wordmark">
+        <span class="wm-commit">Commit</span><span class="wm-lore">Lore</span>
+      </div>
+    </div>
+    <div class="brand-separator"></div>
+
     <div class="nav-items">
       {#each screens as screen}
         <button
@@ -142,28 +166,53 @@
   .layout {
     display: flex;
     height: 100vh;
-    background: #0d1117;
-    color: #e6edf3;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--cl-background, #0d1117);
+    color: var(--cl-text, #e6edf3);
+    font-family: var(--cl-font-family, system-ui, sans-serif);
+    font-size: var(--cl-font-size, 14px);
   }
 
   .sidebar {
     width: 220px;
-    background: #161b22;
-    border-right: 1px solid #30363d;
+    background: var(--cl-surface, #161b22);
+    border-right: 1px solid var(--cl-border, #30363d);
     display: flex;
     flex-direction: column;
     padding: 0;
     flex-shrink: 0;
   }
 
-  .sidebar-header {
-    padding: 20px 16px;
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 16px 12px;
+  }
+
+  .brand-logo {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    color: var(--cl-accent, #58a6ff);
+  }
+
+  .brand-svg { display: flex; }
+  .brand-img { border-radius: 4px; }
+
+  .brand-wordmark {
     font-size: 18px;
-    font-weight: 700;
-    color: #f0f6fc;
-    border-bottom: 1px solid #30363d;
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 600;
+    font-family: var(--cl-font-family, system-ui, sans-serif);
+    line-height: 1;
+  }
+
+  .wm-commit { color: var(--cl-primary, #58a6ff); }
+  .wm-lore { color: var(--cl-accent, #58a6ff); }
+
+  .brand-separator {
+    height: 1px;
+    background: var(--cl-border, #30363d);
+    margin: 0 16px 4px;
   }
 
   .nav-items {
@@ -179,24 +228,24 @@
     padding: 12px 16px;
     border: none;
     background: transparent;
-    color: #8b949e;
+    color: var(--cl-secondary, #8b949e);
     font-size: 14px;
     cursor: pointer;
     text-align: left;
     width: 100%;
     transition: background 0.15s, color 0.15s;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--cl-font-family, system-ui, sans-serif);
   }
 
   .nav-item:hover {
-    background: #1f2937;
-    color: #e6edf3;
+    background: color-mix(in srgb, var(--cl-surface, #161b22) 50%, var(--cl-background, #0d1117));
+    color: var(--cl-text, #e6edf3);
   }
 
   .nav-item.active {
-    background: #1f6feb22;
-    color: #58a6ff;
-    border-left: 3px solid #58a6ff;
+    background: color-mix(in srgb, var(--cl-accent, #58a6ff) 13%, transparent);
+    color: var(--cl-accent, #58a6ff);
+    border-left: 3px solid var(--cl-accent, #58a6ff);
   }
 
   .nav-icon {
@@ -218,7 +267,7 @@
   }
 
   .indicator-separator {
-    border-top: 1px solid #30363d;
+    border-top: 1px solid var(--cl-border, #30363d);
     margin-bottom: 10px;
   }
 
@@ -231,7 +280,7 @@
   .indicator-icon {
     display: flex;
     align-items: center;
-    color: #8b949e;
+    color: var(--cl-secondary, #8b949e);
     flex-shrink: 0;
     margin-top: 1px;
   }
@@ -244,7 +293,7 @@
   }
 
   .indicator-name {
-    color: #e6edf3;
+    color: var(--cl-text, #e6edf3);
     font-size: 12px;
     font-weight: 600;
     white-space: nowrap;
@@ -253,7 +302,7 @@
   }
 
   .indicator-path {
-    color: #8b949e;
+    color: var(--cl-secondary, #8b949e);
     font-size: 10px;
     font-family: 'JetBrains Mono', monospace;
     white-space: nowrap;
@@ -262,7 +311,8 @@
   }
 
   .indicator-empty {
-    color: #484f58;
+    color: var(--cl-secondary, #8b949e);
     font-size: 12px;
+    opacity: 0.6;
   }
 </style>

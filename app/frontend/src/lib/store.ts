@@ -15,3 +15,4 @@ export interface RepoSummary {
 
 export const activeRepo = writable<ActiveRepo | null>(null)
 export const repoSummary = writable<RepoSummary | null>(null)
+export const activeStyle = writable<string>('formal')
