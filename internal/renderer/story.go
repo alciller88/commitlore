@@ -8,6 +8,14 @@ import (
 	"github.com/alciller88/commitlore/internal/styles"
 )
 
+// RenderStoryWithTheme renders story with an optional theme override for HTML output.
+func RenderStoryWithTheme(content string, ch git.Chronology, style styles.Style, format Format, override *HTMLTheme) (string, error) {
+	if override != nil {
+		style = applyHTMLThemeOverride(style, override)
+	}
+	return RenderStory(content, ch, style, format)
+}
+
 // RenderStory formats story content according to the specified format.
 func RenderStory(content string, ch git.Chronology, style styles.Style, format Format) (string, error) {
 	switch format {

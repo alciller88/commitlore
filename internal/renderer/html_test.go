@@ -162,6 +162,42 @@ func TestRenderStory_htmlNarrativeEscapesHTML(t *testing.T) {
 	assert.NotContains(t, out, "alert('xss')")
 }
 
+func TestRenderChangelog_themeOverride(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	override := &HTMLTheme{
+		Background: "#FF0000",
+		Primary:    "#00FF00",
+		Text:       "#0000FF",
+	}
+	out, err := RenderWithTheme("", sampleChangelog(), s, FormatHTML, override)
+	require.NoError(t, err)
+	assert.Contains(t, out, "#FF0000")
+	assert.Contains(t, out, "#00FF00")
+	assert.Contains(t, out, "#0000FF")
+}
+
+func TestRenderStory_themeOverride(t *testing.T) {
+	ch := sampleStoryChronology()
+	s := loadTestStyle(t, "formal")
+	override := &HTMLTheme{
+		Background: "#AA0000",
+		Primary:    "#00AA00",
+	}
+	out, err := RenderStoryWithTheme("", ch, s, FormatHTML, override)
+	require.NoError(t, err)
+	assert.Contains(t, out, "#AA0000")
+	assert.Contains(t, out, "#00AA00")
+}
+
+func TestRenderWithTheme_nilOverride(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	out1, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	out2, err := RenderWithTheme("", sampleChangelog(), s, FormatHTML, nil)
+	require.NoError(t, err)
+	assert.Equal(t, out1, out2)
+}
+
 func sampleStoryChronology() git.Chronology {
 	base := time.Date(2025, 1, 1, 12, 0, 0, 0, time.UTC)
 	return git.Chronology{
