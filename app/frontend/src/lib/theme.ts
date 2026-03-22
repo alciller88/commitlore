@@ -1,4 +1,5 @@
 import { GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+import { uiLabels } from './store'
 
 export interface ThemeVars {
   primary: string
@@ -62,8 +63,29 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
       winMinimize: theme.winMinimize || DEFAULTS.winMinimize,
       winMaximize: theme.winMaximize || DEFAULTS.winMaximize,
     }
+    const labels = (theme as any).uiLabels
+    if (labels) {
+      uiLabels.set({
+        dashboard: labels.dashboard || 'Dashboard',
+        generate: labels.generate || 'Generate',
+        story: labels.story || 'Story',
+        history: labels.history || 'History',
+        contributors: labels.contributors || 'Contributors',
+        styles: labels.styles || 'Styles',
+        settings: labels.settings || 'Settings',
+      })
+    } else {
+      uiLabels.set({
+        dashboard: 'Dashboard', generate: 'Generate', story: 'Story',
+        history: 'History', contributors: 'Contributors', styles: 'Styles', settings: 'Settings',
+      })
+    }
   } catch {
     currentTheme = { ...DEFAULTS }
+    uiLabels.set({
+      dashboard: 'Dashboard', generate: 'Generate', story: 'Story',
+      history: 'History', contributors: 'Contributors', styles: 'Styles', settings: 'Settings',
+    })
   }
   injectCSSVariables(currentTheme)
   return currentTheme
