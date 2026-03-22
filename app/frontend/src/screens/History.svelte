@@ -111,7 +111,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    flex: 1;
     gap: var(--space-3);
     color: var(--cl-secondary);
   }

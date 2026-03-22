@@ -217,6 +217,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+    flex: 1;
+    overflow-y: auto;
     max-width: 600px;
   }
 

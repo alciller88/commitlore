@@ -6,8 +6,13 @@ Versioning follows Semantic Versioning.
 ## [Unreleased]
 
 ### Fixed (P3 UI bugs round 2)
-- History: replaced CSS class layout with inline styles (flex:1; min-height:0; overflow-y:auto) — guarantees scroll containment with no style conflicts
-- Window controls: wired to Wails v3 runtime (Window.Minimise/ToggleMaximise/Close) — were previously no-ops via (window as any).wails calls
+- App.svelte .content: changed from overflow-y:auto to overflow:hidden flex column — was the root cause of all table scroll issues (height:100% inside scrollable parent never constrains)
+- All screens: replaced height:100% with flex:1 to work with the new flex column .content container
+- History/Contributors: inline styles for scroll containment (flex:1; min-height:0; overflow-y:auto on table wrapper)
+- Dashboard: active-view gets overflow-y:auto for long recent lists
+- Settings: screen gets overflow-y:auto for content that exceeds viewport
+- Generate/Story: two-col uses flex:1 + min-height:0 instead of height:100%
+- Window controls: wired to Wails v3 runtime (Window.Minimise/ToggleMaximise/Close) — were previously no-ops
 
 ### Fixed (P3 UI bugs)
 - History: scrollbar no longer overlaps Fetch button — overflow: hidden on container, min-height: 0 on table

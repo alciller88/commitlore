@@ -148,7 +148,7 @@
 
 <style>
   .banner-err { background: #da363422; border: 1px solid #da3634; color: #f85149; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: var(--text-base); margin-bottom: var(--space-3); }
-  .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: var(--space-5); }
+  .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: var(--space-5); }
   h1 { color: var(--cl-text); font-size: var(--text-xl); font-weight: 600; }
   .sub { color: var(--cl-secondary); font-size: var(--text-base); }
 
@@ -191,7 +191,7 @@
   .rr-path { flex: 1; font-size: var(--text-xs); color: var(--cl-secondary); font-family: 'JetBrains Mono', monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .rr-date { font-size: var(--text-xs); color: var(--cl-secondary); flex-shrink: 0; }
 
-  .active-view { display: flex; flex-direction: column; gap: var(--space-5); }
+  .active-view { display: flex; flex-direction: column; gap: var(--space-5); flex: 1; overflow-y: auto; }
   .active-header { display: flex; justify-content: space-between; align-items: flex-start; }
   .repo-name { font-size: var(--text-xl); font-weight: 600; }
   .repo-path { font-size: var(--text-sm); color: var(--cl-secondary); font-family: 'JetBrains Mono', monospace; }
