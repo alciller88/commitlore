@@ -59,21 +59,26 @@
       <div class="banner error" style="flex-shrink:0;">{error}</div>
     {/if}
 
-    <div class="filters-row" style="flex-shrink:0;">
-      <input class="author-input" type="text" bind:value={author} placeholder="Author" />
-      <input class="date-input" type="text" bind:value={since} placeholder="Since" />
-      <input class="date-input" type="text" bind:value={until} placeholder="Until" />
-      <div class="limit-group">
-        <input type="range" min="10" max="200" bind:value={limit} />
-        <span class="limit-value">{limit}</span>
+    <div style="flex-shrink:0; display:flex; flex-direction:column; gap:6px;">
+      <div class="filters-row">
+        <input class="author-input" type="text" bind:value={author} placeholder="Author" />
+        <input class="date-input" type="text" bind:value={since} placeholder="Since" />
+        <input class="date-input" type="text" bind:value={until} placeholder="Until" />
       </div>
-      <button class="fetch-btn" on:click={fetchHistory} disabled={loading}>
-        {#if loading}
-          <span class="spinner"></span>
-        {:else}
-          Fetch
-        {/if}
-      </button>
+      <div class="filters-row">
+        <div class="limit-group">
+          <span class="limit-label">Limit</span>
+          <input type="range" min="10" max="200" bind:value={limit} />
+          <span class="limit-value">{limit}</span>
+        </div>
+        <button class="fetch-btn" on:click={fetchHistory} disabled={loading}>
+          {#if loading}
+            <span class="spinner"></span>
+          {:else}
+            Fetch
+          {/if}
+        </button>
+      </div>
     </div>
 
     {#if commits.length > 0}
@@ -124,8 +129,7 @@
     display: flex;
     gap: var(--space-2);
     align-items: center;
-    height: 40px;
-    flex-shrink: 0;
+    height: 36px;
   }
 
   .author-input {
@@ -167,8 +171,13 @@
   .limit-group {
     display: flex;
     align-items: center;
-    gap: var(--space-1);
-    width: 100px;
+    gap: var(--space-2);
+    flex: 1;
+  }
+  .limit-label {
+    font-size: var(--text-xs);
+    color: var(--cl-secondary);
+    flex-shrink: 0;
   }
   .limit-group input[type="range"] {
     flex: 1;
