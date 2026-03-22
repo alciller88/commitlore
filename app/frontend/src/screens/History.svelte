@@ -54,12 +54,12 @@
     <p>Select a repository in Dashboard to get started.</p>
   </div>
 {:else}
-  <div class="screen">
+  <div style="display:flex; flex-direction:column; height:100%; overflow:hidden;">
     {#if error}
-      <div class="banner error">{error}</div>
+      <div class="banner error" style="flex-shrink:0;">{error}</div>
     {/if}
 
-    <div class="filters-row">
+    <div class="filters-row" style="flex-shrink:0;">
       <input class="author-input" type="text" bind:value={author} placeholder="Author" />
       <input class="date-input" type="text" bind:value={since} placeholder="Since" />
       <input class="date-input" type="text" bind:value={until} placeholder="Until" />
@@ -77,8 +77,8 @@
     </div>
 
     {#if commits.length > 0}
-      <div class="table-container">
-        <table>
+      <div style="flex:1; min-height:0; overflow-y:auto;">
+        <table style="width:100%; border-collapse:collapse;">
           <thead>
             <tr>
               <th class="col-hash">Hash</th>
@@ -118,14 +118,6 @@
   .no-repo p {
     margin: 0;
     font-size: var(--text-md);
-  }
-
-  .screen {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    gap: var(--space-3);
-    overflow: hidden;
   }
 
   .filters-row {
@@ -238,17 +230,6 @@
     animation: spin 0.6s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .table-container {
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
 
   thead {
     position: sticky;
