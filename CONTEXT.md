@@ -209,6 +209,7 @@ fix/p3-ui-bugsHistory scroll fix, repo topbar, no scroll SVG, per-style window c
 fix/p3-ui-bugs-2History inline scroll fix, window controls wired to Wails runtime2026-03-22fix/p3-ui-bugs-2
 feat/p3-style-formalImproved formal built-in style v2.0: colors, typography, templates, LLM prompt2026-03-22feat/p3-style-formal
 feat/p3-style-patchnotesPatchnotes v2.0 + UILabels schema: per-style nav labels, GameController logo, purple/gold aesthetic2026-03-22feat/p3-style-patchnotes
+feat/p3-style-epicEpic v2.0: medieval fantasy aesthetic, Sword logo, ui_labels, anti-hallucination LLM prompt2026-03-22feat/p3-style-epic
 
 Add a row here when completing each phase.
 
