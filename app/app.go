@@ -43,6 +43,7 @@ func run() error {
 		Width:            1200,
 		Height:           800,
 		URL:              "/",
+		Frameless:        true,
 		BackgroundColour: application.NewRGB(13, 17, 23),
 		EnableFileDrop:   true,
 	})
