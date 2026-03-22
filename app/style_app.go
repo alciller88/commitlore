@@ -49,17 +49,21 @@ func (s *StyleApp) ListStyles() (string, error) {
 
 // StyleTheme holds the theme fields for frontend CSS variable injection.
 type StyleTheme struct {
-	Primary    string `json:"primary"`
-	Secondary  string `json:"secondary"`
-	Background string `json:"background"`
-	Surface    string `json:"surface"`
-	Text       string `json:"text"`
-	Accent     string `json:"accent"`
-	Border     string `json:"border"`
-	FontFamily string `json:"fontFamily"`
-	FontSize   string `json:"fontSize"`
-	Mode       string `json:"mode"`
-	Logo       string `json:"logo"`
+	Primary     string `json:"primary"`
+	Secondary   string `json:"secondary"`
+	Background  string `json:"background"`
+	Surface     string `json:"surface"`
+	Text        string `json:"text"`
+	Accent      string `json:"accent"`
+	Border      string `json:"border"`
+	FontFamily  string `json:"fontFamily"`
+	FontSize    string `json:"fontSize"`
+	Mode        string `json:"mode"`
+	Logo        string `json:"logo"`
+	WinDefault  string `json:"winDefault"`
+	WinClose    string `json:"winClose"`
+	WinMinimize string `json:"winMinimize"`
+	WinMaximize string `json:"winMaximize"`
 }
 
 // GetStyleTheme returns only the theme fields for a style, with fallback defaults.
@@ -73,17 +77,21 @@ func (s *StyleApp) GetStyleTheme(name string) (StyleTheme, error) {
 
 func buildStyleTheme(st styles.Style) StyleTheme {
 	return StyleTheme{
-		Primary:    withDefault(st.Theme.Colors.Primary, "#58a6ff"),
-		Secondary:  withDefault(st.Theme.Colors.Secondary, "#8b949e"),
-		Background: withDefault(st.Theme.Colors.Background, "#0d1117"),
-		Surface:    withDefault(st.Theme.Colors.Surface, "#161b22"),
-		Text:       withDefault(st.Theme.Colors.Text, "#e6edf3"),
-		Accent:     withDefault(st.Theme.Colors.Accent, "#58a6ff"),
-		Border:     withDefault(st.Theme.Colors.Border, "#30363d"),
-		FontFamily: withDefault(st.Theme.Typography.FontFamily, "system-ui, sans-serif"),
-		FontSize:   withDefault(st.Theme.Typography.FontSizeBase, "14px"),
-		Mode:       withDefault(st.Theme.Mode, "dark"),
-		Logo:       st.Theme.Logo,
+		Primary:     withDefault(st.Theme.Colors.Primary, "#58a6ff"),
+		Secondary:   withDefault(st.Theme.Colors.Secondary, "#8b949e"),
+		Background:  withDefault(st.Theme.Colors.Background, "#0d1117"),
+		Surface:     withDefault(st.Theme.Colors.Surface, "#161b22"),
+		Text:        withDefault(st.Theme.Colors.Text, "#e6edf3"),
+		Accent:      withDefault(st.Theme.Colors.Accent, "#58a6ff"),
+		Border:      withDefault(st.Theme.Colors.Border, "#30363d"),
+		FontFamily:  withDefault(st.Theme.Typography.FontFamily, "system-ui, sans-serif"),
+		FontSize:    withDefault(st.Theme.Typography.FontSizeBase, "14px"),
+		Mode:        withDefault(st.Theme.Mode, "dark"),
+		Logo:        st.Theme.Logo,
+		WinDefault:  withDefault(st.Theme.WindowControls.Default, "#666666"),
+		WinClose:    withDefault(st.Theme.WindowControls.Close, "#FF5F57"),
+		WinMinimize: withDefault(st.Theme.WindowControls.Minimize, "#FEBC2E"),
+		WinMaximize: withDefault(st.Theme.WindowControls.Maximize, "#28C840"),
 	}
 }
 
@@ -165,14 +173,23 @@ type TemplatesDetail struct {
 
 // ThemeDetail holds all theme fields.
 type ThemeDetail struct {
-	Mode        string       `json:"mode"`
-	Colors      ColorsDetail `json:"colors"`
-	Typography  TypoDetail   `json:"typography"`
-	HeaderImage string       `json:"headerImage"`
-	Logo        string       `json:"logo"`
-	CardStyle   string       `json:"cardStyle"`
-	Animations  bool         `json:"animations"`
-	CustomCSS   string       `json:"customCss"`
+	Mode           string           `json:"mode"`
+	Colors         ColorsDetail     `json:"colors"`
+	Typography     TypoDetail       `json:"typography"`
+	HeaderImage    string           `json:"headerImage"`
+	Logo           string           `json:"logo"`
+	CardStyle      string           `json:"cardStyle"`
+	Animations     bool             `json:"animations"`
+	CustomCSS      string           `json:"customCss"`
+	WindowControls WinControlDetail `json:"windowControls"`
+}
+
+// WinControlDetail holds window control colors.
+type WinControlDetail struct {
+	Default  string `json:"default"`
+	Close    string `json:"close"`
+	Minimize string `json:"minimize"`
+	Maximize string `json:"maximize"`
 }
 
 // ColorsDetail holds the color palette.
@@ -275,6 +292,10 @@ func themeToDetail(t styles.Theme) ThemeDetail {
 			FontFamily: t.Typography.FontFamily, FontSizeBase: t.Typography.FontSizeBase,
 			FontSizeH: t.Typography.FontSizeH, FontSizeCode: t.Typography.FontSizeCode,
 		},
+		WindowControls: WinControlDetail{
+			Default: t.WindowControls.Default, Close: t.WindowControls.Close,
+			Minimize: t.WindowControls.Minimize, Maximize: t.WindowControls.Maximize,
+		},
 	}
 }
 
@@ -318,6 +339,10 @@ func detailToStyle(d StyleDetail) styles.Style {
 			Typography: styles.Typography{
 				FontFamily: d.Theme.Typography.FontFamily, FontSizeBase: d.Theme.Typography.FontSizeBase,
 				FontSizeH: d.Theme.Typography.FontSizeH, FontSizeCode: d.Theme.Typography.FontSizeCode,
+			},
+			WindowControls: styles.WindowControls{
+				Default: d.Theme.WindowControls.Default, Close: d.Theme.WindowControls.Close,
+				Minimize: d.Theme.WindowControls.Minimize, Maximize: d.Theme.WindowControls.Maximize,
 			},
 		},
 		Terminal: styles.Terminal{

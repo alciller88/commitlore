@@ -12,6 +12,10 @@ export interface ThemeVars {
   fontSize: string
   mode: string
   logo: string
+  winDefault: string
+  winClose: string
+  winMinimize: string
+  winMaximize: string
 }
 
 const DEFAULTS: ThemeVars = {
@@ -26,6 +30,10 @@ const DEFAULTS: ThemeVars = {
   fontSize: '14px',
   mode: 'dark',
   logo: '',
+  winDefault: '#666666',
+  winClose: '#FF5F57',
+  winMinimize: '#FEBC2E',
+  winMaximize: '#28C840',
 }
 
 let currentTheme: ThemeVars = { ...DEFAULTS }
@@ -49,6 +57,10 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
       fontSize: theme.fontSize || DEFAULTS.fontSize,
       mode: theme.mode || DEFAULTS.mode,
       logo: theme.logo || '',
+      winDefault: theme.winDefault || DEFAULTS.winDefault,
+      winClose: theme.winClose || DEFAULTS.winClose,
+      winMinimize: theme.winMinimize || DEFAULTS.winMinimize,
+      winMaximize: theme.winMaximize || DEFAULTS.winMaximize,
     }
   } catch {
     currentTheme = { ...DEFAULTS }
@@ -68,4 +80,8 @@ function injectCSSVariables(t: ThemeVars) {
   root.style.setProperty('--cl-border', t.border)
   root.style.setProperty('--cl-font-family', t.fontFamily)
   root.style.setProperty('--cl-font-size', t.fontSize)
+  root.style.setProperty('--cl-win-default', t.winDefault)
+  root.style.setProperty('--cl-win-close', t.winClose)
+  root.style.setProperty('--cl-win-minimize', t.winMinimize)
+  root.style.setProperty('--cl-win-maximize', t.winMaximize)
 }

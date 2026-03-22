@@ -59,6 +59,11 @@ theme:
     font_size_code: "12px"
   card_style: "minimal"
   animations: false
+  window_controls:
+    default: "#444444"
+    close: "#FF5F57"
+    minimize: "#FEBC2E"
+    maximize: "#28C840"
   custom_css: |
     body { letter-spacing: 0.01em; }
     h1 { font-weight: 400; font-style: italic; }

@@ -43,6 +43,11 @@ theme:
     font_size_code: "13px"
   card_style: "minimal"
   animations: false
+  window_controls:
+    default: "#9CA3AF"
+    close: "#FF5F57"
+    minimize: "#FEBC2E"
+    maximize: "#28C840"
   custom_css: |
     body { line-height: 1.6; }
     h1 { font-weight: 700; letter-spacing: -0.02em; }

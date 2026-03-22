@@ -185,17 +185,16 @@
   .win-controls { display: flex; gap: 6px; align-items: center; }
   .wc {
     width: 12px; height: 12px; border-radius: 50%; border: none;
-    background: var(--cl-surface, #161b22); padding: 0;
+    background: var(--cl-win-default, #666666); padding: 0;
     display: flex; align-items: center; justify-content: center;
     color: transparent; transition: var(--transition-fast, 120ms ease);
   }
   .wc svg { opacity: 0; transition: var(--transition-fast, 120ms ease); }
-  .sidebar:hover .wc { background: var(--cl-border, #30363d); }
-  .wc-close:hover { background: #f85149; color: #fff; }
+  .wc-close:hover { background: var(--cl-win-close, #FF5F57); color: #fff; }
   .wc-close:hover svg { opacity: 1; }
-  .wc-min:hover { background: #D4A017; color: #1a1a1a; }
+  .wc-min:hover { background: var(--cl-win-minimize, #FEBC2E); color: #1a1a1a; }
   .wc-min:hover svg { opacity: 1; }
-  .wc-max:hover { background: #3fb950; color: #1a1a1a; }
+  .wc-max:hover { background: var(--cl-win-maximize, #28C840); color: #1a1a1a; }
   .wc-max:hover svg { opacity: 1; }
 
   .nav-section { flex: 1; overflow-y: auto; padding: var(--space-2, 8px) 0; }

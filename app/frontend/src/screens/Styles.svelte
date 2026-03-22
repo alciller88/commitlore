@@ -71,7 +71,7 @@
       llmPrompt: '', tags: [], previewUrl: '', homepage: '',
       templates: { header: '# Changelog {{.Version}}\n', feature: '- {{.Message}}\n', fix: '- {{.Message}}\n', breaking: '- {{.Message}}\n', footer: '', storyIntro: '', storyMilestone: '', storyPeak: '', storyContributor: '', storyFooter: '' },
       vocabulary: {},
-      theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '' },
+      theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '', windowControls: { default: '#666666', close: '#FF5F57', minimize: '#FEBC2E', maximize: '#28C840' } },
       terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' }
     }
     isBuiltIn = false
@@ -321,6 +321,20 @@
               <input type="checkbox" bind:checked={detail.theme.animations} disabled={isBuiltIn} />
               {detail.theme.animations ? 'On' : 'Off'}
             </label>
+          </div>
+          <div class="field-group">
+            <label>Window Controls</label>
+            <div class="inline-fields">
+              {#each [['default', 'Default'], ['close', 'Close'], ['minimize', 'Minimize'], ['maximize', 'Maximize']] as [key, label]}
+                <div class="mini-field">
+                  <span class="mini-label">{label}</span>
+                  <div class="color-input-row">
+                    <input type="color" value={detail.theme.windowControls?.[key] || '#666666'} on:input={(e) => { if (!detail.theme.windowControls) detail.theme.windowControls = {}; detail.theme.windowControls[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} />
+                    <input type="text" value={detail.theme.windowControls?.[key] || ''} on:input={(e) => { if (!detail.theme.windowControls) detail.theme.windowControls = {}; detail.theme.windowControls[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} class="hex-input" />
+                  </div>
+                </div>
+              {/each}
+            </div>
           </div>
 
         {:else if activeTab === 'templates'}

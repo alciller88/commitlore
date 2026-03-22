@@ -43,14 +43,23 @@ type Templates struct {
 
 // Theme defines the visual identity for HTML output.
 type Theme struct {
-	Mode        string     `yaml:"mode"`
-	Colors      Colors     `yaml:"colors"`
-	Typography  Typography `yaml:"typography"`
-	HeaderImage string     `yaml:"header_image"`
-	Logo        string     `yaml:"logo"`
-	CardStyle   string     `yaml:"card_style"`
-	Animations  bool       `yaml:"animations"`
-	CustomCSS   string     `yaml:"custom_css"`
+	Mode           string         `yaml:"mode"`
+	Colors         Colors         `yaml:"colors"`
+	Typography     Typography     `yaml:"typography"`
+	HeaderImage    string         `yaml:"header_image"`
+	Logo           string         `yaml:"logo"`
+	CardStyle      string         `yaml:"card_style"`
+	Animations     bool           `yaml:"animations"`
+	CustomCSS      string         `yaml:"custom_css"`
+	WindowControls WindowControls `yaml:"window_controls"`
+}
+
+// WindowControls holds colors for the custom titlebar buttons.
+type WindowControls struct {
+	Default  string `yaml:"default"`
+	Close    string `yaml:"close"`
+	Minimize string `yaml:"minimize"`
+	Maximize string `yaml:"maximize"`
 }
 
 // Colors holds the color palette for a theme.
