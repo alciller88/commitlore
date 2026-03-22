@@ -7,6 +7,124 @@
 import { Create as $Create } from "@wailsio/runtime";
 
 /**
+ * ColorsDetail holds the color palette.
+ */
+export class ColorsDetail {
+    /**
+     * Creates a new ColorsDetail instance.
+     * @param {Partial<ColorsDetail>} [$$source = {}] - The source object to create the ColorsDetail.
+     */
+    constructor($$source = {}) {
+        if (!("primary" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["primary"] = "";
+        }
+        if (!("secondary" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["secondary"] = "";
+        }
+        if (!("background" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["background"] = "";
+        }
+        if (!("surface" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["surface"] = "";
+        }
+        if (!("text" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["text"] = "";
+        }
+        if (!("accent" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["accent"] = "";
+        }
+        if (!("border" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["border"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ColorsDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {ColorsDetail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ColorsDetail(/** @type {Partial<ColorsDetail>} */($$parsedSource));
+    }
+}
+
+/**
+ * DecorDetail holds terminal decorator strings.
+ */
+export class DecorDetail {
+    /**
+     * Creates a new DecorDetail instance.
+     * @param {Partial<DecorDetail>} [$$source = {}] - The source object to create the DecorDetail.
+     */
+    constructor($$source = {}) {
+        if (!("separator" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["separator"] = "";
+        }
+        if (!("bullet" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["bullet"] = "";
+        }
+        if (!("indent" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["indent"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new DecorDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {DecorDetail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new DecorDetail(/** @type {Partial<DecorDetail>} */($$parsedSource));
+    }
+}
+
+/**
  * LLMConfig holds the LLM provider configuration for the frontend.
  */
 export class LLMConfig {
@@ -93,6 +211,134 @@ export class RecentRepo {
     static createFrom($$source = {}) {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new RecentRepo(/** @type {Partial<RecentRepo>} */($$parsedSource));
+    }
+}
+
+/**
+ * StyleDetail holds all .shipstyle fields for the editor UI.
+ */
+export class StyleDetail {
+    /**
+     * Creates a new StyleDetail instance.
+     * @param {Partial<StyleDetail>} [$$source = {}] - The source object to create the StyleDetail.
+     */
+    constructor($$source = {}) {
+        if (!("name" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["name"] = "";
+        }
+        if (!("version" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["version"] = "";
+        }
+        if (!("description" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["description"] = "";
+        }
+        if (!("author" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["author"] = "";
+        }
+        if (!("llmPrompt" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["llmPrompt"] = "";
+        }
+        if (!("tags" in $$source)) {
+            /**
+             * @member
+             * @type {string[]}
+             */
+            this["tags"] = [];
+        }
+        if (!("previewUrl" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["previewUrl"] = "";
+        }
+        if (!("homepage" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["homepage"] = "";
+        }
+        if (!("templates" in $$source)) {
+            /**
+             * @member
+             * @type {TemplatesDetail}
+             */
+            this["templates"] = (new TemplatesDetail());
+        }
+        if (!("vocabulary" in $$source)) {
+            /**
+             * @member
+             * @type {{ [_ in string]?: string }}
+             */
+            this["vocabulary"] = {};
+        }
+        if (!("theme" in $$source)) {
+            /**
+             * @member
+             * @type {ThemeDetail}
+             */
+            this["theme"] = (new ThemeDetail());
+        }
+        if (!("terminal" in $$source)) {
+            /**
+             * @member
+             * @type {TerminalDetail}
+             */
+            this["terminal"] = (new TerminalDetail());
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new StyleDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {StyleDetail}
+     */
+    static createFrom($$source = {}) {
+        const $$createField5_0 = $$createType0;
+        const $$createField8_0 = $$createType1;
+        const $$createField9_0 = $$createType2;
+        const $$createField10_0 = $$createType3;
+        const $$createField11_0 = $$createType4;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("tags" in $$parsedSource) {
+            $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
+        }
+        if ("templates" in $$parsedSource) {
+            $$parsedSource["templates"] = $$createField8_0($$parsedSource["templates"]);
+        }
+        if ("vocabulary" in $$parsedSource) {
+            $$parsedSource["vocabulary"] = $$createField9_0($$parsedSource["vocabulary"]);
+        }
+        if ("theme" in $$parsedSource) {
+            $$parsedSource["theme"] = $$createField10_0($$parsedSource["theme"]);
+        }
+        if ("terminal" in $$parsedSource) {
+            $$parsedSource["terminal"] = $$createField11_0($$parsedSource["terminal"]);
+        }
+        return new StyleDetail(/** @type {Partial<StyleDetail>} */($$parsedSource));
     }
 }
 
@@ -196,3 +442,360 @@ export class StyleTheme {
         return new StyleTheme(/** @type {Partial<StyleTheme>} */($$parsedSource));
     }
 }
+
+/**
+ * TemplatesDetail holds all template strings.
+ */
+export class TemplatesDetail {
+    /**
+     * Creates a new TemplatesDetail instance.
+     * @param {Partial<TemplatesDetail>} [$$source = {}] - The source object to create the TemplatesDetail.
+     */
+    constructor($$source = {}) {
+        if (!("header" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["header"] = "";
+        }
+        if (!("feature" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["feature"] = "";
+        }
+        if (!("fix" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fix"] = "";
+        }
+        if (!("breaking" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["breaking"] = "";
+        }
+        if (!("footer" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["footer"] = "";
+        }
+        if (!("storyIntro" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["storyIntro"] = "";
+        }
+        if (!("storyMilestone" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["storyMilestone"] = "";
+        }
+        if (!("storyPeak" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["storyPeak"] = "";
+        }
+        if (!("storyContributor" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["storyContributor"] = "";
+        }
+        if (!("storyFooter" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["storyFooter"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TemplatesDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {TemplatesDetail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TemplatesDetail(/** @type {Partial<TemplatesDetail>} */($$parsedSource));
+    }
+}
+
+/**
+ * TermColorsDetail holds terminal ANSI color names.
+ */
+export class TermColorsDetail {
+    /**
+     * Creates a new TermColorsDetail instance.
+     * @param {Partial<TermColorsDetail>} [$$source = {}] - The source object to create the TermColorsDetail.
+     */
+    constructor($$source = {}) {
+        if (!("header" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["header"] = "";
+        }
+        if (!("feature" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["feature"] = "";
+        }
+        if (!("fix" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fix"] = "";
+        }
+        if (!("breaking" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["breaking"] = "";
+        }
+        if (!("footer" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["footer"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TermColorsDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {TermColorsDetail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TermColorsDetail(/** @type {Partial<TermColorsDetail>} */($$parsedSource));
+    }
+}
+
+/**
+ * TerminalDetail holds terminal visual identity.
+ */
+export class TerminalDetail {
+    /**
+     * Creates a new TerminalDetail instance.
+     * @param {Partial<TerminalDetail>} [$$source = {}] - The source object to create the TerminalDetail.
+     */
+    constructor($$source = {}) {
+        if (!("colors" in $$source)) {
+            /**
+             * @member
+             * @type {TermColorsDetail}
+             */
+            this["colors"] = (new TermColorsDetail());
+        }
+        if (!("decorators" in $$source)) {
+            /**
+             * @member
+             * @type {DecorDetail}
+             */
+            this["decorators"] = (new DecorDetail());
+        }
+        if (!("density" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["density"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TerminalDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {TerminalDetail}
+     */
+    static createFrom($$source = {}) {
+        const $$createField0_0 = $$createType5;
+        const $$createField1_0 = $$createType6;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("colors" in $$parsedSource) {
+            $$parsedSource["colors"] = $$createField0_0($$parsedSource["colors"]);
+        }
+        if ("decorators" in $$parsedSource) {
+            $$parsedSource["decorators"] = $$createField1_0($$parsedSource["decorators"]);
+        }
+        return new TerminalDetail(/** @type {Partial<TerminalDetail>} */($$parsedSource));
+    }
+}
+
+/**
+ * ThemeDetail holds all theme fields.
+ */
+export class ThemeDetail {
+    /**
+     * Creates a new ThemeDetail instance.
+     * @param {Partial<ThemeDetail>} [$$source = {}] - The source object to create the ThemeDetail.
+     */
+    constructor($$source = {}) {
+        if (!("mode" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["mode"] = "";
+        }
+        if (!("colors" in $$source)) {
+            /**
+             * @member
+             * @type {ColorsDetail}
+             */
+            this["colors"] = (new ColorsDetail());
+        }
+        if (!("typography" in $$source)) {
+            /**
+             * @member
+             * @type {TypoDetail}
+             */
+            this["typography"] = (new TypoDetail());
+        }
+        if (!("headerImage" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["headerImage"] = "";
+        }
+        if (!("logo" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["logo"] = "";
+        }
+        if (!("cardStyle" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["cardStyle"] = "";
+        }
+        if (!("animations" in $$source)) {
+            /**
+             * @member
+             * @type {boolean}
+             */
+            this["animations"] = false;
+        }
+        if (!("customCss" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["customCss"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ThemeDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {ThemeDetail}
+     */
+    static createFrom($$source = {}) {
+        const $$createField1_0 = $$createType7;
+        const $$createField2_0 = $$createType8;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("colors" in $$parsedSource) {
+            $$parsedSource["colors"] = $$createField1_0($$parsedSource["colors"]);
+        }
+        if ("typography" in $$parsedSource) {
+            $$parsedSource["typography"] = $$createField2_0($$parsedSource["typography"]);
+        }
+        return new ThemeDetail(/** @type {Partial<ThemeDetail>} */($$parsedSource));
+    }
+}
+
+/**
+ * TypoDetail holds typography fields.
+ */
+export class TypoDetail {
+    /**
+     * Creates a new TypoDetail instance.
+     * @param {Partial<TypoDetail>} [$$source = {}] - The source object to create the TypoDetail.
+     */
+    constructor($$source = {}) {
+        if (!("fontFamily" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fontFamily"] = "";
+        }
+        if (!("fontSizeBase" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fontSizeBase"] = "";
+        }
+        if (!("fontSizeHeader" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fontSizeHeader"] = "";
+        }
+        if (!("fontSizeCode" in $$source)) {
+            /**
+             * @member
+             * @type {string}
+             */
+            this["fontSizeCode"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TypoDetail instance from a string or object.
+     * @param {any} [$$source = {}]
+     * @returns {TypoDetail}
+     */
+    static createFrom($$source = {}) {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TypoDetail(/** @type {Partial<TypoDetail>} */($$parsedSource));
+    }
+}
+
+// Private type creation functions
+const $$createType0 = $Create.Array($Create.Any);
+const $$createType1 = TemplatesDetail.createFrom;
+const $$createType2 = $Create.Map($Create.Any, $Create.Any);
+const $$createType3 = ThemeDetail.createFrom;
+const $$createType4 = TerminalDetail.createFrom;
+const $$createType5 = TermColorsDetail.createFrom;
+const $$createType6 = DecorDetail.createFrom;
+const $$createType7 = ColorsDetail.createFrom;
+const $$createType8 = TypoDetail.createFrom;

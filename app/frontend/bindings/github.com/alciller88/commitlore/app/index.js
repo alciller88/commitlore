@@ -16,7 +16,15 @@ export {
 };
 
 export {
+    ColorsDetail,
+    DecorDetail,
     LLMConfig,
     RecentRepo,
-    StyleTheme
+    StyleDetail,
+    StyleTheme,
+    TemplatesDetail,
+    TermColorsDetail,
+    TerminalDetail,
+    ThemeDetail,
+    TypoDetail
 } from "./models.js";
