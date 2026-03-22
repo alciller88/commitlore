@@ -201,6 +201,7 @@ fix/llm-settingsLLM config auto-read from Settings in Generate/Story, redundant 
 fix/story-output-parityHTML renderer uses narrative content, not raw data structs2026-03-21fix/story-output-parity
 feat/p1-ux-globalGlobal repo store, sidebar indicator, two-column layouts, compact filters2026-03-22feat/p1-ux-global
 fix/markdown-renderNarrative markdown rendered as HTML via goldmark (not raw text)2026-03-22fix/markdown-render
+feat/p2-ui-themingActive style themes entire app via CSS variables, persisted in config.yml2026-03-22feat/p2-ui-theming
 
 Add a row here when completing each phase.
 
@@ -254,15 +255,11 @@ Add a row here when completing each phase.
 - Story: richer content (more milestones, activity metrics per period) — deferred to future iteration
 - Generate: style should influence output structure, not just colors — deferred to future iteration
 
-#### P2 — Estilo global en la UI
-- El estilo activo (formal/patchnotes/epic/ironic/user) debe cambiar la paleta de colores,
-  tipografía y icono de la app completa, no solo los outputs
-- Implementar via CSS variables inyectadas desde el theme del .shipstyle activo:
-  colors.primary, colors.secondary, colors.background, colors.surface, colors.text,
-  colors.accent, typography.font_family
-- El icono de la ventana cambia al logo del estilo activo (theme.logo) si existe,
-  si no al logo oficial de CommitLore
-- El estilo se selecciona en Dashboard o Settings y persiste en config.yml
+#### P2 — Global style theming (feat/p2-ui-theming) — COMPLETED 2026-03-22
+- ~~Active style changes app colors, typography~~ — implemented: CSS variables injected from .shipstyle theme via GetStyleTheme binding
+- ~~CSS variables from theme fields~~ — implemented: --cl-primary, --cl-secondary, --cl-background, --cl-surface, --cl-text, --cl-accent, --cl-border, --cl-font-family, --cl-font-size
+- ~~Style logo in sidebar~~ — implemented: branded header with style logo (or fallback scroll SVG) + "Commit"/"Lore" split wordmark colored by primary/accent
+- ~~Style selected in Settings, persisted in config.yml~~ — implemented: Appearance section with dropdown + color swatches, GetActiveStyle/SetActiveStyle bindings
 
 #### P3 — Visual overhaul (Fase 13)
 - El diseño visual actual es genérico — necesita personalidad y calidad comparable

@@ -5,6 +5,18 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (P2 UI theming)
+- app/config_app.go: GetActiveStyle/SetActiveStyle — active style persisted in config.yml, defaults to "formal"
+- app/style_app.go: GetStyleTheme binding returns typed StyleTheme struct with fallback defaults for missing theme fields
+- app/style_app.go: StyleTheme struct with primary, secondary, background, surface, text, accent, border, fontFamily, fontSize, mode, logo fields
+- app/frontend/src/lib/theme.ts: applyTheme() fetches StyleTheme and injects CSS variables on :root
+- app/frontend/src/lib/store.ts: activeStyle writable store
+- app/frontend: all screens use CSS variables (--cl-background, --cl-surface, --cl-text, --cl-accent, --cl-secondary, --cl-border, --cl-font-family) — no hardcoded structural colors
+- app/frontend/src/App.svelte: branded sidebar header with style logo + "Commit"/"Lore" split wordmark colored by primary/accent
+- app/frontend/src/screens/Settings.svelte: Appearance section with style dropdown and color swatch preview
+- app/style_app_test.go: tests for GetStyleTheme (formal, patchnotes, missing fields, unknown style)
+- app/config_app_test.go: tests for GetActiveStyle/SetActiveStyle
+
 ### Fixed (Markdown rendering)
 - internal/renderer: narrative content now rendered as HTML via goldmark — was displaying raw markdown (## headings, * bullets) in iframe
 - internal/renderer: goldmark safe mode omits raw HTML tags (XSS protection)
