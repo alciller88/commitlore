@@ -167,7 +167,7 @@ Story — narrative visualization of the repo history.
 History — commit explorer with filters.
 Contributors — visual contribution map.
 Styles — visual manager: create, import, export, preview styles.
-Settings — LLM provider configuration, API key management via OS keychain.
+Settings — LLM provider configuration, API key management via OS keychain, app style selection.
 
 Repo Picker (all screens)
 
@@ -179,6 +179,13 @@ Output Display (Generate, Story)
 
 HTML preview rendered inline + Copy button + Save as file button.
 Uses internal/renderer HTML output.
+
+Style Selection (Settings screen)
+
+Active app style selected from dropdown (built-in + user styles).
+Persisted in ~/.config/commitlore/config.yml as active_style field.
+Theme colors and typography injected as CSS variables across the entire UI.
+Default style: formal.
 
 LLM Configuration (Settings screen)
 

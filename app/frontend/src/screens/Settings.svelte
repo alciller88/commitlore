@@ -1,6 +1,15 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { GetLLMConfig, SetLLMConfig, ClearLLMKey } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { onMount, onDestroy } from 'svelte'
+  import { GetLLMConfig, SetLLMConfig, ClearLLMKey, GetActiveStyle, SetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { ListStyles, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { activeStyle } from '../lib/store'
+
+  let styleName = 'formal'
+  let styles: Array<{name: string}> = []
+  let themePreview = { primary: '', accent: '' }
+
+  const unsubStyle = activeStyle.subscribe(v => { styleName = v })
+  onDestroy(() => unsubStyle())
 
   let provider = ''
   let model = ''
@@ -12,7 +21,11 @@
   let keyInput = ''
   let savingKey = false
 
-  onMount(loadConfig)
+  onMount(() => {
+    loadConfig()
+    loadStyles()
+    loadThemePreview(styleName)
+  })
 
   async function loadConfig() {
     loading = true
@@ -27,6 +40,29 @@
     } finally {
       loading = false
     }
+  }
+
+  async function loadStyles() {
+    try {
+      const raw = await ListStyles()
+      styles = JSON.parse(raw)
+    } catch {}
+  }
+
+  async function loadThemePreview(name: string) {
+    try {
+      const t = await GetStyleTheme(name)
+      themePreview = { primary: t.primary, accent: t.accent }
+    } catch {
+      themePreview = { primary: '#58a6ff', accent: '#58a6ff' }
+    }
+  }
+
+  async function changeStyle(name: string) {
+    styleName = name
+    activeStyle.set(name)
+    await SetActiveStyle(name)
+    await loadThemePreview(name)
   }
 
   async function saveConfig() {
@@ -85,6 +121,26 @@
   {#if success}
     <div class="banner success">{success}</div>
   {/if}
+
+  <section>
+    <h2>Appearance</h2>
+    <div class="form">
+      <div class="field">
+        <label>App style</label>
+        <div class="style-selector">
+          <select bind:value={styleName} on:change={() => changeStyle(styleName)}>
+            {#each styles as s}
+              <option value={s.name}>{s.name}</option>
+            {/each}
+          </select>
+          <span class="swatch-preview">
+            <span class="swatch" style="background: {themePreview.primary}"></span>
+            <span class="swatch" style="background: {themePreview.accent}"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section>
     <h2>LLM Provider</h2>
@@ -161,24 +217,24 @@
 
 <style>
   .screen { display: flex; flex-direction: column; gap: 24px; max-width: 600px; }
-  h1 { color: #e6edf3; font-size: 22px; margin: 0; }
-  h2 { color: #e6edf3; font-size: 16px; margin: 0 0 12px; }
-  h3 { color: #e6edf3; font-size: 16px; margin: 0 0 8px; }
+  h1 { color: var(--cl-text, #e6edf3); font-size: 22px; margin: 0; }
+  h2 { color: var(--cl-text, #e6edf3); font-size: 16px; margin: 0 0 12px; }
+  h3 { color: var(--cl-text, #e6edf3); font-size: 16px; margin: 0 0 8px; }
 
   section {
-    padding: 20px; background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+    padding: 20px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d); border-radius: 8px;
   }
 
   .form { display: flex; flex-direction: column; gap: 14px; }
   .field { display: flex; flex-direction: column; gap: 4px; }
-  .field label { color: #8b949e; font-size: 12px; text-transform: uppercase; }
+  .field label { color: var(--cl-secondary, #8b949e); font-size: 12px; text-transform: uppercase; }
 
   input, select {
-    padding: 8px 12px; background: #0d1117; border: 1px solid #30363d;
-    border-radius: 6px; color: #e6edf3; font-size: 14px;
+    padding: 8px 12px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 14px;
     font-family: 'JetBrains Mono', monospace;
   }
-  input:focus, select:focus { outline: none; border-color: #58a6ff; }
+  input:focus, select:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
   select { cursor: pointer; }
 
   .key-status { display: flex; align-items: center; gap: 12px; }
@@ -187,10 +243,10 @@
   .not-configured { color: #f85149; }
 
   .tool-btn {
-    padding: 6px 14px; background: #21262d; border: 1px solid #30363d;
-    border-radius: 6px; color: #e6edf3; cursor: pointer; font-size: 13px; font-family: inherit;
+    padding: 6px 14px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 6px; color: var(--cl-text, #e6edf3); cursor: pointer; font-size: 13px; font-family: inherit;
   }
-  .tool-btn:hover { border-color: #58a6ff; }
+  .tool-btn:hover { border-color: var(--cl-accent, #58a6ff); }
   .tool-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .tool-btn.danger:hover { border-color: #da3634; color: #f85149; }
 
@@ -203,7 +259,7 @@
 
   .about { font-size: 13px; }
   .about-row { margin-bottom: 4px; }
-  .about-row .label { color: #8b949e; }
+  .about-row .label { color: var(--cl-secondary, #8b949e); }
 
   .banner {
     padding: 8px 12px; border-radius: 6px; font-size: 13px;
@@ -221,10 +277,18 @@
     align-items: center; justify-content: center; z-index: 100;
   }
   .modal {
-    background: #161b22; border: 1px solid #30363d; border-radius: 12px;
+    background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d); border-radius: 12px;
     padding: 24px; max-width: 400px; width: 100%;
     display: flex; flex-direction: column; gap: 12px;
   }
-  .modal-hint { color: #8b949e; font-size: 13px; margin: 0; }
+  .modal-hint { color: var(--cl-secondary, #8b949e); font-size: 13px; margin: 0; }
   .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+
+  .style-selector { display: flex; align-items: center; gap: 10px; }
+  .style-selector select { flex: 1; }
+  .swatch-preview { display: flex; gap: 4px; }
+  .swatch {
+    width: 16px; height: 16px; border-radius: 3px;
+    border: 1px solid var(--cl-border, #30363d);
+  }
 </style>

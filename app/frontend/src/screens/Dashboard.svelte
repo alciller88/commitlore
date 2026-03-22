@@ -248,8 +248,8 @@
     gap: 24px;
   }
 
-  h1 { color: #e6edf3; font-size: 28px; margin: 0; }
-  .subtitle { color: #8b949e; margin: 0; }
+  h1 { color: var(--cl-text, #e6edf3); font-size: 28px; margin: 0; }
+  .subtitle { color: var(--cl-secondary, #8b949e); margin: 0; }
 
   .entry-points {
     display: flex;
@@ -266,32 +266,32 @@
     align-items: center;
     gap: 8px;
     padding: 24px 32px;
-    background: #161b22;
-    border: 1px solid #30363d;
+    background: var(--cl-surface, #161b22);
+    border: 1px solid var(--cl-border, #30363d);
     border-radius: 8px;
-    color: #e6edf3;
+    color: var(--cl-text, #e6edf3);
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
     font-size: 14px;
     font-family: inherit;
   }
-  .entry-btn:hover { border-color: #58a6ff; background: #1c2333; }
+  .entry-btn:hover { border-color: var(--cl-accent, #58a6ff); background: #1c2333; }
   .entry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .entry-icon { display: flex; align-items: center; color: #58a6ff; }
+  .entry-icon { display: flex; align-items: center; color: var(--cl-accent, #58a6ff); }
 
   .drop-zone {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 24px 32px;
-    border: 2px dashed #30363d;
+    border: 2px dashed var(--cl-border, #30363d);
     border-radius: 8px;
-    color: #8b949e;
+    color: var(--cl-secondary, #8b949e);
     transition: border-color 0.2s, background 0.2s;
     min-width: 160px;
     cursor: default;
   }
-  .drop-zone:hover { border-color: #58a6ff; background: #1c233322; }
+  .drop-zone:hover { border-color: var(--cl-accent, #58a6ff); background: #1c233322; }
 
   .github-input {
     display: flex;
@@ -300,15 +300,15 @@
   }
   .github-input input {
     padding: 10px 14px;
-    background: #0d1117;
-    border: 1px solid #30363d;
+    background: var(--cl-background, #0d1117);
+    border: 1px solid var(--cl-border, #30363d);
     border-radius: 6px;
-    color: #e6edf3;
+    color: var(--cl-text, #e6edf3);
     font-size: 14px;
     width: 180px;
     font-family: 'JetBrains Mono', monospace;
   }
-  .github-input input:focus { outline: none; border-color: #58a6ff; }
+  .github-input input:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
   .connect-btn {
     padding: 10px 16px;
     background: #238636;
@@ -323,7 +323,7 @@
   .connect-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .recent-section { margin-top: 24px; width: 100%; max-width: 500px; }
-  .recent-section h3 { color: #8b949e; font-size: 13px; text-transform: uppercase; margin-bottom: 8px; }
+  .recent-section h3 { color: var(--cl-secondary, #8b949e); font-size: 13px; text-transform: uppercase; margin-bottom: 8px; }
 
   .recent-list { display: flex; flex-direction: column; gap: 4px; }
   .recent-item {
@@ -334,7 +334,7 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: 6px;
-    color: #e6edf3;
+    color: var(--cl-text, #e6edf3);
     cursor: pointer;
     text-align: left;
     width: 100%;
@@ -342,9 +342,9 @@
     font-size: 13px;
     transition: background 0.15s;
   }
-  .recent-item:hover { background: #161b22; border-color: #30363d; }
+  .recent-item:hover { background: var(--cl-surface, #161b22); border-color: var(--cl-border, #30363d); }
   .recent-path { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
-  .recent-date { color: #8b949e; font-size: 11px; }
+  .recent-date { color: var(--cl-secondary, #8b949e); font-size: 11px; }
 
   .banner.error {
     background: #da363433;
@@ -376,7 +376,7 @@
   }
 
   .repo-path {
-    color: #8b949e;
+    color: var(--cl-secondary, #8b949e);
     font-size: 12px;
     font-family: 'JetBrains Mono', monospace;
   }
@@ -388,28 +388,28 @@
   .stat {
     display: flex;
     flex-direction: column;
-    background: #161b22;
-    border: 1px solid #30363d;
+    background: var(--cl-surface, #161b22);
+    border: 1px solid var(--cl-border, #30363d);
     border-radius: 8px;
     padding: 16px 24px;
     min-width: 120px;
   }
-  .stat-value { font-size: 28px; font-weight: 700; color: #58a6ff; }
-  .stat-label { font-size: 12px; color: #8b949e; text-transform: uppercase; }
-  .last-commit { color: #8b949e; font-size: 13px; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--cl-accent, #58a6ff); }
+  .stat-label { font-size: 12px; color: var(--cl-secondary, #8b949e); text-transform: uppercase; }
+  .last-commit { color: var(--cl-secondary, #8b949e); font-size: 13px; }
   .last-commit .label { margin-right: 6px; }
-  .last-commit .value { color: #e6edf3; font-family: 'JetBrains Mono', monospace; }
+  .last-commit .value { color: var(--cl-text, #e6edf3); font-family: 'JetBrains Mono', monospace; }
   .change-repo {
     padding: 6px 12px;
     background: transparent;
-    border: 1px solid #30363d;
+    border: 1px solid var(--cl-border, #30363d);
     border-radius: 6px;
-    color: #8b949e;
+    color: var(--cl-secondary, #8b949e);
     cursor: pointer;
     font-size: 12px;
     font-family: inherit;
     white-space: nowrap;
     flex-shrink: 0;
   }
-  .change-repo:hover { border-color: #58a6ff; color: #58a6ff; }
+  .change-repo:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
 </style>

@@ -34,6 +34,7 @@ type LLMConfig struct {
 type appConfig struct {
 	RecentRepos []RecentRepo `yaml:"recent_repos"`
 	LLM         llmDiskConf  `yaml:"llm"`
+	ActiveStyle string       `yaml:"active_style,omitempty"`
 }
 
 type llmDiskConf struct {
@@ -125,6 +126,28 @@ func (c *ConfigApp) ClearLLMKey(provider string) error {
 		return nil
 	}
 	return err
+}
+
+// GetActiveStyle returns the active style name, default "formal".
+func (c *ConfigApp) GetActiveStyle() (string, error) {
+	cfg, err := loadConfig()
+	if err != nil {
+		return "formal", err
+	}
+	if cfg.ActiveStyle == "" {
+		return "formal", nil
+	}
+	return cfg.ActiveStyle, nil
+}
+
+// SetActiveStyle saves the active style name to config.yml.
+func (c *ConfigApp) SetActiveStyle(name string) error {
+	cfg, err := loadConfig()
+	if err != nil {
+		return err
+	}
+	cfg.ActiveStyle = name
+	return saveConfig(cfg)
 }
 
 func filterOutRepo(repos []RecentRepo, path string) []RecentRepo {
