@@ -78,8 +78,6 @@
   function winMaximize() { (window as any).wails?.Window?.ToggleMaximise?.() }
   function winClose() { (window as any).wails?.Window?.Close?.() }
 
-  const LOGO_SVG = `<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><defs><clipPath id="c"><rect x="110" y="100" width="180" height="182"/></clipPath></defs><rect fill="currentColor" opacity="0.15" x="108" y="92" width="192" height="220" rx="4"/><rect fill="none" stroke="currentColor" stroke-width="6" x="100" y="86" width="200" height="220" rx="4" opacity="0.5"/><rect fill="none" stroke="currentColor" stroke-width="5" x="80" y="64" width="240" height="40" rx="20" opacity="0.6"/><rect fill="none" stroke="currentColor" stroke-width="5" x="80" y="292" width="240" height="40" rx="20" opacity="0.6"/><g clip-path="url(#c)" font-family="monospace" text-anchor="middle" fill="currentColor"><text x="200" y="140" font-size="18" opacity="0.9">a3f9c2e</text><text x="200" y="172" font-size="18" opacity="0.6">7b1d4f8</text><text x="200" y="204" font-size="18" opacity="0.3">2c8e6a1</text></g></svg>`
-
   const components: Record<string, any> = { Dashboard, Generate, Story, History, Contributors, Styles, Settings }
 </script>
 
@@ -87,13 +85,11 @@
   <nav class="sidebar" style="--wails-draggable: drag">
     <div class="sidebar-header" style="--wails-draggable: drag">
       <div class="brand" style="--wails-draggable: no-drag">
-        <span class="brand-logo">
-          {#if theme.logo}
+        {#if theme.logo}
+          <span class="brand-logo">
             <img src={theme.logo} alt="" width="24" height="24" />
-          {:else}
-            {@html LOGO_SVG}
-          {/if}
-        </span>
+          </span>
+        {/if}
         <span class="brand-text"><span class="wm-c">Commit</span><span class="wm-l">Lore</span></span>
       </div>
       <div class="win-controls" style="--wails-draggable: no-drag">
