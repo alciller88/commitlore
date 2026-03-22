@@ -12,9 +12,9 @@ func TestGetStyleTheme_formal(t *testing.T) {
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
-	assert.Equal(t, "#2563EB", theme.Primary)
-	assert.Equal(t, "#F8FAFC", theme.Background)
-	assert.Equal(t, "#1E293B", theme.Text)
+	assert.Equal(t, "#0969DA", theme.Primary)
+	assert.Equal(t, "#FFFFFF", theme.Background)
+	assert.Equal(t, "#1A1A2E", theme.Text)
 	assert.Equal(t, "light", theme.Mode)
 	assert.Contains(t, theme.FontFamily, "Inter")
 }
@@ -54,7 +54,7 @@ func TestGetStyleDetail_formal(t *testing.T) {
 	assert.NotEmpty(t, d.Templates.Header)
 	assert.NotEmpty(t, d.Templates.Feature)
 	assert.Equal(t, "light", d.Theme.Mode)
-	assert.Equal(t, "#2563EB", d.Theme.Colors.Primary)
+	assert.Equal(t, "#0969DA", d.Theme.Colors.Primary)
 	assert.Contains(t, d.Theme.Typography.FontFamily, "Inter")
 }
 
@@ -105,7 +105,7 @@ func TestGetStyleTheme_windowControls(t *testing.T) {
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
-	assert.Equal(t, "#9CA3AF", theme.WinDefault)
+	assert.Equal(t, "#888888", theme.WinDefault)
 	assert.Equal(t, "#FF5F57", theme.WinClose)
 	assert.Equal(t, "#FEBC2E", theme.WinMinimize)
 	assert.Equal(t, "#28C840", theme.WinMaximize)

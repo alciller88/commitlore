@@ -11,7 +11,7 @@ func TestLoad_formal(t *testing.T) {
 	s, err := Load("formal")
 	require.NoError(t, err)
 	assert.Equal(t, "formal", s.Name)
-	assert.Equal(t, "1.0.0", s.Version)
+	assert.Equal(t, "2.0.0", s.Version)
 	assert.NotEmpty(t, s.Description)
 	assert.NotEmpty(t, s.Templates.Header)
 	assert.NotEmpty(t, s.Templates.Feature)
