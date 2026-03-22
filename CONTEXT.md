@@ -208,6 +208,7 @@ feat/p3-visual-overhaulFrameless window, custom titlebar, design system, all scr
 fix/p3-ui-bugsHistory scroll fix, repo topbar, no scroll SVG, per-style window controls2026-03-22fix/p3-ui-bugs
 fix/p3-ui-bugs-2History inline scroll fix, window controls wired to Wails runtime2026-03-22fix/p3-ui-bugs-2
 feat/p3-style-formalImproved formal built-in style v2.0: colors, typography, templates, LLM prompt2026-03-22feat/p3-style-formal
+feat/p3-style-patchnotesPatchnotes v2.0 + UILabels schema: per-style nav labels, GameController logo, purple/gold aesthetic2026-03-22feat/p3-style-patchnotes
 
 Add a row here when completing each phase.
 
@@ -295,20 +296,16 @@ Add a row here when completing each phase.
   - vocabulary (key→value pairs, add/remove rows)
   - templates (header, feature, fix, breaking, footer, story_* — textarea per field)
 
-#### P3.3 — Style system expansion (future)
-- Styles will also control app UI text strings:
-  Example: "Story" → "Saga" for epic, "Chronicle" for patchnotes
-  Fields to add to .shipstyle: ui_labels.story, ui_labels.history, ui_labels.contributors,
-  ui_labels.generate, ui_labels.styles, ui_labels.settings, ui_labels.dashboard
-- Styles will also control navigation icons:
-  Example: local repo icon → sacred scroll for adeptus-mechanicus style,
-  folder for formal, game controller for patchnotes
+#### P3.3 — Style system expansion (partially implemented)
+- ~~ui_labels: per-style navigation label overrides~~ — IMPLEMENTED (feat/p3-style-patchnotes):
+  UILabels struct in internal/styles, UILabelsDetail in StyleTheme/StyleDetail,
+  reactive $uiLabels store in frontend, App.svelte nav uses labels from active style.
+  patchnotes uses: Hub, Patch Notes, Dev Diary, Commit Log, Dev Team, Themes, Options
+- Styles will also control navigation icons (future):
   Fields to add to .shipstyle: ui_icons.local_repo, ui_icons.github_repo,
   ui_icons.dashboard, ui_icons.generate, ui_icons.story, ui_icons.history,
   ui_icons.contributors, ui_icons.styles, ui_icons.settings
   Icons are inline SVG strings stored in the .shipstyle file
-- These fields are NOT implemented now — registered here to inform future .shipstyle
-  schema design decisions
 
 #### P3.4 — HTML report visual overhaul
 - Reports must visually reflect the active style beyond just colors

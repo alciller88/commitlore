@@ -105,7 +105,7 @@ Complete structure of a .shipstyle file:
     typography:
       font_family, font_size_base, font_size_header, font_size_code
     header_image: ""          # URL or base64
-    logo: ""                  # URL or base64
+    logo: ""                  # URL, base64, or inline SVG string
     card_style: "bordered"    # minimal | bordered | glassmorphism
     animations: true
     custom_css: ""            # additional CSS injected at end
@@ -119,8 +119,17 @@ Complete structure of a .shipstyle file:
       separator, bullet, indent
     density: "normal"         # compact | normal | verbose
 
-All vocabulary, theme, and terminal fields are optional with sensible
-zero-value defaults.
+  ui_labels:                  # navigation label overrides (optional)
+    dashboard: "Dashboard"
+    generate: "Generate"
+    story: "Story"
+    history: "History"
+    contributors: "Contributors"
+    styles: "Styles"
+    settings: "Settings"
+
+All vocabulary, theme, terminal, and ui_labels fields are optional with
+sensible zero-value defaults (English labels for ui_labels).
 
 Built-in Styles (v1)
 
