@@ -26,5 +26,6 @@ export {
     TerminalDetail,
     ThemeDetail,
     TypoDetail,
+    UILabelsDetail,
     WinControlDetail
 } from "./models.js";

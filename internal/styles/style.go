@@ -24,6 +24,7 @@ type Style struct {
 	Tags        []string          `yaml:"tags"`
 	PreviewURL  string            `yaml:"preview_url"`
 	Homepage    string            `yaml:"homepage"`
+	UILabels    UILabels          `yaml:"ui_labels"`
 }
 
 // Templates holds the template strings for each commit type and story sections.
@@ -79,6 +80,17 @@ type Typography struct {
 	FontSizeBase string `yaml:"font_size_base"`
 	FontSizeH    string `yaml:"font_size_header"`
 	FontSizeCode string `yaml:"font_size_code"`
+}
+
+// UILabels holds optional navigation label overrides per style.
+type UILabels struct {
+	Dashboard    string `yaml:"dashboard"`
+	Generate     string `yaml:"generate"`
+	Story        string `yaml:"story"`
+	History      string `yaml:"history"`
+	Contributors string `yaml:"contributors"`
+	Styles       string `yaml:"styles"`
+	Settings     string `yaml:"settings"`
 }
 
 // Terminal defines the visual identity for terminal output.

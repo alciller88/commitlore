@@ -5,6 +5,13 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (P3 patchnotes style v2 + UILabels)
+- internal/styles: UILabels struct added to .shipstyle schema — per-style navigation label overrides (dashboard, generate, story, history, contributors, styles, settings)
+- app/style_app.go: UILabelsDetail in StyleTheme and StyleDetail, buildUILabels() with English defaults fallback
+- app/frontend: uiLabels writable store, applyTheme() updates labels reactively, App.svelte nav uses $uiLabels
+- App.svelte: inline SVG logo support via {@html} when logo field starts with `<svg`
+- patchnotes.shipstyle v2.0.0: professional gaming aesthetic (purple #7C6FCD / gold #F0A500), Rajdhani font, Phosphor GameController SVG logo, ui_labels overrides (Hub, Patch Notes, Dev Diary, Commit Log, Dev Team, Themes, Options), refined LLM prompt
+
 ### Changed (P3 formal style v2)
 - formal.shipstyle: bumped to v2.0.0 with improved colors (#0969DA primary, #0550AE accent, pure white background), tighter typography (13px base, 20px headers, Inter system stack), bordered card style, refined LLM prompt with executive summary instruction, enriched templates with hash+author metadata, bullet decorator changed to •
 

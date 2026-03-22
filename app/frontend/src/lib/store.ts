@@ -16,3 +16,23 @@ export interface RepoSummary {
 export const activeRepo = writable<ActiveRepo | null>(null)
 export const repoSummary = writable<RepoSummary | null>(null)
 export const activeStyle = writable<string>('formal')
+
+export interface UILabelsType {
+  dashboard: string
+  generate: string
+  story: string
+  history: string
+  contributors: string
+  styles: string
+  settings: string
+}
+
+export const uiLabels = writable<UILabelsType>({
+  dashboard: 'Dashboard',
+  generate: 'Generate',
+  story: 'Story',
+  history: 'History',
+  contributors: 'Contributors',
+  styles: 'Styles',
+  settings: 'Settings',
+})

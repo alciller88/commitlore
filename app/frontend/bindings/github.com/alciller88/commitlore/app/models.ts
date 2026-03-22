@@ -165,6 +165,7 @@ export class StyleDetail {
     "vocabulary": { [_ in string]?: string };
     "theme": ThemeDetail;
     "terminal": TerminalDetail;
+    "uiLabels": UILabelsDetail;
 
     /** Creates a new StyleDetail instance. */
     constructor($$source: Partial<StyleDetail> = {}) {
@@ -204,6 +205,9 @@ export class StyleDetail {
         if (!("terminal" in $$source)) {
             this["terminal"] = (new TerminalDetail());
         }
+        if (!("uiLabels" in $$source)) {
+            this["uiLabels"] = (new UILabelsDetail());
+        }
 
         Object.assign(this, $$source);
     }
@@ -217,6 +221,7 @@ export class StyleDetail {
         const $$createField9_0 = $$createType2;
         const $$createField10_0 = $$createType3;
         const $$createField11_0 = $$createType4;
+        const $$createField12_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("tags" in $$parsedSource) {
             $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
@@ -232,6 +237,9 @@ export class StyleDetail {
         }
         if ("terminal" in $$parsedSource) {
             $$parsedSource["terminal"] = $$createField11_0($$parsedSource["terminal"]);
+        }
+        if ("uiLabels" in $$parsedSource) {
+            $$parsedSource["uiLabels"] = $$createField12_0($$parsedSource["uiLabels"]);
         }
         return new StyleDetail($$parsedSource as Partial<StyleDetail>);
     }
@@ -256,6 +264,7 @@ export class StyleTheme {
     "winClose": string;
     "winMinimize": string;
     "winMaximize": string;
+    "uiLabels": UILabelsDetail;
 
     /** Creates a new StyleTheme instance. */
     constructor($$source: Partial<StyleTheme> = {}) {
@@ -304,6 +313,9 @@ export class StyleTheme {
         if (!("winMaximize" in $$source)) {
             this["winMaximize"] = "";
         }
+        if (!("uiLabels" in $$source)) {
+            this["uiLabels"] = (new UILabelsDetail());
+        }
 
         Object.assign(this, $$source);
     }
@@ -312,7 +324,11 @@ export class StyleTheme {
      * Creates a new StyleTheme instance from a string or object.
      */
     static createFrom($$source: any = {}): StyleTheme {
+        const $$createField15_0 = $$createType5;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("uiLabels" in $$parsedSource) {
+            $$parsedSource["uiLabels"] = $$createField15_0($$parsedSource["uiLabels"]);
+        }
         return new StyleTheme($$parsedSource as Partial<StyleTheme>);
     }
 }
@@ -444,8 +460,8 @@ export class TerminalDetail {
      * Creates a new TerminalDetail instance from a string or object.
      */
     static createFrom($$source: any = {}): TerminalDetail {
-        const $$createField0_0 = $$createType5;
-        const $$createField1_0 = $$createType6;
+        const $$createField0_0 = $$createType6;
+        const $$createField1_0 = $$createType7;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("colors" in $$parsedSource) {
             $$parsedSource["colors"] = $$createField0_0($$parsedSource["colors"]);
@@ -508,9 +524,9 @@ export class ThemeDetail {
      * Creates a new ThemeDetail instance from a string or object.
      */
     static createFrom($$source: any = {}): ThemeDetail {
-        const $$createField1_0 = $$createType7;
-        const $$createField2_0 = $$createType8;
-        const $$createField8_0 = $$createType9;
+        const $$createField1_0 = $$createType8;
+        const $$createField2_0 = $$createType9;
+        const $$createField8_0 = $$createType10;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("colors" in $$parsedSource) {
             $$parsedSource["colors"] = $$createField1_0($$parsedSource["colors"]);
@@ -562,6 +578,54 @@ export class TypoDetail {
 }
 
 /**
+ * UILabelsDetail holds navigation label overrides for the frontend.
+ */
+export class UILabelsDetail {
+    "dashboard": string;
+    "generate": string;
+    "story": string;
+    "history": string;
+    "contributors": string;
+    "styles": string;
+    "settings": string;
+
+    /** Creates a new UILabelsDetail instance. */
+    constructor($$source: Partial<UILabelsDetail> = {}) {
+        if (!("dashboard" in $$source)) {
+            this["dashboard"] = "";
+        }
+        if (!("generate" in $$source)) {
+            this["generate"] = "";
+        }
+        if (!("story" in $$source)) {
+            this["story"] = "";
+        }
+        if (!("history" in $$source)) {
+            this["history"] = "";
+        }
+        if (!("contributors" in $$source)) {
+            this["contributors"] = "";
+        }
+        if (!("styles" in $$source)) {
+            this["styles"] = "";
+        }
+        if (!("settings" in $$source)) {
+            this["settings"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new UILabelsDetail instance from a string or object.
+     */
+    static createFrom($$source: any = {}): UILabelsDetail {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new UILabelsDetail($$parsedSource as Partial<UILabelsDetail>);
+    }
+}
+
+/**
  * WinControlDetail holds window control colors.
  */
 export class WinControlDetail {
@@ -603,8 +667,9 @@ const $$createType1 = TemplatesDetail.createFrom;
 const $$createType2 = $Create.Map($Create.Any, $Create.Any);
 const $$createType3 = ThemeDetail.createFrom;
 const $$createType4 = TerminalDetail.createFrom;
-const $$createType5 = TermColorsDetail.createFrom;
-const $$createType6 = DecorDetail.createFrom;
-const $$createType7 = ColorsDetail.createFrom;
-const $$createType8 = TypoDetail.createFrom;
-const $$createType9 = WinControlDetail.createFrom;
+const $$createType5 = UILabelsDetail.createFrom;
+const $$createType6 = TermColorsDetail.createFrom;
+const $$createType7 = DecorDetail.createFrom;
+const $$createType8 = ColorsDetail.createFrom;
+const $$createType9 = TypoDetail.createFrom;
+const $$createType10 = WinControlDetail.createFrom;

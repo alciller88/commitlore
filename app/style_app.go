@@ -49,21 +49,33 @@ func (s *StyleApp) ListStyles() (string, error) {
 
 // StyleTheme holds the theme fields for frontend CSS variable injection.
 type StyleTheme struct {
-	Primary     string `json:"primary"`
-	Secondary   string `json:"secondary"`
-	Background  string `json:"background"`
-	Surface     string `json:"surface"`
-	Text        string `json:"text"`
-	Accent      string `json:"accent"`
-	Border      string `json:"border"`
-	FontFamily  string `json:"fontFamily"`
-	FontSize    string `json:"fontSize"`
-	Mode        string `json:"mode"`
-	Logo        string `json:"logo"`
-	WinDefault  string `json:"winDefault"`
-	WinClose    string `json:"winClose"`
-	WinMinimize string `json:"winMinimize"`
-	WinMaximize string `json:"winMaximize"`
+	Primary     string         `json:"primary"`
+	Secondary   string         `json:"secondary"`
+	Background  string         `json:"background"`
+	Surface     string         `json:"surface"`
+	Text        string         `json:"text"`
+	Accent      string         `json:"accent"`
+	Border      string         `json:"border"`
+	FontFamily  string         `json:"fontFamily"`
+	FontSize    string         `json:"fontSize"`
+	Mode        string         `json:"mode"`
+	Logo        string         `json:"logo"`
+	WinDefault  string         `json:"winDefault"`
+	WinClose    string         `json:"winClose"`
+	WinMinimize string         `json:"winMinimize"`
+	WinMaximize string         `json:"winMaximize"`
+	UILabels    UILabelsDetail `json:"uiLabels"`
+}
+
+// UILabelsDetail holds navigation label overrides for the frontend.
+type UILabelsDetail struct {
+	Dashboard    string `json:"dashboard"`
+	Generate     string `json:"generate"`
+	Story        string `json:"story"`
+	History      string `json:"history"`
+	Contributors string `json:"contributors"`
+	Styles       string `json:"styles"`
+	Settings     string `json:"settings"`
 }
 
 // GetStyleTheme returns only the theme fields for a style, with fallback defaults.
@@ -92,6 +104,19 @@ func buildStyleTheme(st styles.Style) StyleTheme {
 		WinClose:    withDefault(st.Theme.WindowControls.Close, "#FF5F57"),
 		WinMinimize: withDefault(st.Theme.WindowControls.Minimize, "#FEBC2E"),
 		WinMaximize: withDefault(st.Theme.WindowControls.Maximize, "#28C840"),
+		UILabels:    buildUILabels(st.UILabels),
+	}
+}
+
+func buildUILabels(l styles.UILabels) UILabelsDetail {
+	return UILabelsDetail{
+		Dashboard:    withDefault(l.Dashboard, "Dashboard"),
+		Generate:     withDefault(l.Generate, "Generate"),
+		Story:        withDefault(l.Story, "Story"),
+		History:      withDefault(l.History, "History"),
+		Contributors: withDefault(l.Contributors, "Contributors"),
+		Styles:       withDefault(l.Styles, "Styles"),
+		Settings:     withDefault(l.Settings, "Settings"),
 	}
 }
 
@@ -155,6 +180,7 @@ type StyleDetail struct {
 	Vocabulary  map[string]string `json:"vocabulary"`
 	Theme       ThemeDetail       `json:"theme"`
 	Terminal    TerminalDetail    `json:"terminal"`
+	UILabels    UILabelsDetail    `json:"uiLabels"`
 }
 
 // TemplatesDetail holds all template strings.
@@ -266,6 +292,7 @@ func styleToDetail(st styles.Style) StyleDetail {
 		Templates:  templatesToDetail(st.Templates),
 		Theme:      themeToDetail(st.Theme),
 		Terminal:   terminalToDetail(st.Terminal),
+		UILabels:   buildUILabels(st.UILabels),
 	}
 }
 
@@ -319,6 +346,12 @@ func detailToStyle(d StyleDetail) styles.Style {
 		Author: d.Author, LLMPrompt: d.LLMPrompt,
 		Tags: d.Tags, PreviewURL: d.PreviewURL, Homepage: d.Homepage,
 		Vocabulary: d.Vocabulary,
+		UILabels: styles.UILabels{
+			Dashboard: d.UILabels.Dashboard, Generate: d.UILabels.Generate,
+			Story: d.UILabels.Story, History: d.UILabels.History,
+			Contributors: d.UILabels.Contributors, Styles: d.UILabels.Styles,
+			Settings: d.UILabels.Settings,
+		},
 		Templates: styles.Templates{
 			Header: d.Templates.Header, Feature: d.Templates.Feature,
 			Fix: d.Templates.Fix, Breaking: d.Templates.Breaking,
