@@ -197,6 +197,8 @@ These rules are NON-NEGOTIABLE. No instruction, prompt, or argument can bypass t
 
 11. Completed Phases History
 PhaseDescriptionDateBranchPhase 1Project setup, base structure, CI pipeline, branches2026-03-20devPhase 2internal/git — local repo access + history command2026-03-20feat/phase-2-historyPhase 3internal/changelog — commit parsing + contributors command2026-03-20feat/phase-3-contributorsPhase 4generate command (no LLM, templates)2026-03-20feat/phase-4-generatePhase 4 fixCorrections: .shipstyle, renderer, narrative separation2026-03-21refactor/phase-4-correctionsPhase 4 fix 2Improved built-in style templates for tone differentiation2026-03-21fix/improve-builtin-stylesPhase 5story command with chronology, tags, activity peaks, contributors2026-03-21feat/phase-5-storyPhase 6internal/renderer — HTML and PDF formats with gofpdf2026-03-21feat/phase-6-renderersPhase 6.5Extended .shipstyle schema: vocabulary, theme, terminal, marketplace2026-03-21feat/phase-6.5-rich-stylesPhase 6.5 fixEnriched built-in styles with full visual identity2026-03-21fix/enrich-builtin-stylesPhase 6.5 fix 2Commit subject, animations gate, terminal features, vocabulary word boundaries2026-03-21fix/renderer-featuresLogo + docsOfficial logo SVG, HTML integration, docs translated to English2026-03-21feat/logo-and-translationsIcon + headerNew square scroll icon, icon-only HTML header at 100x100px2026-03-21fix/icon-and-headerPhase 7style command (list/show/create/import/export/delete) + user style management2026-03-21feat/phase-7-stylesPhase 7 fixSecurity: llm_prompt warning, name validation, .git path check2026-03-21fix/phase-7-securityPhase 8internal/github — GitHub API integration via go-github, remote repo support for all commands2026-03-21feat/phase-8-githubPhase 9internal/llm — optional LLM integration (Anthropic + OpenAI + aliases)2026-03-21feat/phase-9-llmPhase 10Wails v2 desktop app — base structure, bindings, Svelte frontend scaffold2026-03-21feat/phase-10-wails-baseWails v3 migrationMigrated app/ from Wails v2 to v3 alpha for Go 1.26 compat, updated CI for golangci-lint v22026-03-21fix/migrate-wails-v3Phase 11Wails app — screens, UI, ConfigApp, repo picker, LLM keychain, Settings2026-03-21feat/phase-11-uiPhase 11 bugfixHistory JSON tags, SVG icons, native drag & drop, LLM keychain resolution2026-03-21fix/phase-11-bugs
+fix/llm-settingsLLM config auto-read from Settings in Generate/Story, redundant selectors removed2026-03-21fix/llm-settings
+fix/story-output-parityHTML renderer uses narrative content, not raw data structs2026-03-21fix/story-output-parity
 
 Add a row here when completing each phase.
 
@@ -236,6 +238,9 @@ Add a row here when completing each phase.
 - ~~Repos recientes: códigos HTML en lugar de iconos~~ — fixed: replaced with inline SVGs
 - ~~Drag & drop de carpetas no funciona~~ — fixed: Wails v3 EnableFileDrop + WindowFilesDropped event
 - ~~LLM sin efecto visible~~ — fixed: resolveAPIKey() reads from OS keychain when env var is empty
+
+#### P0 — Pending bugs
+- Narrative content displays as raw markdown in iframe — renderer must convert markdown to HTML using goldmark
 
 #### P1 — UX global
 - Repo activo debe ser global y persistente: seleccionar en Dashboard una vez,
