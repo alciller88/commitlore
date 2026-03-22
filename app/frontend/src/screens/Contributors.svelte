@@ -42,12 +42,12 @@
     <p>Select a repository in Dashboard to get started.</p>
   </div>
 {:else}
-  <div class="screen">
+  <div style="display:flex; flex-direction:column; height:100%; overflow:hidden;">
     {#if error}
-      <div class="banner error">{error}</div>
+      <div class="banner error" style="flex-shrink:0;">{error}</div>
     {/if}
 
-    <div class="filters-row">
+    <div class="filters-row" style="flex-shrink:0;">
       <input class="since-input" type="text" bind:value={since} placeholder="Since (YYYY-MM-DD)" />
       <div class="top-group">
         <span class="top-label">Top</span>
@@ -64,12 +64,12 @@
     </div>
 
     {#if currentRepo.type === 'github' && contribs.length > 0}
-      <p class="remote-note">Note: Top files not available for remote repositories.</p>
+      <p class="remote-note" style="flex-shrink:0;">Note: Top files not available for remote repositories.</p>
     {/if}
 
     {#if contribs.length > 0}
-      <div class="table-container">
-        <table>
+      <div style="flex:1; min-height:0; overflow-y:auto;">
+        <table style="width:100%; border-collapse:collapse;">
           <thead>
             <tr>
               <th class="col-contributor">Contributor</th>
@@ -108,20 +108,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    flex: 1;
     gap: var(--space-3);
     color: var(--cl-secondary);
   }
   .no-repo p {
     margin: 0;
     font-size: var(--text-md);
-  }
-
-  .screen {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    gap: var(--space-3);
   }
 
   .filters-row {
@@ -226,11 +219,6 @@
     margin: 0;
     font-size: var(--text-xs);
     color: var(--cl-secondary);
-  }
-
-  .table-container {
-    overflow: auto;
-    flex: 1;
   }
 
   table {

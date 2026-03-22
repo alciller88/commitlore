@@ -438,7 +438,7 @@
 </div>
 
 <style>
-  .two-col { display: flex; gap: 0; height: 100%; }
+  .two-col { display: flex; gap: 0; flex: 1; min-height: 0; }
 
   .left-col {
     width: 260px; flex-shrink: 0; display: flex; flex-direction: column;
