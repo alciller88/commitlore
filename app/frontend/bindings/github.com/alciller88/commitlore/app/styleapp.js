@@ -46,13 +46,24 @@ export function ExportStyle(name, output) {
 }
 
 /**
+ * GetStyleDetail returns all fields of a .shipstyle for the editor UI.
+ * @param {string} name
+ * @returns {$CancellablePromise<$models.StyleDetail>}
+ */
+export function GetStyleDetail(name) {
+    return $Call.ByID(2945748804, name).then(/** @type {($result: any) => any} */(($result) => {
+        return $$createType0($result);
+    }));
+}
+
+/**
  * GetStyleTheme returns only the theme fields for a style, with fallback defaults.
  * @param {string} name
  * @returns {$CancellablePromise<$models.StyleTheme>}
  */
 export function GetStyleTheme(name) {
     return $Call.ByID(579919682, name).then(/** @type {($result: any) => any} */(($result) => {
-        return $$createType0($result);
+        return $$createType1($result);
     }));
 }
 
@@ -66,11 +77,29 @@ export function ImportStyle(path) {
 }
 
 /**
+ * IsStyleBuiltIn returns true if the given name is a built-in style.
+ * @param {string} name
+ * @returns {$CancellablePromise<boolean>}
+ */
+export function IsStyleBuiltIn(name) {
+    return $Call.ByID(2321027588, name);
+}
+
+/**
  * ListStyles returns all available styles (built-in + user) as JSON.
  * @returns {$CancellablePromise<string>}
  */
 export function ListStyles() {
     return $Call.ByID(2140763718);
+}
+
+/**
+ * SaveStyleDetail saves all fields of a user style. Built-in styles are rejected.
+ * @param {$models.StyleDetail} detail
+ * @returns {$CancellablePromise<void>}
+ */
+export function SaveStyleDetail(detail) {
+    return $Call.ByID(2713249251, detail);
 }
 
 /**
@@ -83,4 +112,5 @@ export function ShowStyle(name) {
 }
 
 // Private type creation functions
-const $$createType0 = $models.StyleTheme.createFrom;
+const $$createType0 = $models.StyleDetail.createFrom;
+const $$createType1 = $models.StyleTheme.createFrom;

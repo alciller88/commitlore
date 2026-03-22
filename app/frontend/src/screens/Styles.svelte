@@ -1,25 +1,27 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { ListStyles, ShowStyle, ImportStyle, ExportStyle, DeleteStyle, CreateStyle } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { onMount, onDestroy } from 'svelte'
+  import { ListStyles, GetStyleDetail, SaveStyleDetail, DeleteStyle, ImportStyle, ExportStyle, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { GetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
   import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
+  import { activeStyle } from '../lib/store'
 
-  type StyleInfo = {
-    name: string
-    builtIn: boolean
-    description: string
-    author: string
-    version: string
-  }
+  type StyleListItem = { name: string; builtIn: boolean; primary: string; accent: string; background: string }
 
-  let styles: StyleInfo[] = []
-  let selectedStyle: any = null
+  let styles: StyleListItem[] = []
   let selectedName = ''
-  let loading = false
+  let detail: any = null
+  let isBuiltIn = false
+  let activeTab = 'colors'
   let error = ''
-  let showCreate = false
+  let success = ''
+  let loading = false
+  let creating = false
   let newName = ''
-  let newDesc = ''
-  let newAuthor = ''
+  let confirmDelete = false
+  let currentActiveStyle = 'formal'
+
+  const unsubStyle = activeStyle.subscribe(v => { currentActiveStyle = v })
+  onDestroy(() => unsubStyle())
 
   onMount(loadStyles)
 
@@ -28,7 +30,17 @@
     error = ''
     try {
       const raw = await ListStyles()
-      styles = JSON.parse(raw)
+      const list = JSON.parse(raw)
+      const enriched: StyleListItem[] = []
+      for (const s of list) {
+        try {
+          const t = await GetStyleTheme(s.name)
+          enriched.push({ name: s.name, builtIn: s.builtIn, primary: t.primary, accent: t.accent, background: t.background })
+        } catch {
+          enriched.push({ name: s.name, builtIn: s.builtIn, primary: '#58a6ff', accent: '#58a6ff', background: '#0d1117' })
+        }
+      }
+      styles = enriched
     } catch (e: any) {
       error = e?.message || 'Failed to load styles'
     } finally {
@@ -37,12 +49,73 @@
   }
 
   async function selectStyle(name: string) {
+    creating = false
     selectedName = name
+    error = ''
     try {
-      const raw = await ShowStyle(name)
-      selectedStyle = JSON.parse(raw)
+      detail = await GetStyleDetail(name)
+      isBuiltIn = styles.find(s => s.name === name)?.builtIn ?? false
+      activeTab = 'colors'
     } catch (e: any) {
-      error = e?.message || 'Failed to load style details'
+      error = e?.message || 'Failed to load style'
+      detail = null
+    }
+  }
+
+  function startCreate() {
+    creating = true
+    selectedName = ''
+    newName = ''
+    detail = {
+      name: '', version: '1.0.0', description: '', author: '',
+      llmPrompt: '', tags: [], previewUrl: '', homepage: '',
+      templates: { header: '# Changelog {{.Version}}\n', feature: '- {{.Message}}\n', fix: '- {{.Message}}\n', breaking: '- {{.Message}}\n', footer: '', storyIntro: '', storyMilestone: '', storyPeak: '', storyContributor: '', storyFooter: '' },
+      vocabulary: {},
+      theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '' },
+      terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' }
+    }
+    isBuiltIn = false
+    activeTab = 'colors'
+  }
+
+  async function saveStyle() {
+    error = ''
+    success = ''
+    if (creating) {
+      if (!newName.trim() || !/^[a-zA-Z0-9_-]+$/.test(newName.trim())) {
+        error = 'Name must contain only letters, numbers, hyphens, underscores'
+        return
+      }
+      if (styles.some(s => s.name === newName.trim())) {
+        error = 'A style with this name already exists'
+        return
+      }
+      detail.name = newName.trim()
+    }
+    try {
+      await SaveStyleDetail(detail)
+      success = 'Style saved.'
+      setTimeout(() => success = '', 3000)
+      if (creating) {
+        creating = false
+        selectedName = detail.name
+      }
+      await loadStyles()
+    } catch (e: any) {
+      error = e?.message || 'Save failed'
+    }
+  }
+
+  async function doDelete() {
+    error = ''
+    try {
+      await DeleteStyle(selectedName)
+      detail = null
+      selectedName = ''
+      confirmDelete = false
+      await loadStyles()
+    } catch (e: any) {
+      error = e?.message || 'Delete failed'
     }
   }
 
@@ -59,209 +132,448 @@
     }
   }
 
-  async function exportStyle(name: string) {
+  async function exportStyle() {
+    if (!selectedName) return
     error = ''
     try {
-      await ExportStyle(name, name + '.shipstyle')
+      await ExportStyle(selectedName, selectedName + '.shipstyle')
+      success = 'Exported.'
+      setTimeout(() => success = '', 3000)
     } catch (e: any) {
       error = e?.message || 'Export failed'
     }
   }
 
-  async function deleteStyle(name: string) {
-    error = ''
-    try {
-      await DeleteStyle(name)
-      if (selectedName === name) {
-        selectedStyle = null
-        selectedName = ''
-      }
-      await loadStyles()
-    } catch (e: any) {
-      error = e?.message || 'Delete failed'
-    }
+  let vocabKey = ''
+  let vocabVal = ''
+  function addVocab() {
+    if (!vocabKey.trim()) return
+    if (!detail.vocabulary) detail.vocabulary = {}
+    detail.vocabulary[vocabKey.trim()] = vocabVal.trim()
+    detail = detail
+    vocabKey = ''
+    vocabVal = ''
+  }
+  function removeVocab(key: string) {
+    delete detail.vocabulary[key]
+    detail = detail
   }
 
-  async function createStyle() {
-    if (!newName.trim()) return
-    error = ''
-    try {
-      await CreateStyle(newName.trim(), newDesc.trim(), newAuthor.trim())
-      showCreate = false
-      newName = ''
-      newDesc = ''
-      newAuthor = ''
-      await loadStyles()
-    } catch (e: any) {
-      error = e?.message || 'Create failed'
-    }
-  }
+  const tabs = [
+    { id: 'colors', label: 'Colors' },
+    { id: 'typography', label: 'Typography' },
+    { id: 'images', label: 'Images' },
+    { id: 'templates', label: 'Templates' },
+    { id: 'advanced', label: 'Advanced' },
+  ]
+
+  const colorFields = ['primary', 'secondary', 'background', 'surface', 'text', 'accent', 'border'] as const
+  const templateFields = [
+    { key: 'header', label: 'Header', hint: '{{.Version}}, {{.Date}}' },
+    { key: 'feature', label: 'Feature', hint: '{{.Message}}, {{.Hash}}, {{.Author}}' },
+    { key: 'fix', label: 'Fix', hint: '{{.Message}}, {{.Hash}}, {{.Author}}' },
+    { key: 'breaking', label: 'Breaking', hint: '{{.Message}}, {{.Hash}}' },
+    { key: 'footer', label: 'Footer', hint: '{{.Date}}' },
+    { key: 'storyIntro', label: 'Story Intro', hint: '{{.FirstAuthor}}, {{.TotalCommits}}' },
+    { key: 'storyMilestone', label: 'Story Milestone', hint: '{{.Tag}}, {{.Date}}' },
+    { key: 'storyPeak', label: 'Story Peak', hint: '{{.Month}}, {{.Count}}' },
+    { key: 'storyContributor', label: 'Story Contributor', hint: '{{.Name}}, {{.Date}}' },
+    { key: 'storyFooter', label: 'Story Footer', hint: '' },
+  ]
 </script>
 
-<div class="screen">
-  <div class="header-row">
-    <h1>Styles</h1>
-    <div class="header-actions">
-      <button class="tool-btn" on:click={importStyle}>Import</button>
-      <button class="tool-btn" on:click={() => showCreate = !showCreate}>
-        {showCreate ? 'Cancel' : 'Create'}
+<div class="two-col">
+  <div class="left-col">
+    <div class="left-header">
+      <h1>Styles</h1>
+      <button class="small-action" on:click={importStyle} title="Import .shipstyle file">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       </button>
     </div>
-  </div>
-
-  {#if error}
-    <div class="banner error">{error}</div>
-  {/if}
-
-  {#if showCreate}
-    <div class="create-form">
-      <input type="text" bind:value={newName} placeholder="Style name" />
-      <input type="text" bind:value={newDesc} placeholder="Description" />
-      <input type="text" bind:value={newAuthor} placeholder="Author" />
-      <button class="action-btn" on:click={createStyle} disabled={!newName.trim()}>Create style</button>
-    </div>
-  {/if}
-
-  <div class="layout">
-    <div class="style-list">
+    <div class="style-cards">
       {#each styles as s}
         <button
-          class="style-item"
-          class:active={selectedName === s.name}
+          class="style-card"
+          class:selected={selectedName === s.name && !creating}
+          class:is-active={currentActiveStyle === s.name}
           on:click={() => selectStyle(s.name)}
         >
-          <div class="style-name">
-            {s.name}
-            <span class="badge" class:builtin={s.builtIn}>{s.builtIn ? 'built-in' : 'user'}</span>
+          <div class="card-top">
+            <span class="card-name">{s.name}</span>
+            <span class="card-badge" class:builtin={s.builtIn}>{s.builtIn ? 'built-in' : 'user'}</span>
           </div>
-          <div class="style-desc">{s.description}</div>
-          <div class="style-actions">
-            <button class="small-btn" on:click|stopPropagation={() => exportStyle(s.name)}>Export</button>
-            {#if !s.builtIn}
-              <button class="small-btn danger" on:click|stopPropagation={() => deleteStyle(s.name)}>Delete</button>
-            {/if}
+          <div class="card-swatches">
+            <span class="mini-swatch" style="background:{s.primary}"></span>
+            <span class="mini-swatch" style="background:{s.accent}"></span>
+            <span class="mini-swatch" style="background:{s.background}"></span>
           </div>
         </button>
       {/each}
-      {#if styles.length === 0 && !loading}
-        <p class="empty">No styles found.</p>
-      {/if}
     </div>
+    <button class="new-style-btn" on:click={startCreate}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M12 5v14M5 12h14"/></svg>
+      New style
+    </button>
+  </div>
 
-    {#if selectedStyle}
-      <div class="detail-panel">
-        <h2>{selectedStyle.name}</h2>
-        <div class="detail-row"><span class="label">Version:</span> {selectedStyle.version}</div>
-        <div class="detail-row"><span class="label">Author:</span> {selectedStyle.author}</div>
-        <div class="detail-row"><span class="label">Description:</span> {selectedStyle.description}</div>
-        {#if selectedStyle.theme}
-          <h3>Theme</h3>
-          <div class="detail-row"><span class="label">Mode:</span> {selectedStyle.theme.mode || 'dark'}</div>
-          {#if selectedStyle.theme.colors}
-            <div class="color-row">
-              {#each Object.entries(selectedStyle.theme.colors) as [key, val]}
-                <div class="color-swatch">
-                  <div class="swatch" style="background: {val}"></div>
-                  <span class="color-name">{key}</span>
+  <div class="right-col">
+    {#if error}
+      <div class="banner error">{error}</div>
+    {/if}
+    {#if success}
+      <div class="banner success">{success}</div>
+    {/if}
+
+    {#if !detail && !creating}
+      <div class="empty-editor">
+        <p>Select a style to view or edit</p>
+      </div>
+    {:else if detail}
+      {#if isBuiltIn}
+        <div class="banner info">Built-in styles cannot be modified</div>
+      {/if}
+
+      {#if creating}
+        <div class="name-field">
+          <label>Name</label>
+          <input type="text" bind:value={newName} placeholder="my-style-name" />
+        </div>
+      {:else}
+        <div class="editor-header">{detail.name}</div>
+      {/if}
+
+      <div class="tab-bar">
+        {#each tabs as tab}
+          <button class="tab" class:active={activeTab === tab.id} on:click={() => activeTab = tab.id}>{tab.label}</button>
+        {/each}
+      </div>
+
+      <div class="tab-content">
+        {#if activeTab === 'colors'}
+          <div class="field-group">
+            <label>Mode</label>
+            <div class="radio-group">
+              <label><input type="radio" bind:group={detail.theme.mode} value="dark" disabled={isBuiltIn} /> Dark</label>
+              <label><input type="radio" bind:group={detail.theme.mode} value="light" disabled={isBuiltIn} /> Light</label>
+            </div>
+          </div>
+          {#each colorFields as cf}
+            <div class="color-field">
+              <label>{cf}</label>
+              <div class="color-input-row">
+                <input type="color" value={detail.theme.colors[cf] || '#000000'} on:input={(e) => { detail.theme.colors[cf] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} />
+                <input type="text" bind:value={detail.theme.colors[cf]} disabled={isBuiltIn} class="hex-input" />
+              </div>
+            </div>
+          {/each}
+
+        {:else if activeTab === 'typography'}
+          <div class="field-group">
+            <label>Font Family</label>
+            <input type="text" bind:value={detail.theme.typography.fontFamily} disabled={isBuiltIn} />
+            <div class="font-preview" style="font-family:{detail.theme.typography.fontFamily || 'sans-serif'}">The quick brown fox jumps over the lazy dog</div>
+          </div>
+          <div class="field-group">
+            <label>Base Font Size</label>
+            <input type="text" bind:value={detail.theme.typography.fontSizeBase} disabled={isBuiltIn} placeholder="14px" />
+          </div>
+          <div class="field-group">
+            <label>Header Font Size</label>
+            <input type="text" bind:value={detail.theme.typography.fontSizeHeader} disabled={isBuiltIn} placeholder="24px" />
+          </div>
+          <div class="field-group">
+            <label>Code Font Size</label>
+            <input type="text" bind:value={detail.theme.typography.fontSizeCode} disabled={isBuiltIn} placeholder="13px" />
+          </div>
+
+        {:else if activeTab === 'images'}
+          <div class="field-group">
+            <label>Logo</label>
+            {#if detail.theme.logo}
+              <img src={detail.theme.logo} alt="logo" class="img-preview-sm" />
+            {/if}
+            <input type="text" bind:value={detail.theme.logo} disabled={isBuiltIn} placeholder="URL or base64" />
+            {#if !isBuiltIn}
+              <button class="small-action" on:click={() => { detail.theme.logo = ''; detail = detail }}>Clear</button>
+            {/if}
+          </div>
+          <div class="field-group">
+            <label>Header Image</label>
+            {#if detail.theme.headerImage}
+              <img src={detail.theme.headerImage} alt="header" class="img-preview-wide" />
+            {/if}
+            <input type="text" bind:value={detail.theme.headerImage} disabled={isBuiltIn} placeholder="URL or base64" />
+            {#if !isBuiltIn}
+              <button class="small-action" on:click={() => { detail.theme.headerImage = ''; detail = detail }}>Clear</button>
+            {/if}
+          </div>
+          <div class="field-group">
+            <label>Card Style</label>
+            <div class="radio-group">
+              <label><input type="radio" bind:group={detail.theme.cardStyle} value="minimal" disabled={isBuiltIn} /> Minimal</label>
+              <label><input type="radio" bind:group={detail.theme.cardStyle} value="bordered" disabled={isBuiltIn} /> Bordered</label>
+              <label><input type="radio" bind:group={detail.theme.cardStyle} value="glassmorphism" disabled={isBuiltIn} /> Glassmorphism</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Animations</label>
+            <label class="toggle-label">
+              <input type="checkbox" bind:checked={detail.theme.animations} disabled={isBuiltIn} />
+              {detail.theme.animations ? 'On' : 'Off'}
+            </label>
+          </div>
+
+        {:else if activeTab === 'templates'}
+          {#each templateFields as tf}
+            <div class="field-group">
+              <label>{tf.label} {#if tf.hint}<span class="hint">{tf.hint}</span>{/if}</label>
+              <textarea bind:value={detail.templates[tf.key]} disabled={isBuiltIn} rows="3" class="mono"></textarea>
+            </div>
+          {/each}
+          <div class="field-group">
+            <label>Vocabulary</label>
+            <div class="vocab-table">
+              {#if detail.vocabulary}
+                {#each Object.entries(detail.vocabulary) as [k, v]}
+                  <div class="vocab-row">
+                    <span class="vocab-key">{k}</span>
+                    <span class="vocab-val">{v}</span>
+                    {#if !isBuiltIn}
+                      <button class="vocab-del" on:click={() => removeVocab(k)}>x</button>
+                    {/if}
+                  </div>
+                {/each}
+              {/if}
+              {#if !isBuiltIn}
+                <div class="vocab-add">
+                  <input type="text" bind:value={vocabKey} placeholder="key" />
+                  <input type="text" bind:value={vocabVal} placeholder="value" />
+                  <button class="small-action" on:click={addVocab}>Add</button>
+                </div>
+              {/if}
+            </div>
+          </div>
+
+        {:else if activeTab === 'advanced'}
+          <div class="field-group">
+            <label>Terminal Colors (ANSI names)</label>
+            <div class="inline-fields">
+              {#each ['header', 'feature', 'fix', 'breaking', 'footer'] as tc}
+                <div class="mini-field">
+                  <span class="mini-label">{tc}</span>
+                  <input type="text" bind:value={detail.terminal.colors[tc]} disabled={isBuiltIn} placeholder="e.g. cyan" />
                 </div>
               {/each}
             </div>
-          {/if}
-        {/if}
-        {#if selectedStyle.llm_prompt}
-          <h3>LLM Prompt</h3>
-          <pre class="prompt-preview">{selectedStyle.llm_prompt}</pre>
+          </div>
+          <div class="field-group">
+            <label>Terminal Decorators</label>
+            <div class="inline-fields">
+              <div class="mini-field">
+                <span class="mini-label">separator</span>
+                <input type="text" bind:value={detail.terminal.decorators.separator} disabled={isBuiltIn} />
+              </div>
+              <div class="mini-field">
+                <span class="mini-label">bullet</span>
+                <input type="text" bind:value={detail.terminal.decorators.bullet} disabled={isBuiltIn} />
+              </div>
+              <div class="mini-field">
+                <span class="mini-label">indent</span>
+                <input type="text" bind:value={detail.terminal.decorators.indent} disabled={isBuiltIn} />
+              </div>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Terminal Density</label>
+            <div class="radio-group">
+              <label><input type="radio" bind:group={detail.terminal.density} value="compact" disabled={isBuiltIn} /> Compact</label>
+              <label><input type="radio" bind:group={detail.terminal.density} value="normal" disabled={isBuiltIn} /> Normal</label>
+              <label><input type="radio" bind:group={detail.terminal.density} value="verbose" disabled={isBuiltIn} /> Verbose</label>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Custom CSS</label>
+            <textarea bind:value={detail.theme.customCss} disabled={isBuiltIn} rows="6" class="mono" placeholder="Additional CSS injected at end of HTML reports"></textarea>
+          </div>
+          <div class="field-group">
+            <label>LLM Prompt
+              <span class="hint-warn">Injected into LLM calls. Keep it focused on tone and format.</span>
+            </label>
+            <textarea bind:value={detail.llmPrompt} disabled={isBuiltIn} rows="6" class="mono"></textarea>
+          </div>
         {/if}
       </div>
+
+      {#if !isBuiltIn}
+        <div class="editor-actions">
+          <button class="action-btn" on:click={saveStyle}>Save</button>
+          {#if !creating && selectedName}
+            <button class="small-action" on:click={exportStyle}>Export</button>
+            {#if !confirmDelete}
+              <button class="delete-btn" on:click={() => confirmDelete = true}>Delete</button>
+            {:else}
+              <span class="confirm-text">Delete "{selectedName}"?</span>
+              <button class="delete-btn" on:click={doDelete}>Confirm</button>
+              <button class="small-action" on:click={() => confirmDelete = false}>Cancel</button>
+            {/if}
+          {/if}
+        </div>
+      {/if}
     {/if}
   </div>
 </div>
 
 <style>
-  .screen { display: flex; flex-direction: column; gap: 16px; height: 100%; }
-  .header-row { display: flex; justify-content: space-between; align-items: center; }
-  h1 { color: var(--cl-text, #e6edf3); font-size: 22px; margin: 0; }
-  h2 { color: var(--cl-text, #e6edf3); font-size: 18px; margin: 0 0 12px; }
-  h3 { color: var(--cl-secondary, #8b949e); font-size: 13px; margin: 16px 0 8px; text-transform: uppercase; }
-  .header-actions { display: flex; gap: 8px; }
+  .two-col { display: flex; gap: 0; height: 100%; }
 
-  .tool-btn {
-    padding: 6px 14px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 6px; color: var(--cl-text, #e6edf3); cursor: pointer; font-size: 13px; font-family: inherit;
+  .left-col {
+    width: 260px; flex-shrink: 0; display: flex; flex-direction: column;
+    border-right: 1px solid var(--cl-border, #30363d);
   }
-  .tool-btn:hover { border-color: var(--cl-accent, #58a6ff); }
+  .left-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 12px 10px 0;
+  }
+  h1 { color: var(--cl-text, #e6edf3); font-size: 20px; margin: 0; }
 
-  .create-form {
-    display: flex; gap: 8px; padding: 12px; background: var(--cl-surface, #161b22);
-    border: 1px solid var(--cl-border, #30363d); border-radius: 8px;
-  }
-  .create-form input {
-    padding: 8px 12px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 13px; flex: 1;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .create-form input:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
+  .style-cards { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; padding-right: 12px; }
 
+  .style-card {
+    display: flex; flex-direction: column; gap: 4px; padding: 8px 10px;
+    background: transparent; border: none; border-left: 3px solid transparent;
+    border-radius: 0; color: var(--cl-text, #e6edf3); cursor: pointer;
+    text-align: left; width: 100%; font-family: inherit; transition: background 0.12s;
+  }
+  .style-card:hover { background: var(--cl-surface, #161b22); }
+  .style-card.selected { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 10%, transparent); }
+  .style-card.is-active { border-left-color: var(--cl-accent, #58a6ff); }
+
+  .card-top { display: flex; align-items: center; gap: 6px; }
+  .card-name { font-size: 13px; font-weight: 500; }
+  .card-badge {
+    font-size: 9px; padding: 1px 5px; border-radius: 8px;
+    background: var(--cl-border, #30363d); color: var(--cl-secondary, #8b949e);
+  }
+  .card-badge.builtin { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 20%, transparent); color: var(--cl-accent, #58a6ff); }
+
+  .card-swatches { display: flex; gap: 4px; }
+  .mini-swatch { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--cl-border, #30363d); }
+
+  .new-style-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px; margin: 8px 12px 0 0; background: transparent;
+    border: 1px dashed var(--cl-border, #30363d); border-radius: 6px;
+    color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 13px; font-family: inherit;
+    flex-shrink: 0;
+  }
+  .new-style-btn:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
+
+  .right-col {
+    flex: 1; display: flex; flex-direction: column; gap: 10px;
+    padding: 0 0 0 16px; overflow-y: auto; min-width: 0;
+  }
+
+  .empty-editor {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    color: var(--cl-secondary, #8b949e); font-size: 14px;
+  }
+  .empty-editor p { margin: 0; }
+
+  .editor-header { font-size: 18px; font-weight: 600; color: var(--cl-text, #e6edf3); }
+
+  .name-field { display: flex; flex-direction: column; gap: 4px; }
+  .name-field label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; }
+  .name-field input {
+    padding: 7px 10px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 14px; font-family: 'JetBrains Mono', monospace;
+    max-width: 300px;
+  }
+  .name-field input:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
+
+  .tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--cl-border, #30363d); flex-shrink: 0; }
+  .tab {
+    padding: 8px 14px; background: transparent; border: none; border-bottom: 2px solid transparent;
+    color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 12px; font-family: inherit;
+    transition: color 0.12s;
+  }
+  .tab:hover { color: var(--cl-text, #e6edf3); }
+  .tab.active { color: var(--cl-accent, #58a6ff); border-bottom-color: var(--cl-accent, #58a6ff); }
+
+  .tab-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+
+  .field-group { display: flex; flex-direction: column; gap: 4px; }
+  .field-group > label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; display: flex; gap: 6px; align-items: center; }
+
+  .hint { font-size: 10px; color: var(--cl-secondary, #8b949e); opacity: 0.7; text-transform: none; }
+  .hint-warn { font-size: 10px; color: #D97706; text-transform: none; }
+
+  input[type="text"], textarea, select {
+    padding: 6px 8px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 4px; color: var(--cl-text, #e6edf3); font-size: 12px; font-family: inherit;
+  }
+  input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
+  input:disabled, textarea:disabled, select:disabled { opacity: 0.6; cursor: not-allowed; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .color-field { display: flex; align-items: center; gap: 8px; }
+  .color-field label { width: 80px; color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; flex-shrink: 0; }
+  .color-input-row { display: flex; align-items: center; gap: 6px; }
+  input[type="color"] { width: 28px; height: 28px; padding: 0; border: 1px solid var(--cl-border, #30363d); border-radius: 4px; cursor: pointer; background: none; }
+  input[type="color"]:disabled { cursor: not-allowed; }
+  .hex-input { width: 80px; font-family: 'JetBrains Mono', monospace; }
+
+  .radio-group { display: flex; gap: 12px; font-size: 12px; color: var(--cl-text, #e6edf3); }
+  .radio-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+  .toggle-label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--cl-text, #e6edf3); cursor: pointer; }
+
+  .font-preview {
+    padding: 8px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
+    border-radius: 4px; font-size: 13px; color: var(--cl-text, #e6edf3);
+  }
+
+  .img-preview-sm { width: 64px; height: 64px; object-fit: contain; border: 1px solid var(--cl-border, #30363d); border-radius: 4px; }
+  .img-preview-wide { width: 200px; height: 64px; object-fit: cover; border: 1px solid var(--cl-border, #30363d); border-radius: 4px; }
+
+  .inline-fields { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mini-field { display: flex; flex-direction: column; gap: 2px; }
+  .mini-label { font-size: 10px; color: var(--cl-secondary, #8b949e); }
+  .mini-field input { width: 90px; }
+
+  .vocab-table { display: flex; flex-direction: column; gap: 4px; }
+  .vocab-row { display: flex; align-items: center; gap: 8px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .vocab-key { color: var(--cl-accent, #58a6ff); min-width: 80px; }
+  .vocab-val { color: var(--cl-text, #e6edf3); flex: 1; }
+  .vocab-del { background: none; border: none; color: #f85149; cursor: pointer; font-size: 14px; padding: 0 4px; }
+  .vocab-add { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+  .vocab-add input { width: 100px; }
+
+  .editor-actions {
+    display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--cl-border, #30363d);
+    flex-shrink: 0;
+  }
   .action-btn {
     padding: 8px 16px; background: #238636; border: none; border-radius: 6px;
     color: #fff; font-size: 13px; cursor: pointer; font-family: inherit;
   }
   .action-btn:hover { background: #2ea043; }
-  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .layout { display: flex; gap: 16px; flex: 1; overflow: hidden; }
-  .style-list {
-    display: flex; flex-direction: column; gap: 4px; width: 320px;
-    overflow-y: auto; flex-shrink: 0;
+  .small-action {
+    padding: 4px 10px; background: transparent; border: 1px solid var(--cl-border, #30363d);
+    border-radius: 4px; color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 12px; font-family: inherit;
+    display: flex; align-items: center; gap: 4px;
   }
+  .small-action:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-text, #e6edf3); }
 
-  .style-item {
-    display: flex; flex-direction: column; gap: 4px; padding: 10px 12px;
-    background: transparent; border: 1px solid transparent; border-radius: 6px;
-    color: var(--cl-text, #e6edf3); cursor: pointer; text-align: left; width: 100%; font-family: inherit;
-    transition: background 0.15s;
+  .delete-btn {
+    padding: 4px 10px; background: transparent; border: 1px solid #da3634;
+    border-radius: 4px; color: #f85149; cursor: pointer; font-size: 12px; font-family: inherit;
   }
-  .style-item:hover { background: var(--cl-surface, #161b22); border-color: var(--cl-border, #30363d); }
-  .style-item.active { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 13%, transparent); border-color: var(--cl-accent, #58a6ff); }
+  .delete-btn:hover { background: #da363422; }
 
-  .style-name { display: flex; align-items: center; gap: 8px; font-size: 14px; }
-  .badge {
-    font-size: 10px; padding: 2px 6px; border-radius: 10px;
-    background: var(--cl-border, #30363d); color: var(--cl-secondary, #8b949e);
-  }
-  .badge.builtin { background: #1f6feb33; color: var(--cl-accent, #58a6ff); }
-  .style-desc { color: var(--cl-secondary, #8b949e); font-size: 12px; }
+  .confirm-text { font-size: 12px; color: #f85149; }
 
-  .style-actions { display: flex; gap: 6px; margin-top: 4px; }
-  .small-btn {
-    font-size: 11px; padding: 2px 8px; background: none;
-    border: 1px solid var(--cl-border, #30363d); border-radius: 4px; color: var(--cl-secondary, #8b949e);
-    cursor: pointer; font-family: inherit;
-  }
-  .small-btn:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-text, #e6edf3); }
-  .small-btn.danger:hover { border-color: #da3634; color: #f85149; }
-
-  .detail-panel {
-    flex: 1; padding: 16px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 8px; overflow-y: auto;
-  }
-  .detail-row { font-size: 13px; margin-bottom: 4px; }
-  .detail-row .label { color: var(--cl-secondary, #8b949e); }
-  .color-row { display: flex; gap: 8px; flex-wrap: wrap; }
-  .color-swatch { display: flex; align-items: center; gap: 4px; }
-  .swatch { width: 16px; height: 16px; border-radius: 3px; border: 1px solid var(--cl-border, #30363d); }
-  .color-name { font-size: 11px; color: var(--cl-secondary, #8b949e); }
-
-  .prompt-preview {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px;
-    background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d); border-radius: 6px;
-    padding: 12px; color: var(--cl-text, #e6edf3); white-space: pre-wrap; overflow: auto; max-height: 200px;
-  }
-
-  .empty { color: var(--cl-secondary, #8b949e); text-align: center; padding: 40px; }
-
-  .banner.error {
-    background: #da363433; border: 1px solid #da3634; color: #f85149;
-    padding: 8px 12px; border-radius: 6px; font-size: 13px;
-  }
+  .banner { padding: 6px 10px; border-radius: 4px; font-size: 12px; flex-shrink: 0; }
+  .banner.error { background: #da363433; border: 1px solid #da3634; color: #f85149; }
+  .banner.success { background: #23863633; border: 1px solid #238636; color: #3fb950; }
+  .banner.info { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 10%, transparent); border: 1px solid var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
 </style>
