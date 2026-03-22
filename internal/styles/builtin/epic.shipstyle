@@ -22,7 +22,7 @@ theme:
     font_size_header: "22px"
     font_size_code: "12px"
   logo: |
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,34.34a8,8,0,0,0-11.32,0L160,84.69,128,56,48,136l28,32L34.34,210.34a8,8,0,0,0,11.32,11.32L88,179.31l32,28,80-80L171.31,96l50.35-50.34A8,8,0,0,0,221.66,34.34ZM108,191.31,64.69,148l64-64L172,128Z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,26.34a8,8,0,0,0-11.32,0l-52,52L160,72,72,160l6.34,6.34-38,38a8,8,0,0,0,0,11.32l16,16a8,8,0,0,0,11.32,0l38-38L112,200l88-88-6.34-6.34,52-52a8,8,0,0,0,0-11.32ZM100.69,183.31,72.69,155.31,160,68l28,28ZM56,204.69,51.31,200,89.37,162l4.63,4.63Z"/></svg>
   header_image: ""
   card_style: "bordered"
   animations: true
