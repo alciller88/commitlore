@@ -62,8 +62,8 @@ func TestGenerateStory_ironic(t *testing.T) {
 func TestGenerateStory_epic(t *testing.T) {
 	out, err := GenerateStory(sampleChronology(), loadStyle(t, "epic"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "SAGA BEGINS")
-	assert.Contains(t, out, "fellowship")
+	assert.Contains(t, out, "The Saga of Alice")
+	assert.Contains(t, out, "champions answered the call")
 }
 
 func TestGenerateStory_includesMilestones(t *testing.T) {
@@ -106,5 +106,5 @@ func TestGenerateStory_noTags(t *testing.T) {
 func TestGenerateStory_footer(t *testing.T) {
 	out, err := GenerateStory(sampleChronology(), loadStyle(t, "epic"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "next chapter awaits")
+	assert.Contains(t, out, "saga continues")
 }

@@ -65,7 +65,7 @@ func TestGenerate_epic(t *testing.T) {
 	out, err := Generate(sampleChangelog(), loadStyle(t, "epic"))
 	require.NoError(t, err)
 	assert.NotEmpty(t, out)
-	assert.Contains(t, out, "CHRONICLES")
+	assert.Contains(t, out, "The Chronicle")
 }
 
 func TestGenerate_emptyChangelog(t *testing.T) {

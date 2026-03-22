@@ -1,104 +1,95 @@
-name: epic
-version: 1.0.0
-description: "Grand narrative chronicle — every commit is a legendary deed"
-author: "commitlore"
+name: "epic"
+version: "2.0.0"
+description: "Medieval fantasy chronicle. Swords, dragons and ancient scrolls."
+author: "CommitLore"
 tags: ["fantasy", "narrative", "medieval", "chronicle", "dramatic", "immersive"]
 preview_url: ""
 homepage: ""
-llm_prompt: |
-  You are an ancient chronicler inscribing the legendary deeds of heroes
-  onto a sacred scroll. This is not a changelog — it is an EPIC CHRONICLE
-  of the repository's history. Rules:
-  - Write in grandiose, archaic English: "And so it came to pass...",
-    "In the twilight of the sprint...", "The code-smiths forged..."
-  - Every feature is a "legendary artifact forged in the fires of creation"
-  - Every bug fix is "a dark curse vanquished by a brave hero"
-  - Every breaking change is "the old ways shattered, a new age dawning"
-  - Contributors are heroes, knights, mages, or code-smiths
-  - Use medieval/fantasy metaphors: forge, quest, realm, fellowship,
-    saga, prophecy, ancient, sacred, scroll, chronicle
-  - Dates are "ages" or "epochs". Months are "moons".
-  - End with a prophecy about what is yet to come
-  - Use ornate language but remain readable. Grandiose, not gibberish.
-  - Emojis allowed: 📜 ⚔️ ⚡ 🔥 ⚜ 👑 🏰
-templates:
-  header: "📜 THE CHRONICLES OF THIS REPOSITORY"
-  feature: "  ⚜ And so it came to pass — {{.Author}} forged: {{.Message}}"
-  fix: "  ⚔️  The dark curse was vanquished by {{.Author}}: {{.Message}}"
-  breaking: "  ⚡ The old ways were shattered, and a new age dawned: {{.Message}}"
-  footer: "📜 Thus ends another chapter in the great saga. What comes next, only the prophecy knows."
-  story_intro: "📜 THE SAGA BEGINS\n\nIn the age of {{.FirstCommitDate}}, the great {{.FirstAuthor}} laid the first stone of this realm.\nFrom that day forward, {{.TotalCommits}} deeds were inscribed upon the sacred scroll.\n{{.TotalContributors}} heroes answered the call and joined the fellowship."
-  story_milestone: "  👑 A new era dawned — {{.Name}} was sealed into the archives on {{.Date}}"
-  story_peak: "  🔥 The forge burned brightest in the moon of {{.Month}}: {{.Count}} deeds inscribed"
-  story_contributor: "  ⚔️  The hero {{.Name}} joined the fellowship on {{.Date}}"
-  story_footer: "📜 Thus the saga continues. The scroll remains unfinished. The next chapter awaits its heroes."
-vocabulary:
-  bug: "dark curse"
-  fix: "vanquished"
-  feature: "legendary artifact"
-  added: "forged"
-  removed: "banished"
-  updated: "reforged"
-  commit: "saga"
-  merge: "union of realms"
-  error: "blight upon the realm"
-  refactor: "the great restructuring"
+
 theme:
   mode: "dark"
   colors:
-    primary: "#D4AF37"
-    secondary: "#C0962C"
-    background: "#1A1209"
-    surface: "#241A0E"
-    text: "#F0E8D8"
-    accent: "#8B0000"
-    border: "#D4AF37"
+    primary: "#C9A84C"
+    secondary: "#7A6545"
+    background: "#0F0A05"
+    surface: "#1C1208"
+    text: "#E8D5A3"
+    accent: "#8B1A1A"
+    border: "#3D2B0F"
   typography:
-    font_family: "'Palatino Linotype', 'Book Antiqua', Palatino, 'Georgia', serif"
-    font_size_base: "15px"
-    font_size_header: "28px"
-    font_size_code: "13px"
-  card_style: "glassmorphism"
+    font_family: "'Cinzel', 'Palatino Linotype', serif"
+    font_size_base: "13px"
+    font_size_header: "22px"
+    font_size_code: "12px"
+  logo: |
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,34.34a8,8,0,0,0-11.32,0L160,84.69,128,56,48,136l28,32L34.34,210.34a8,8,0,0,0,11.32,11.32L88,179.31l32,28,80-80L171.31,96l50.35-50.34A8,8,0,0,0,221.66,34.34ZM108,191.31,64.69,148l64-64L172,128Z"/></svg>
+  header_image: ""
+  card_style: "bordered"
   animations: true
+  custom_css: ""
   window_controls:
-    default: "#6B5B3A"
-    close: "#8B0000"
-    minimize: "#D4AF37"
-    maximize: "#2E7D32"
-  custom_css: |
-    h1, h2 {
-      text-shadow: 0 0 10px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.1);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-    }
-    body::after {
-      content: '📜';
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      font-size: 32px;
-      opacity: 0.15;
-      animation: float 6s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-    li {
-      animation: fadeIn 0.3s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    default: "#3D2B0F"
+    close: "#8B1A1A"
+    minimize: "#C9A84C"
+    maximize: "#7A6545"
+
 terminal:
   colors:
     header: "yellow"
-    feature: "yellow"
+    feature: "white"
     fix: "green"
     breaking: "red"
     footer: "yellow"
   decorators:
-    separator: "⚜═══════════════════════════════════════⚜"
-    bullet: "📜"
-    indent: "  ║ "
-  density: "verbose"
+    separator: "⚔═══════════════════════════════════════⚔"
+    bullet: "⚜"
+    indent: "  "
+  density: "normal"
+
+llm_prompt: |
+  You are a medieval chronicler writing in a fantasy epic style.
+  Describe code changes as heroic deeds, quests and battles.
+  Features are gifts bestowed upon the realm, fixes are curses lifted,
+  breaking changes are great upheavals that shake the foundations.
+  Use archaic but readable language. Reference taverns, dragons, swords
+  and ancient scrolls naturally. Keep it epic but not unreadable.
+  IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the
+  data section. Do not invent features, fixes, or changes that are not
+  present in the commit data. Adapt the tone, never fabricate content.
+
+vocabulary:
+  bug: "curse"
+  fix: "mended"
+  feature: "gift"
+  breaking: "GREAT UPHEAVAL"
+  error: "dark omen"
+  deploy: "proclaimed"
+  merge: "united"
+
+ui_labels:
+  dashboard: "The Keep"
+  generate: "The Chronicle"
+  story: "The Saga"
+  history: "The Scrolls"
+  contributors: "The Fellowship"
+  styles: "The Wardrobe"
+  settings: "The Forge"
+
+templates:
+  header: |
+    # The Chronicle — {{.Version}}
+    *Inscribed on {{.Date}}*
+  feature: "- ⚜ **Gift bestowed:** {{.Message}}"
+  fix: "- ⚔ **Curse lifted:** {{.Message}}"
+  breaking: "- ⚠ **GREAT UPHEAVAL:** {{.Message}}"
+  footer: |
+    ---
+    *Thus the chronicle is sealed — CommitLore*
+  story_intro: |
+    ## The Saga of {{.FirstAuthor}}
+    In the age of {{.FirstCommitDate}}, brave heroes began their quest.
+    {{.TotalContributors}} champions answered the call.
+  story_milestone: "- ⚜ {{.Name}} (`{{.Hash | short}}`) — {{.Date}}"
+  story_peak: "The forge burned brightest in {{.Month}} — {{.Count}} deeds inscribed"
+  story_contributor: "- **{{.Name}}** — joined the fellowship on {{.Date}}"
+  story_footer: "*Thus the saga continues — CommitLore*"
