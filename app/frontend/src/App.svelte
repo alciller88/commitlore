@@ -247,5 +247,12 @@
   }
   .tb-empty { color: var(--cl-secondary, #8b949e); font-style: italic; opacity: 0.5; }
 
-  .content { flex: 1; overflow-y: auto; padding: var(--space-5, 24px); }
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    padding: var(--space-5, 24px);
+  }
 </style>

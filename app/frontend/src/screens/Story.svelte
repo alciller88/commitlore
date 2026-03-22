@@ -129,7 +129,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    flex: 1;
     gap: var(--space-3);
     color: var(--cl-secondary);
   }
@@ -141,7 +141,8 @@
   .two-col {
     display: flex;
     gap: var(--space-4);
-    height: 100%;
+    flex: 1;
+    min-height: 0;
   }
 
   .sidebar-form {
