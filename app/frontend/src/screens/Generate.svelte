@@ -1,35 +1,26 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
   import { Generate } from '../../bindings/github.com/alciller88/commitlore/app/changelogapp.js'
-  import { ListStyles } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
   import { GetLLMConfig } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
-  import { activeRepo } from '../lib/store'
+  import { activeRepo, activeStyle } from '../lib/store'
   import type { ActiveRepo } from '../lib/store'
 
   let currentRepo: ActiveRepo | null = null
-  const unsub = activeRepo.subscribe(v => { currentRepo = v })
-  onDestroy(() => unsub())
+  let currentStyle = 'formal'
+  const unsubRepo = activeRepo.subscribe(v => { currentRepo = v })
+  const unsubStyle = activeStyle.subscribe(v => { currentStyle = v })
+  onDestroy(() => { unsubRepo(); unsubStyle() })
 
   let since = ''
   let until = ''
-  let styleName = 'formal'
-  let styles: Array<{name: string}> = []
   let loading = false
   let error = ''
   let htmlResult = ''
   let llmStatus = ''
 
   onMount(() => {
-    loadStyles()
     loadLLMStatus()
   })
-
-  async function loadStyles() {
-    try {
-      const raw = await ListStyles()
-      styles = JSON.parse(raw)
-    } catch {}
-  }
 
   async function loadLLMStatus() {
     try {
@@ -52,7 +43,7 @@
     error = ''
     htmlResult = ''
     try {
-      htmlResult = await Generate(currentRepo.path, since, until, styleName)
+      htmlResult = await Generate(currentRepo.path, since, until, currentStyle)
     } catch (e: any) {
       error = e?.message || 'Generation failed'
     } finally {
@@ -99,13 +90,10 @@
         <label>Until</label>
         <input type="text" bind:value={until} placeholder="default: HEAD" />
       </div>
-      <div class="field">
-        <label>Style</label>
-        <select bind:value={styleName}>
-          {#each styles as s}
-            <option value={s.name}>{s.name}</option>
-          {/each}
-        </select>
+
+      <div class="style-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <span>{currentStyle}</span>
       </div>
 
       <div class="llm-indicator">
@@ -169,13 +157,26 @@
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; }
 
-  input, select {
+  input {
     padding: 7px 10px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
     border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
   }
-  input:focus, select:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
-  select { cursor: pointer; }
+  input:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
+
+  .style-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: color-mix(in srgb, var(--cl-accent, #58a6ff) 13%, transparent);
+    border: 1px solid var(--cl-accent, #58a6ff);
+    border-radius: 12px;
+    color: var(--cl-accent, #58a6ff);
+    font-size: 11px;
+    font-weight: 600;
+    align-self: flex-start;
+  }
 
   .llm-indicator {
     display: flex; align-items: center; gap: 6px;

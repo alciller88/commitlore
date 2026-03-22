@@ -19,6 +19,19 @@ const (
 	FormatPDF      Format = "pdf"
 )
 
+// HTMLTheme allows overriding the style's theme for HTML output.
+type HTMLTheme struct {
+	Background string
+	Surface    string
+	Text       string
+	Primary    string
+	Secondary  string
+	Accent     string
+	Border     string
+	FontFamily string
+	Mode       string
+}
+
 // Render formats the given content according to the specified format.
 func Render(content string, cl changelog.Changelog, style styles.Style, format Format) (string, error) {
 	switch format {
@@ -32,6 +45,35 @@ func Render(content string, cl changelog.Changelog, style styles.Style, format F
 		return renderTerminal(content, style), nil
 	default:
 		return content, nil
+	}
+}
+
+// RenderWithTheme renders with an optional theme override for HTML output.
+// If override is nil, uses the style's own theme (same as Render).
+func RenderWithTheme(content string, cl changelog.Changelog, style styles.Style, format Format, override *HTMLTheme) (string, error) {
+	if override != nil {
+		style = applyHTMLThemeOverride(style, override)
+	}
+	return Render(content, cl, style, format)
+}
+
+func applyHTMLThemeOverride(style styles.Style, o *HTMLTheme) styles.Style {
+	s := style
+	overrideField(&s.Theme.Colors.Background, o.Background)
+	overrideField(&s.Theme.Colors.Surface, o.Surface)
+	overrideField(&s.Theme.Colors.Text, o.Text)
+	overrideField(&s.Theme.Colors.Primary, o.Primary)
+	overrideField(&s.Theme.Colors.Secondary, o.Secondary)
+	overrideField(&s.Theme.Colors.Accent, o.Accent)
+	overrideField(&s.Theme.Colors.Border, o.Border)
+	overrideField(&s.Theme.Typography.FontFamily, o.FontFamily)
+	overrideField(&s.Theme.Mode, o.Mode)
+	return s
+}
+
+func overrideField(field *string, value string) {
+	if value != "" {
+		*field = value
 	}
 }
 

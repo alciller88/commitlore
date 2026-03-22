@@ -202,6 +202,7 @@ fix/story-output-parityHTML renderer uses narrative content, not raw data struct
 feat/p1-ux-globalGlobal repo store, sidebar indicator, two-column layouts, compact filters2026-03-22feat/p1-ux-global
 fix/markdown-renderNarrative markdown rendered as HTML via goldmark (not raw text)2026-03-22fix/markdown-render
 feat/p2-ui-themingActive style themes entire app via CSS variables, persisted in config.yml2026-03-22feat/p2-ui-theming
+fix/p2-style-cleanupRemoved style selectors from Generate/Story, added HTMLTheme override to renderer2026-03-22fix/p2-style-cleanup
 
 Add a row here when completing each phase.
 

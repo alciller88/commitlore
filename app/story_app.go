@@ -77,7 +77,8 @@ func renderStoryHTML(ch git.Chronology, styleName, llmProvider, llmModel string)
 
 	text = tryEnrich(llmProvider, llmModel, style.LLMPrompt, text)
 
-	rendered, err := renderer.RenderStory(text, ch, style, renderer.Format("html"))
+	override := buildHTMLThemeOverride(styleName)
+	rendered, err := renderer.RenderStoryWithTheme(text, ch, style, renderer.Format("html"), override)
 	if err != nil {
 		return "", cleanError(err)
 	}

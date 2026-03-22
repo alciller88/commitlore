@@ -59,12 +59,32 @@ func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel st
 
 	text = tryEnrich(llmProvider, llmModel, style.LLMPrompt, text)
 
-	rendered, err := renderer.Render(text, cl, style, renderer.Format("html"))
+	override := buildHTMLThemeOverride(styleName)
+	rendered, err := renderer.RenderWithTheme(text, cl, style, renderer.Format("html"), override)
 	if err != nil {
 		return "", cleanError(err)
 	}
 
 	return rendered, nil
+}
+
+func buildHTMLThemeOverride(styleName string) *renderer.HTMLTheme {
+	st, err := styles.Load(styleName)
+	if err != nil {
+		return nil
+	}
+	t := st.Theme
+	return &renderer.HTMLTheme{
+		Background: t.Colors.Background,
+		Surface:    t.Colors.Surface,
+		Text:       t.Colors.Text,
+		Primary:    t.Colors.Primary,
+		Secondary:  t.Colors.Secondary,
+		Accent:     t.Colors.Accent,
+		Border:     t.Colors.Border,
+		FontFamily: t.Typography.FontFamily,
+		Mode:       t.Mode,
+	}
 }
 
 func tryEnrich(provider, model, llmPrompt, text string) string {
