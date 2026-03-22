@@ -5,6 +5,22 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (Markdown rendering)
+- internal/renderer: narrative content now rendered as HTML via goldmark — was displaying raw markdown (## headings, * bullets) in iframe
+- internal/renderer: goldmark safe mode omits raw HTML tags (XSS protection)
+- go.mod: github.com/yuin/goldmark promoted to direct dependency
+
+### Added (P1 UX global)
+- app/frontend/src/lib/store.ts: Svelte writable stores for activeRepo and repoSummary — single source of truth across all screens
+- app/frontend: sidebar repo indicator with SVG icons (folder/GitHub), repo name, truncated path
+- app/frontend: Dashboard shows cached summary on return (no loading spinner), "Change repository" button in top-right
+- app/frontend: Generate and Story two-column layout (280px form sidebar + flex iframe preview)
+- app/frontend: History and Contributors compact horizontal filter rows
+- app/frontend: repo picker removed from Generate, Story, History, Contributors — all screens read from global store
+- app/frontend: "Select a repository in Dashboard" banner when no repo active
+- app/frontend: App.svelte preloads most recent repo on startup from GetRecentRepos()
+- app/frontend: all nav icons replaced with inline SVGs (no emoji)
+
 ### Fixed (Story/Changelog output parity)
 - internal/renderer: HTML output now includes narrative content — was previously discarded, producing bare data-only HTML while terminal/markdown got rich styled narrative
 - internal/renderer: narrative text rendered as HTML paragraphs in .narrative div above structured data section
