@@ -3,8 +3,6 @@
   import { ListStyles, ShowStyle, ImportStyle, ExportStyle, DeleteStyle, CreateStyle } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
   import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
 
-  export let activeRepo = ''
-
   type StyleInfo = {
     name: string
     builtIn: boolean

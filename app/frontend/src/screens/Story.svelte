@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte'
-  import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
+  import { onMount, onDestroy } from 'svelte'
   import { GenerateStory } from '../../bindings/github.com/alciller88/commitlore/app/storyapp.js'
   import { ListStyles } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
   import { GetLLMConfig } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { activeRepo } from '../lib/store'
+  import type { ActiveRepo } from '../lib/store'
 
-  export let activeRepo = ''
+  let currentRepo: ActiveRepo | null = null
+  const unsub = activeRepo.subscribe(v => { currentRepo = v })
+  onDestroy(() => unsub())
 
-  const dispatch = createEventDispatcher()
-
-  let repo = ''
   let from = ''
   let styleName = 'formal'
   let styles: Array<{name: string}> = []
@@ -17,8 +17,6 @@
   let error = ''
   let htmlResult = ''
   let llmStatus = ''
-
-  $: repo = activeRepo || repo
 
   onMount(() => {
     loadStyles()
@@ -47,21 +45,13 @@
     }
   }
 
-  async function pickRepo() {
-    const path = await OpenFolderPicker()
-    if (path) {
-      repo = path
-      dispatch('repoSelected', path)
-    }
-  }
-
   async function tellStory() {
-    if (!repo) return
+    if (!currentRepo) return
     loading = true
     error = ''
     htmlResult = ''
     try {
-      htmlResult = await GenerateStory(repo, from, styleName)
+      htmlResult = await GenerateStory(currentRepo.path, from, styleName)
     } catch (e: any) {
       error = e?.message || 'Story generation failed'
     } finally {
@@ -86,23 +76,20 @@
   }
 </script>
 
-<div class="screen">
-  <h1>Tell the Story</h1>
+{#if !currentRepo}
+  <div class="no-repo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+    <p>Select a repository in Dashboard to get started.</p>
+  </div>
+{:else}
+  <div class="two-col">
+    <div class="sidebar-form">
+      <h2>Tell the Story</h2>
 
-  {#if error}
-    <div class="banner error">{error}</div>
-  {/if}
+      {#if error}
+        <div class="banner error">{error}</div>
+      {/if}
 
-  <div class="form">
-    <div class="field">
-      <label>Repository</label>
-      <div class="repo-input">
-        <input type="text" bind:value={repo} placeholder="Local path or owner/repo" />
-        <button class="pick-btn" on:click={pickRepo}>Browse</button>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="field">
         <label>From</label>
         <input type="text" bind:value={from} placeholder="Starting commit or tag" />
@@ -115,65 +102,89 @@
           {/each}
         </select>
       </div>
-    </div>
 
-    <div class="action-row">
-      <button class="action-btn" on:click={tellStory} disabled={loading || !repo}>
+      <div class="llm-indicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>LLM: {llmStatus}</span>
+      </div>
+
+      <button class="action-btn" on:click={tellStory} disabled={loading}>
         {#if loading}
           <span class="spinner"></span> Generating...
         {:else}
           Tell the story
         {/if}
       </button>
-      <span class="llm-status">LLM: {llmStatus}</span>
+    </div>
+
+    <div class="main-panel">
+      {#if htmlResult}
+        <div class="result-toolbar">
+          <button class="tool-btn" on:click={copyText}>Copy text</button>
+          <button class="tool-btn" on:click={saveAsFile}>Save as .html</button>
+        </div>
+        <iframe class="preview" srcdoc={htmlResult} sandbox="" title="Story preview"></iframe>
+      {:else}
+        <div class="empty-preview">
+          <span class="empty-text">Preview will appear here</span>
+        </div>
+      {/if}
     </div>
   </div>
-
-  {#if htmlResult}
-    <div class="result">
-      <div class="result-toolbar">
-        <button class="tool-btn" on:click={copyText}>Copy text</button>
-        <button class="tool-btn" on:click={saveAsFile}>Save as .html</button>
-      </div>
-      <iframe class="preview" srcdoc={htmlResult} sandbox="" title="Story preview"></iframe>
-    </div>
-  {/if}
-</div>
+{/if}
 
 <style>
-  .screen { display: flex; flex-direction: column; gap: 20px; height: 100%; }
-  h1 { color: #e6edf3; font-size: 22px; margin: 0; }
-  .form { display: flex; flex-direction: column; gap: 14px; }
-  .field { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-  .field label { color: #8b949e; font-size: 12px; text-transform: uppercase; }
-  .row { display: flex; gap: 12px; }
+  .no-repo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: #484f58;
+  }
+  .no-repo p { margin: 0; font-size: 14px; }
+
+  .two-col {
+    display: flex;
+    gap: 16px;
+    height: 100%;
+  }
+
+  .sidebar-form {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  h2 { color: #e6edf3; font-size: 18px; margin: 0 0 4px 0; }
+
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label { color: #8b949e; font-size: 11px; text-transform: uppercase; }
 
   input, select {
-    padding: 8px 12px; background: #0d1117; border: 1px solid #30363d;
-    border-radius: 6px; color: #e6edf3; font-size: 14px;
+    padding: 7px 10px; background: #0d1117; border: 1px solid #30363d;
+    border-radius: 6px; color: #e6edf3; font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
   }
   input:focus, select:focus { outline: none; border-color: #58a6ff; }
   select { cursor: pointer; }
 
-  .repo-input { display: flex; gap: 8px; }
-  .repo-input input { flex: 1; }
-  .pick-btn {
-    padding: 8px 14px; background: #21262d; border: 1px solid #30363d;
-    border-radius: 6px; color: #e6edf3; cursor: pointer; font-family: inherit; font-size: 13px;
+  .llm-indicator {
+    display: flex; align-items: center; gap: 6px;
+    color: #8b949e; font-size: 11px;
   }
-  .pick-btn:hover { border-color: #58a6ff; }
 
-  .action-row { display: flex; align-items: center; gap: 16px; }
   .action-btn {
     padding: 10px 20px; background: #238636; border: none; border-radius: 6px;
     color: #fff; font-size: 14px; cursor: pointer;
-    display: flex; align-items: center; gap: 8px; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit;
+    margin-top: auto;
   }
   .action-btn:hover { background: #2ea043; }
   .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .llm-status { color: #8b949e; font-size: 12px; }
 
   .spinner {
     display: inline-block; width: 14px; height: 14px;
@@ -182,18 +193,35 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .result { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 300px; }
+  .main-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
   .result-toolbar { display: flex; gap: 8px; }
   .tool-btn {
-    padding: 6px 12px; background: #21262d; border: 1px solid #30363d;
+    padding: 5px 10px; background: #21262d; border: 1px solid #30363d;
     border-radius: 6px; color: #e6edf3; cursor: pointer; font-size: 12px; font-family: inherit;
   }
   .tool-btn:hover { border-color: #58a6ff; }
 
   .preview {
     flex: 1; border: 1px solid #30363d; border-radius: 6px;
-    background: #fff; min-height: 300px;
+    background: #fff; min-height: 200px;
   }
+
+  .empty-preview {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #30363d;
+    border-radius: 6px;
+  }
+  .empty-text { color: #484f58; font-size: 13px; }
 
   .banner.error {
     background: #da363433; border: 1px solid #da3634; color: #f85149;

@@ -242,17 +242,15 @@ Add a row here when completing each phase.
 #### P0 — Pending bugs
 - Narrative content displays as raw markdown in iframe — renderer must convert markdown to HTML using goldmark
 
-#### P1 — UX global
-- Repo activo debe ser global y persistente: seleccionar en Dashboard una vez,
-  todas las pantallas (History, Contributors, Generate, Story) lo heredan sin picker propio
-- Dashboard con repo cargado: estado activo con resumen visual, sin "Loading repo info..."
-  al volver desde otra pantalla
-- Story: contenido más rico y útil (más hitos, más contexto por período, métricas de actividad)
-- Generate: el estilo seleccionado debe influir más en la estructura del output,
-  no solo en colores
-- Layout de Generate: los campos del formulario ocupan demasiado espacio vertical,
-  reduciendo el área del visor HTML — rediseñar distribución (formulario lateral o colapsable)
-- Revisar distribución de campos en todas las pantallas con criterio de espacio útil
+#### P1 — UX global (feat/p1-ux-global) — COMPLETED 2026-03-22
+- ~~Repo activo debe ser global y persistente~~ — implemented: Svelte store (activeRepo + repoSummary), all screens read from store, only Dashboard writes
+- ~~Dashboard con repo cargado: estado activo con resumen visual~~ — implemented: summary cached in store, no reload on return
+- ~~Layout de Generate~~ — implemented: two-column layout (280px form sidebar + flex iframe)
+- ~~Layout de Story~~ — implemented: same two-column pattern as Generate
+- ~~Revisar distribución de campos~~ — implemented: History/Contributors use compact horizontal filter rows, repo pickers removed from all screens
+- ~~Sidebar repo indicator~~ — implemented: persistent indicator at bottom of sidebar with SVG icons
+- Story: richer content (more milestones, activity metrics per period) — deferred to future iteration
+- Generate: style should influence output structure, not just colors — deferred to future iteration
 
 #### P2 — Estilo global en la UI
 - El estilo activo (formal/patchnotes/epic/ironic/user) debe cambiar la paleta de colores,

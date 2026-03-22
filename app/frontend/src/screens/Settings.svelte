@@ -2,8 +2,6 @@
   import { onMount } from 'svelte'
   import { GetLLMConfig, SetLLMConfig, ClearLLMKey } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
 
-  export let activeRepo = ''
-
   let provider = ''
   let model = ''
   let keyConfigured = false
