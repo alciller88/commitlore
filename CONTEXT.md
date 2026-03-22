@@ -203,6 +203,7 @@ feat/p1-ux-globalGlobal repo store, sidebar indicator, two-column layouts, compa
 fix/markdown-renderNarrative markdown rendered as HTML via goldmark (not raw text)2026-03-22fix/markdown-render
 feat/p2-ui-themingActive style themes entire app via CSS variables, persisted in config.yml2026-03-22feat/p2-ui-theming
 fix/p2-style-cleanupRemoved style selectors from Generate/Story, added HTMLTheme override to renderer2026-03-22fix/p2-style-cleanup
+feat/p3-styles-screenStyles screen overhaul: two-column layout, 5-tab editor, GetStyleDetail/SaveStyleDetail bindings2026-03-22feat/p3-styles-screen
 
 Add a row here when completing each phase.
 
@@ -270,14 +271,13 @@ Add a row here when completing each phase.
 - Titlebar background: var(--cl-background), controls styled to match active style
 - Use Wails v3 frameless window + custom drag region
 
-#### P3.2 — Styles screen overhaul
-- Layout: style list on the left, full template editor on the right in tabs
-- Tabs: Colors / Typography / Images & Icons / Separators / Templates
-- Built-in styles (formal, patchnotes, epic, ironic): immutable — no edit/delete buttons
-- User styles: fully editable and deletable
-- Current side panel (showing "Version undefined / Author undefined") → replace entirely
-  with the tabbed editor
-- Preview updates only on Save or when selecting a style in Settings
+#### P3.2 — Styles screen overhaul (feat/p3-styles-screen) — COMPLETED 2026-03-22
+- ~~Layout: style list on the left, full template editor on the right in tabs~~ — implemented
+- ~~Tabs: Colors / Typography / Images & Icons / Templates / Advanced~~ — implemented (5 tabs)
+- ~~Built-in styles immutable~~ — implemented: read-only banner, disabled fields, no Save/Delete
+- ~~User styles fully editable and deletable~~ — implemented: Save, Delete (with confirm), Export
+- ~~Side panel replaced with tabbed editor~~ — implemented: covers all .shipstyle fields
+- ~~New style flow~~ — implemented: name validation, default values, inline errors
 - Editor covers ALL .shipstyle fields:
   - theme.colors (primary, secondary, background, surface, text, accent, border)
   - theme.typography (font_family, font_size_base, font_size_header, font_size_code)

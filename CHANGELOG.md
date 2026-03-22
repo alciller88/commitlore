@@ -5,6 +5,21 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (P3.2 Styles screen overhaul)
+- app/style_app.go: GetStyleDetail binding — returns all .shipstyle fields as typed StyleDetail struct
+- app/style_app.go: SaveStyleDetail binding — saves all fields, rejects built-in styles
+- app/style_app.go: IsStyleBuiltIn binding — returns true for built-in style names
+- app/style_app.go: StyleDetail, TemplatesDetail, ThemeDetail, ColorsDetail, TypoDetail, TerminalDetail, TermColorsDetail, DecorDetail structs
+- app/frontend/src/screens/Styles.svelte: complete overhaul — two-column layout with style cards (left) and 5-tab editor (right)
+- Styles screen: Colors tab — 7 color pickers with hex input, mode toggle (dark/light)
+- Styles screen: Typography tab — font family with live preview, font sizes
+- Styles screen: Images tab — logo/header image URL fields, card style radio, animations toggle
+- Styles screen: Templates tab — textarea per template field with variable hints, vocabulary key-value editor
+- Styles screen: Advanced tab — terminal colors, decorators, density, custom CSS, LLM prompt
+- Styles screen: built-in styles read-only with info banner, user styles fully editable with Save/Delete/Export
+- Styles screen: new style creation flow with name validation and duplicate detection
+- app/style_app_test.go: TestGetStyleDetail_formal, TestSaveStyleDetail_user, TestSaveStyleDetail_builtinRejected, TestIsStyleBuiltIn_formal, TestIsStyleBuiltIn_userStyle
+
 ### Fixed (P2 style cleanup)
 - app/frontend: removed redundant style selector from Generate and Story — active style now read from global store
 - app/frontend: added read-only style pill in Generate/Story sidebar showing active style name with accent color
