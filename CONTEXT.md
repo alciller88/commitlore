@@ -207,6 +207,7 @@ feat/p3-styles-screenStyles screen overhaul: two-column layout, 5-tab editor, Ge
 feat/p3-visual-overhaulFrameless window, custom titlebar, design system, all screens redesigned2026-03-22feat/p3-visual-overhaul
 fix/p3-ui-bugsHistory scroll fix, repo topbar, no scroll SVG, per-style window controls2026-03-22fix/p3-ui-bugs
 fix/p3-ui-bugs-2History inline scroll fix, window controls wired to Wails runtime2026-03-22fix/p3-ui-bugs-2
+feat/p3-style-formalImproved formal built-in style v2.0: colors, typography, templates, LLM prompt2026-03-22feat/p3-style-formal
 
 Add a row here when completing each phase.
 
