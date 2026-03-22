@@ -262,13 +262,77 @@ Add a row here when completing each phase.
 - ~~Style logo in sidebar~~ — implemented: branded header with style logo (or fallback scroll SVG) + "Commit"/"Lore" split wordmark colored by primary/accent
 - ~~Style selected in Settings, persisted in config.yml~~ — implemented: Appearance section with dropdown + color swatches, GetActiveStyle/SetActiveStyle bindings
 
-#### P3 — Visual overhaul (Fase 13)
-- El diseño visual actual es genérico — necesita personalidad y calidad comparable
-  a apps de referencia del sector
-- Tipografía, espaciado, iconografía, micro-interacciones
-- Revisar cada pantalla con criterio de diseño de producto
-- Icono de taskbar/app debe ser el de CommitLore, no el icono por defecto del framework
-- Barra de título de Windows (blanca con minimizar/maximizar/cerrar nativa) debe
-  reemplazarse por una titlebar custom generada con Wails que comparta la estética de la UI
-- Los HTML generados por Generate y Story necesitan un overhaul visual — más atractivos,
-  más estructurados, más coherentes con el estilo activo
+### P3 — Visual overhaul (priority order)
+
+#### P3.1 — Custom titlebar
+- Replace native Windows titlebar (white bar with minimize/maximize/close) with a
+  custom Wails titlebar that shares the app's visual identity
+- Titlebar background: var(--cl-background), controls styled to match active style
+- Use Wails v3 frameless window + custom drag region
+
+#### P3.2 — Styles screen overhaul
+- Layout: style list on the left, full template editor on the right in tabs
+- Tabs: Colors / Typography / Images & Icons / Separators / Templates
+- Built-in styles (formal, patchnotes, epic, ironic): immutable — no edit/delete buttons
+- User styles: fully editable and deletable
+- Current side panel (showing "Version undefined / Author undefined") → replace entirely
+  with the tabbed editor
+- Preview updates only on Save or when selecting a style in Settings
+- Editor covers ALL .shipstyle fields:
+  - theme.colors (primary, secondary, background, surface, text, accent, border)
+  - theme.typography (font_family, font_size_base, font_size_header, font_size_code)
+  - theme.header_image (URL or base64 upload)
+  - theme.logo (URL or base64 upload)
+  - theme.card_style (minimal / bordered / glassmorphism)
+  - theme.animations (toggle)
+  - theme.custom_css (textarea)
+  - terminal.colors (header, feature, fix, breaking, footer — ANSI color names)
+  - terminal.decorators (separator, bullet, indent)
+  - terminal.density (compact / normal / verbose)
+  - vocabulary (key→value pairs, add/remove rows)
+  - templates (header, feature, fix, breaking, footer, story_* — textarea per field)
+
+#### P3.3 — Style system expansion (future)
+- Styles will also control app UI text strings:
+  Example: "Story" → "Saga" for epic, "Chronicle" for patchnotes
+  Fields to add to .shipstyle: ui_labels.story, ui_labels.history, ui_labels.contributors,
+  ui_labels.generate, ui_labels.styles, ui_labels.settings, ui_labels.dashboard
+- Styles will also control navigation icons:
+  Example: local repo icon → sacred scroll for adeptus-mechanicus style,
+  folder for formal, game controller for patchnotes
+  Fields to add to .shipstyle: ui_icons.local_repo, ui_icons.github_repo,
+  ui_icons.dashboard, ui_icons.generate, ui_icons.story, ui_icons.history,
+  ui_icons.contributors, ui_icons.styles, ui_icons.settings
+  Icons are inline SVG strings stored in the .shipstyle file
+- These fields are NOT implemented now — registered here to inform future .shipstyle
+  schema design decisions
+
+#### P3.4 — HTML report visual overhaul
+- Reports must visually reflect the active style beyond just colors
+- Per-style elements: header image (theme.header_image), style logo (theme.logo),
+  card style (minimal/bordered/glassmorphism), separators, font
+- Wordmark in report header: "Commit"(primary color) + "Lore"(accent color) + style logo
+- Each style should feel like a completely different report, not just a recolor
+
+#### P3.5 — General UI polish
+- Typography, spacing, iconography, micro-interactions
+- shadcn-svelte (already in SPEC) + DaisyUI for theme system
+- Every screen reviewed with product design criteria
+- Reference aesthetic: clean, modern, dark-first, personality per style
+
+#### P3.6 — Internationalisation (i18n)
+- Language selector in Settings: English / Spanish (extensible for future languages)
+- Language applies to ALL app text: UI labels, navigation, buttons, messages, errors
+- Language also applies to ALL generated content: changelogs, stories, reports
+- Built-in style templates must have both English and Spanish versions
+  Example: formal_en.shipstyle / formal_es.shipstyle, or language variants inside
+  a single .shipstyle via a new `templates_es` / `templates_en` block
+- LLM prompt (llm_prompt field) must also have language variants:
+  the prompt instructs the LLM to respond in the selected language
+- User-created styles: language handling is the user's responsibility —
+  documented in the style creation UI
+- Language persists in ~/.config/commitlore/config.yml
+- Default language: English
+- Architecture decision needed before implementation:
+  single .shipstyle with language blocks vs separate files per language
+  → ask human before implementing
