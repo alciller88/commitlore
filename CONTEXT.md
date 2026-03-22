@@ -335,3 +335,13 @@ Add a row here when completing each phase.
 - Architecture decision needed before implementation:
   single .shipstyle with language blocks vs separate files per language
   → ask human before implementing
+
+#### P3 — Pending fixes (do not forget)
+- Dashboard: GitHub Connect button misaligned in the repo picker card — fix layout in Dashboard.svelte
+- LLM prompts ALL styles: must include explicit instruction to NEVER invent content not present
+  in the actual commits. The LLM must adapt tone and language but always be faithful to the real
+  repo data. Add to every built-in style llm_prompt:
+  "IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the data section.
+  Do not invent features, fixes, or changes that are not present in the commit data.
+  Adapt the tone and style, but never fabricate content."
+  This applies to: formal, patchnotes, epic, ironic, and any future built-in style.
