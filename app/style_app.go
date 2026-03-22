@@ -45,6 +45,53 @@ func (s *StyleApp) ListStyles() (string, error) {
 	return toJSON(result)
 }
 
+// StyleTheme holds the theme fields for frontend CSS variable injection.
+type StyleTheme struct {
+	Primary    string `json:"primary"`
+	Secondary  string `json:"secondary"`
+	Background string `json:"background"`
+	Surface    string `json:"surface"`
+	Text       string `json:"text"`
+	Accent     string `json:"accent"`
+	Border     string `json:"border"`
+	FontFamily string `json:"fontFamily"`
+	FontSize   string `json:"fontSize"`
+	Mode       string `json:"mode"`
+	Logo       string `json:"logo"`
+}
+
+// GetStyleTheme returns only the theme fields for a style, with fallback defaults.
+func (s *StyleApp) GetStyleTheme(name string) (StyleTheme, error) {
+	st, err := styles.Load(name)
+	if err != nil {
+		return StyleTheme{}, cleanError(err)
+	}
+	return buildStyleTheme(st), nil
+}
+
+func buildStyleTheme(st styles.Style) StyleTheme {
+	return StyleTheme{
+		Primary:    withDefault(st.Theme.Colors.Primary, "#58a6ff"),
+		Secondary:  withDefault(st.Theme.Colors.Secondary, "#8b949e"),
+		Background: withDefault(st.Theme.Colors.Background, "#0d1117"),
+		Surface:    withDefault(st.Theme.Colors.Surface, "#161b22"),
+		Text:       withDefault(st.Theme.Colors.Text, "#e6edf3"),
+		Accent:     withDefault(st.Theme.Colors.Accent, "#58a6ff"),
+		Border:     withDefault(st.Theme.Colors.Border, "#30363d"),
+		FontFamily: withDefault(st.Theme.Typography.FontFamily, "system-ui, sans-serif"),
+		FontSize:   withDefault(st.Theme.Typography.FontSizeBase, "14px"),
+		Mode:       withDefault(st.Theme.Mode, "dark"),
+		Logo:       st.Theme.Logo,
+	}
+}
+
+func withDefault(value, fallback string) string {
+	if value == "" {
+		return fallback
+	}
+	return value
+}
+
 // ShowStyle returns the full style definition as JSON.
 func (s *StyleApp) ShowStyle(name string) (string, error) {
 	st, err := styles.Load(name)

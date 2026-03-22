@@ -153,6 +153,33 @@ func TestLoadLLMSettings_emptyWhenNotConfigured(t *testing.T) {
 	assert.Equal(t, "", model)
 }
 
+func TestGetActiveStyle_defaultFormal(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	style, err := c.GetActiveStyle()
+	require.NoError(t, err)
+	assert.Equal(t, "formal", style)
+}
+
+func TestSetActiveStyle_persists(t *testing.T) {
+	dir, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	require.NoError(t, c.SetActiveStyle("patchnotes"))
+
+	style, err := c.GetActiveStyle()
+	require.NoError(t, err)
+	assert.Equal(t, "patchnotes", style)
+
+	path := filepath.Join(dir, "commitlore", "config.yml")
+	data, err := os.ReadFile(path)
+	require.NoError(t, err)
+	assert.Contains(t, string(data), "patchnotes")
+}
+
 func TestConfigPersistence_surviveReload(t *testing.T) {
 	_, cleanup := setupTestConfig(t)
 	defer cleanup()
