@@ -5,6 +5,17 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (P3 UI bugs)
+- History: scrollbar no longer overlaps Fetch button — overflow: hidden on container, min-height: 0 on table
+- App.svelte: repo indicator moved from sidebar bottom to 32px content topbar (always visible, all screens)
+- App.svelte: scroll SVG removed from sidebar header — only style logo (if defined) or wordmark alone
+- Window controls: per-style colors via WindowControls struct in .shipstyle (default, close, minimize, maximize)
+- internal/styles: WindowControls struct added to Theme
+- app/style_app.go: StyleTheme includes winDefault/winClose/winMinimize/winMaximize with fallback defaults
+- theme.ts: injects --cl-win-default/close/minimize/maximize CSS variables
+- All 4 built-in styles have window_controls fields with style-appropriate colors
+- Styles editor: Window Controls color pickers added to Images & Icons tab
+
 ### Added (P3.1 + P3.5 Visual overhaul)
 - app/app.go: frameless window (Wails v3 Frameless: true) for custom titlebar
 - app/frontend/src/lib/design.css: design system with --space-*, --text-*, --radius-*, --transition-* tokens, global reset, scrollbar styling, button micro-interactions

@@ -58,6 +58,11 @@ theme:
     font_size_code: "12px"
   card_style: "bordered"
   animations: true
+  window_controls:
+    default: "#4C3A6E"
+    close: "#FF5F57"
+    minimize: "#F59E0B"
+    maximize: "#7C3AED"
   custom_css: |
     h1, h2 {
       text-transform: uppercase;

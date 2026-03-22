@@ -101,6 +101,26 @@ func TestSaveStyleDetail_user(t *testing.T) {
 	assert.Equal(t, "# {{.Version}}", loaded.Templates.Header)
 }
 
+func TestGetStyleTheme_windowControls(t *testing.T) {
+	s := NewStyleApp()
+	theme, err := s.GetStyleTheme("formal")
+	require.NoError(t, err)
+	assert.Equal(t, "#9CA3AF", theme.WinDefault)
+	assert.Equal(t, "#FF5F57", theme.WinClose)
+	assert.Equal(t, "#FEBC2E", theme.WinMinimize)
+	assert.Equal(t, "#28C840", theme.WinMaximize)
+}
+
+func TestGetStyleTheme_windowControls_defaults(t *testing.T) {
+	s := NewStyleApp()
+	theme, err := s.GetStyleTheme("formal")
+	require.NoError(t, err)
+	assert.NotEmpty(t, theme.WinDefault)
+	assert.NotEmpty(t, theme.WinClose)
+	assert.NotEmpty(t, theme.WinMinimize)
+	assert.NotEmpty(t, theme.WinMaximize)
+}
+
 func TestSaveStyleDetail_builtinRejected(t *testing.T) {
 	s := NewStyleApp()
 	detail := StyleDetail{Name: "formal", Version: "1.0.0"}

@@ -125,6 +125,7 @@
     flex-direction: column;
     height: 100%;
     gap: var(--space-3);
+    overflow: hidden;
   }
 
   .filters-row {
@@ -239,8 +240,9 @@
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .table-container {
-    overflow: auto;
     flex: 1;
+    overflow-y: auto;
+    min-height: 0;
   }
 
   table {

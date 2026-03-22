@@ -60,6 +60,11 @@ theme:
     font_size_code: "13px"
   card_style: "glassmorphism"
   animations: true
+  window_controls:
+    default: "#6B5B3A"
+    close: "#8B0000"
+    minimize: "#D4AF37"
+    maximize: "#2E7D32"
   custom_css: |
     h1, h2 {
       text-shadow: 0 0 10px rgba(212, 175, 55, 0.3), 0 0 20px rgba(212, 175, 55, 0.1);
