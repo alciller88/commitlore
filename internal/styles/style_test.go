@@ -49,7 +49,20 @@ func TestLoad_epic(t *testing.T) {
 	s, err := Load("epic")
 	require.NoError(t, err)
 	assert.Equal(t, "epic", s.Name)
-	assert.Contains(t, s.Templates.Header, "CHRONICLES")
+	assert.Equal(t, "2.0.0", s.Version)
+	assert.Contains(t, s.Templates.Header, "The Chronicle")
+}
+
+func TestLoad_epic_uiLabels(t *testing.T) {
+	s, err := Load("epic")
+	require.NoError(t, err)
+	assert.Equal(t, "The Keep", s.UILabels.Dashboard)
+	assert.Equal(t, "The Chronicle", s.UILabels.Generate)
+	assert.Equal(t, "The Saga", s.UILabels.Story)
+	assert.Equal(t, "The Scrolls", s.UILabels.History)
+	assert.Equal(t, "The Fellowship", s.UILabels.Contributors)
+	assert.Equal(t, "The Wardrobe", s.UILabels.Styles)
+	assert.Equal(t, "The Forge", s.UILabels.Settings)
 }
 
 func TestLoad_emptyNameDefaultsToFormal(t *testing.T) {
@@ -91,8 +104,8 @@ func TestLoad_themeLoaded(t *testing.T) {
 	s, err := Load("epic")
 	require.NoError(t, err)
 	assert.Equal(t, "dark", s.Theme.Mode)
-	assert.Equal(t, "#D4AF37", s.Theme.Colors.Primary)
-	assert.Equal(t, "glassmorphism", s.Theme.CardStyle)
+	assert.Equal(t, "#C9A84C", s.Theme.Colors.Primary)
+	assert.Equal(t, "bordered", s.Theme.CardStyle)
 	assert.True(t, s.Theme.Animations)
 }
 
@@ -107,8 +120,8 @@ func TestLoad_terminalLoaded(t *testing.T) {
 func TestLoad_vocabularyLoaded(t *testing.T) {
 	s, err := Load("epic")
 	require.NoError(t, err)
-	assert.Equal(t, "dark curse", s.Vocabulary["bug"])
-	assert.Equal(t, "vanquished", s.Vocabulary["fix"])
+	assert.Equal(t, "curse", s.Vocabulary["bug"])
+	assert.Equal(t, "mended", s.Vocabulary["fix"])
 }
 
 func TestValidate_invalidCardStyle(t *testing.T) {

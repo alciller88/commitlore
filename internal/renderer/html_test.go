@@ -61,15 +61,15 @@ func TestRender_htmlUsesThemeColors(t *testing.T) {
 	s := loadTestStyle(t, "epic")
 	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
-	assert.Contains(t, out, "#D4AF37")
-	assert.Contains(t, out, "#1A1209")
+	assert.Contains(t, out, "#C9A84C")
+	assert.Contains(t, out, "#0F0A05")
 }
 
 func TestRender_htmlUsesCustomCSS(t *testing.T) {
-	s := loadTestStyle(t, "epic")
+	s := loadTestStyle(t, "ironic")
 	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
-	assert.Contains(t, out, "text-shadow")
+	assert.Contains(t, out, "letter-spacing")
 }
 
 func TestRender_htmlBorderedCardStyle(t *testing.T) {

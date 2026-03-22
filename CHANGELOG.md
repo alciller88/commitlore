@@ -5,6 +5,9 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed (P3 epic style v2)
+- epic.shipstyle v2.0.0: medieval fantasy aesthetic (gold #C9A84C / crimson #8B1A1A on dark #0F0A05), Cinzel serif font, Phosphor Sword inline SVG logo, bordered card style, ui_labels (The Keep, The Chronicle, The Saga, The Scrolls, The Fellowship, The Wardrobe, The Forge), refined LLM prompt with anti-hallucination instruction, simplified vocabulary
+
 ### Added (P3 patchnotes style v2 + UILabels)
 - internal/styles: UILabels struct added to .shipstyle schema — per-style navigation label overrides (dashboard, generate, story, history, contributors, styles, settings)
 - app/style_app.go: UILabelsDetail in StyleTheme and StyleDetail, buildUILabels() with English defaults fallback
