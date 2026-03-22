@@ -132,28 +132,27 @@
       {/each}
     </div>
 
-    <div class="repo-indicator" style="--wails-draggable: no-drag">
-      {#if currentRepo}
-        <div class="ri-row">
-          <span class="ri-icon">
-            {#if currentRepo.type === 'github'}<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-            {:else}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-            {/if}
-          </span>
-          <div class="ri-text">
-            <span class="ri-name">{currentRepo.name}</span>
-            <span class="ri-path">{truncatePath(currentRepo.path, 28)}</span>
-          </div>
-        </div>
-      {:else}
-        <span class="ri-empty">No repo selected</span>
-      {/if}
-    </div>
   </nav>
 
-  <main class="content">
-    <svelte:component this={components[activeScreen]} />
-  </main>
+  <div class="main-area">
+    <div class="topbar">
+      {#if currentRepo}
+        <span class="tb-icon">
+          {#if currentRepo.type === 'github'}<svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          {:else}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+          {/if}
+        </span>
+        <span class="tb-name">{currentRepo.name}</span>
+        <span class="tb-sep">&middot;</span>
+        <span class="tb-path">{truncatePath(currentRepo.path, 60)}</span>
+      {:else}
+        <span class="tb-empty">No repository selected</span>
+      {/if}
+    </div>
+    <main class="content">
+      <svelte:component this={components[activeScreen]} />
+    </main>
+  </div>
 </div>
 
 <style>
@@ -233,24 +232,24 @@
   .nav-icon { display: flex; align-items: center; width: 16px; height: 16px; flex-shrink: 0; }
   .nav-text { white-space: nowrap; }
 
-  .repo-indicator {
-    padding: var(--space-3, 12px);
-    border-top: 1px solid var(--cl-surface, #161b22);
-    flex-shrink: 0;
+  .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+  .topbar {
+    height: 32px; flex-shrink: 0; display: flex; align-items: center; gap: var(--space-2, 8px);
+    padding: 0 var(--space-4, 16px);
+    background: var(--cl-surface, #161b22);
+    border-bottom: 1px solid var(--cl-background, #0d1117);
+    font-size: var(--text-base, 13px);
   }
-  .ri-row { display: flex; gap: var(--space-2, 8px); align-items: flex-start; }
-  .ri-icon { display: flex; color: var(--cl-secondary, #8b949e); flex-shrink: 0; margin-top: 1px; }
-  .ri-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-  .ri-name {
-    color: var(--cl-text, #e6edf3); font-size: var(--text-sm, 12px); font-weight: 500;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .ri-path {
-    color: var(--cl-secondary, #8b949e); font-size: var(--text-xs, 11px);
+  .tb-icon { display: flex; color: var(--cl-secondary, #8b949e); flex-shrink: 0; }
+  .tb-name { color: var(--cl-text, #e6edf3); font-weight: 500; white-space: nowrap; }
+  .tb-sep { color: var(--cl-secondary, #8b949e); opacity: 0.5; }
+  .tb-path {
+    color: var(--cl-secondary, #8b949e); font-size: var(--text-sm, 12px);
     font-family: 'JetBrains Mono', monospace;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px;
   }
-  .ri-empty { color: var(--cl-secondary, #8b949e); font-size: var(--text-sm, 12px); opacity: 0.5; font-style: italic; }
+  .tb-empty { color: var(--cl-secondary, #8b949e); font-style: italic; opacity: 0.5; }
 
   .content { flex: 1; overflow-y: auto; padding: var(--space-5, 24px); }
 </style>
