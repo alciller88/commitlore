@@ -109,6 +109,8 @@ Complete structure of a .shipstyle file:
     card_style: "bordered"    # minimal | bordered | glassmorphism
     animations: true
     custom_css: ""            # additional CSS injected at end
+    window_controls:          # custom titlebar button colors
+      default, close, minimize, maximize
 
   terminal:                   # terminal visual identity
     colors:
