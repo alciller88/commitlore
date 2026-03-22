@@ -5,6 +5,9 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed (P3 formal style v2)
+- formal.shipstyle: bumped to v2.0.0 with improved colors (#0969DA primary, #0550AE accent, pure white background), tighter typography (13px base, 20px headers, Inter system stack), bordered card style, refined LLM prompt with executive summary instruction, enriched templates with hash+author metadata, bullet decorator changed to •
+
 ### Fixed (P3 UI bugs round 2)
 - App.svelte .content: changed from overflow-y:auto to overflow:hidden flex column — was the root cause of all table scroll issues (height:100% inside scrollable parent never constrains)
 - All screens: replaced height:100% with flex:1 to work with the new flex column .content container

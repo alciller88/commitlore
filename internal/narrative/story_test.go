@@ -39,7 +39,7 @@ func sampleChronology() git.Chronology {
 func TestGenerateStory_formal(t *testing.T) {
 	out, err := GenerateStory(sampleChronology(), loadStyle(t, "formal"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "Repository Story")
+	assert.Contains(t, out, "Repository Report")
 	assert.Contains(t, out, "2025-01-01")
 	assert.Contains(t, out, "Alice")
 	assert.Contains(t, out, "92")

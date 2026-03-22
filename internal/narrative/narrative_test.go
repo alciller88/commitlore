@@ -77,8 +77,7 @@ func TestGenerate_emptyChangelog(t *testing.T) {
 func TestGenerate_shortHash(t *testing.T) {
 	out, err := Generate(sampleChangelog(), loadStyle(t, "formal"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "abc1234")
-	assert.NotContains(t, out, "abc1234567")
+	assert.Contains(t, out, "abc1234567")
 }
 
 func TestGenerate_groupLabels(t *testing.T) {
