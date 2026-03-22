@@ -5,6 +5,12 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (P2 style cleanup)
+- app/frontend: removed redundant style selector from Generate and Story — active style now read from global store
+- app/frontend: added read-only style pill in Generate/Story sidebar showing active style name with accent color
+- internal/renderer: added RenderWithTheme/RenderStoryWithTheme with HTMLTheme override — HTML output reflects active style colors
+- app/changelog_app.go, app/story_app.go: pass active style's theme as HTMLTheme override to renderer
+
 ### Added (P2 UI theming)
 - app/config_app.go: GetActiveStyle/SetActiveStyle — active style persisted in config.yml, defaults to "formal"
 - app/style_app.go: GetStyleTheme binding returns typed StyleTheme struct with fallback defaults for missing theme fields
