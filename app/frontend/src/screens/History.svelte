@@ -128,8 +128,8 @@
   }
 
   .author-input {
-    width: 140px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 100px;
     height: 36px;
     box-sizing: border-box;
     padding: 0 var(--space-2);
@@ -147,7 +147,8 @@
   }
 
   .date-input {
-    width: 120px;
+    width: 100px;
+    flex-shrink: 0;
     height: 36px;
     box-sizing: border-box;
     padding: 0 var(--space-2);
@@ -168,8 +169,8 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    flex: 1;
-    min-width: 80px;
+    width: 120px;
+    flex-shrink: 0;
   }
   .limit-group input[type="range"] {
     flex: 1;
@@ -197,7 +198,7 @@
   }
 
   .fetch-btn {
-    width: 80px;
+    width: 72px;
     height: 36px;
     background: var(--cl-accent);
     border: none;
