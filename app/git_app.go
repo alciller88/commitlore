@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/alciller88/commitlore/internal/git"
@@ -37,6 +38,12 @@ func (g *GitApp) OpenFolderPicker() string {
 	}
 
 	return path
+}
+
+// SetGitHubToken sets the GITHUB_TOKEN env var for the current session.
+// The token is not persisted to disk. Pass empty string to clear.
+func (g *GitApp) SetGitHubToken(token string) {
+	os.Setenv("GITHUB_TOKEN", token)
 }
 
 // History returns commits as JSON, supporting local and GitHub repos.
