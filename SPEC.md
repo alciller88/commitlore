@@ -376,8 +376,8 @@ commitlore-styles/
     "author": "author",
     "version": "1.0.0",
     "tags": ["dark", "colorful"],
-    "preview": "https://raw.githubusercontent.com/commitlore/commitlore-styles/main/<name>/preview.png",
-    "download": "https://raw.githubusercontent.com/commitlore/commitlore-styles/main/<name>/style.shipstyle"
+    "preview": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/preview.png",
+    "download": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/style.shipstyle"
   }
 ]
 ```

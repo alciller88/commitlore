@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Marketplace screen**: Browse and install community styles from the official `commitlore-styles` repository. Displays style cards with preview image, name, author, description, tags, and version. Install button with loading/installed states. Full-screen error state with retry button for offline scenarios.
 - **MarketplaceApp binding**: `FetchCatalog`, `InstallStyle`, `IsInstalled` — fetches catalog from the official repository, downloads and validates `.shipstyle` files with strict schema checking (rejects unknown fields), saves to user styles directory.
 - **`marketplace` ui_label field**: Styles can now customize the Marketplace navigation label via `ui_labels.marketplace` in `.shipstyle` schema.
+- **`commitlore-styles` repository**: Official marketplace repository created at `alciller88/commitlore-styles` with `index.json` catalog.
+- **Cyberpunk style v1.0.0**: Night City aesthetic with glitch effects, neon colors (yellow/cyan/pink), Orbitron + Share Tech Mono typography, HUD-style cards with cut corners, scanlines overlay, and full changelog + story HTML templates with Chart.js visualizations. Includes cyberpunk vocabulary, themed UI labels (NIGHT CITY, COMPILE, NEURAL LINK, RIPPERDOC, etc.), and anti-hallucination LLM prompt.
+- **Marketplace end-to-end flow verified**: Catalog fetch, style install, theme activation, and UI label propagation all functional.
 
 ### Removed
 
