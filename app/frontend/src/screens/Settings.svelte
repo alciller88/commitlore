@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { GetLLMConfig, SetLLMConfig, ClearLLMKey, GetActiveStyle, SetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
-  import { ListStyles, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
-  import { activeStyle } from '../lib/store'
+  import { GetLLMConfig, SetLLMConfig, ClearLLMKey, GetActiveStyle, SetActiveStyle, GetLanguage, SetLanguage } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { ListStyles, GetStyleTheme, GetAvailableLanguagesForStyle } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { activeStyle, activeLanguage } from '../lib/store'
+  import { applyTheme } from '../lib/theme'
 
   let styleName = 'formal'
   let styles: Array<{name: string}> = []
@@ -21,10 +22,15 @@
   let keyInput = ''
   let savingKey = false
 
+  let language = 'en'
+  let availableLanguages: string[] = ['en']
+  let languageError = ''
+
   onMount(() => {
     loadConfig()
     loadStyles()
     loadThemePreview(styleName)
+    loadLanguage()
   })
 
   async function loadConfig() {
@@ -63,6 +69,35 @@
     activeStyle.set(name)
     await SetActiveStyle(name)
     await loadThemePreview(name)
+    await loadAvailableLanguages(name)
+  }
+
+  async function loadLanguage() {
+    try {
+      language = await GetLanguage()
+      activeLanguage.set(language)
+      await loadAvailableLanguages(styleName)
+    } catch {}
+  }
+
+  async function loadAvailableLanguages(name: string) {
+    try {
+      availableLanguages = await GetAvailableLanguagesForStyle(name)
+    } catch {
+      availableLanguages = ['en']
+    }
+  }
+
+  async function changeLanguage(lang: string) {
+    languageError = ''
+    try {
+      await SetLanguage(lang)
+      language = lang
+      activeLanguage.set(lang)
+      await applyTheme(styleName)
+    } catch (e: any) {
+      languageError = e?.message || 'Failed to change language'
+    }
   }
 
   async function saveConfig() {
@@ -136,6 +171,34 @@
             <span class="swatch" style="background: {themePreview.accent}"></span>
           </span>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Language</h2>
+    <div class="form">
+      <div class="field">
+        <label>App language</label>
+        <div class="lang-selector">
+          <label class="lang-option">
+            <input type="radio" name="lang" value="en"
+              checked={language === 'en'}
+              on:change={() => changeLanguage('en')}
+              disabled={!availableLanguages.includes('en')} />
+            <span>English</span>
+          </label>
+          <label class="lang-option">
+            <input type="radio" name="lang" value="es"
+              checked={language === 'es'}
+              on:change={() => changeLanguage('es')}
+              disabled={!availableLanguages.includes('es')} />
+            <span>Español</span>
+          </label>
+        </div>
+        {#if languageError}
+          <div class="lang-error">{languageError}</div>
+        {/if}
       </div>
     </div>
   </section>
@@ -405,6 +468,38 @@
     gap: var(--space-2);
     justify-content: flex-end;
     margin-top: var(--space-2);
+  }
+
+  .lang-selector {
+    display: flex;
+    gap: var(--space-4);
+  }
+  .lang-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+    font-size: var(--text-md);
+    color: var(--cl-text);
+  }
+  .lang-option input[type="radio"] {
+    accent-color: var(--cl-accent);
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+  }
+  .lang-option input[type="radio"]:disabled + span {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .lang-error {
+    margin-top: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    background: #da363433;
+    border: 1px solid #da3634;
+    border-radius: var(--radius-md);
+    color: #f85149;
+    font-size: var(--text-base);
   }
 
   .style-selector {
