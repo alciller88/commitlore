@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Adeptus Mechanicus style**: Changelog charts stacked vertically (320px height each), story `story_contributor` template field error resolved (removed `.Count` — not available on `contributorData`), logo redesigned as bold cog-with-eye legible at 32px, story title `mechanicus-boot` animation added with binary-reveal subtitle (respects `prefers-reduced-motion`)
 - **Cyberpunk style**: Logo SVG constrained to 32x32 viewBox, no longer overflows sidebar header
 - **Adeptus Mechanicus style**: Logo SVG constrained to 32x32 viewBox, no longer overflows sidebar header
+- **Cyberpunk style**: Logo replaced with approved wireframe triangle design, legible at 32x32px
+- **Adeptus Mechanicus style**: Logo replaced with approved cog design in #C41E2A red, legible at 32x32px
 
 ### Removed
 
