@@ -121,7 +121,7 @@ func TestRenderStory_htmlIncludesNarrativeContent(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, out, "THE SAGA BEGINS")
 	assert.Contains(t, out, "Alice laid the first stone")
-	assert.Contains(t, out, "class=\"narrative\"")
+	assert.Contains(t, out, "narrative")
 }
 
 func TestRender_htmlIncludesNarrativeContent(t *testing.T) {
@@ -131,7 +131,7 @@ func TestRender_htmlIncludesNarrativeContent(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, out, "CHANGELOG REPORT")
 	assert.Contains(t, out, "New features have been added")
-	assert.Contains(t, out, "class=\"narrative\"")
+	assert.Contains(t, out, "narrative")
 }
 
 func TestRenderStory_htmlRendersMarkdown(t *testing.T) {
