@@ -46,6 +46,12 @@ func (g *GitApp) SetGitHubToken(token string) {
 	os.Setenv("GITHUB_TOKEN", token)
 }
 
+// ClearCommitCache invalidates the in-memory commit cache.
+// Call when the user switches to a different repository.
+func (g *GitApp) ClearCommitCache() {
+	InvalidateCache()
+}
+
 // History returns commits as JSON, supporting local and GitHub repos.
 func (g *GitApp) History(repo, author, since, until string, limit int) (string, error) {
 	opts, err := buildOpts(author, since, until, limit)

@@ -86,6 +86,62 @@ export class DecorDetail {
 }
 
 /**
+ * IconsDetail holds per-style icon/emoji characters.
+ */
+export class IconsDetail {
+    "feature": string;
+    "fix": string;
+    "breaking": string;
+    "chore": string;
+    "docs": string;
+    "test": string;
+    "storyPeak": string;
+    "bullet": string;
+    "separator": string;
+
+    /** Creates a new IconsDetail instance. */
+    constructor($$source: Partial<IconsDetail> = {}) {
+        if (!("feature" in $$source)) {
+            this["feature"] = "";
+        }
+        if (!("fix" in $$source)) {
+            this["fix"] = "";
+        }
+        if (!("breaking" in $$source)) {
+            this["breaking"] = "";
+        }
+        if (!("chore" in $$source)) {
+            this["chore"] = "";
+        }
+        if (!("docs" in $$source)) {
+            this["docs"] = "";
+        }
+        if (!("test" in $$source)) {
+            this["test"] = "";
+        }
+        if (!("storyPeak" in $$source)) {
+            this["storyPeak"] = "";
+        }
+        if (!("bullet" in $$source)) {
+            this["bullet"] = "";
+        }
+        if (!("separator" in $$source)) {
+            this["separator"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new IconsDetail instance from a string or object.
+     */
+    static createFrom($$source: any = {}): IconsDetail {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new IconsDetail($$parsedSource as Partial<IconsDetail>);
+    }
+}
+
+/**
  * LLMConfig holds the LLM provider configuration for the frontend.
  */
 export class LLMConfig {
@@ -166,6 +222,9 @@ export class StyleDetail {
     "theme": ThemeDetail;
     "terminal": TerminalDetail;
     "uiLabels": UILabelsDetail;
+    "icons": IconsDetail;
+    "htmlTemplateChangelog": string;
+    "htmlTemplateStory": string;
 
     /** Creates a new StyleDetail instance. */
     constructor($$source: Partial<StyleDetail> = {}) {
@@ -208,6 +267,15 @@ export class StyleDetail {
         if (!("uiLabels" in $$source)) {
             this["uiLabels"] = (new UILabelsDetail());
         }
+        if (!("icons" in $$source)) {
+            this["icons"] = (new IconsDetail());
+        }
+        if (!("htmlTemplateChangelog" in $$source)) {
+            this["htmlTemplateChangelog"] = "";
+        }
+        if (!("htmlTemplateStory" in $$source)) {
+            this["htmlTemplateStory"] = "";
+        }
 
         Object.assign(this, $$source);
     }
@@ -222,6 +290,7 @@ export class StyleDetail {
         const $$createField10_0 = $$createType3;
         const $$createField11_0 = $$createType4;
         const $$createField12_0 = $$createType5;
+        const $$createField13_0 = $$createType6;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("tags" in $$parsedSource) {
             $$parsedSource["tags"] = $$createField5_0($$parsedSource["tags"]);
@@ -240,6 +309,9 @@ export class StyleDetail {
         }
         if ("uiLabels" in $$parsedSource) {
             $$parsedSource["uiLabels"] = $$createField12_0($$parsedSource["uiLabels"]);
+        }
+        if ("icons" in $$parsedSource) {
+            $$parsedSource["icons"] = $$createField13_0($$parsedSource["icons"]);
         }
         return new StyleDetail($$parsedSource as Partial<StyleDetail>);
     }
@@ -265,6 +337,7 @@ export class StyleTheme {
     "winMinimize": string;
     "winMaximize": string;
     "uiLabels": UILabelsDetail;
+    "icons": IconsDetail;
 
     /** Creates a new StyleTheme instance. */
     constructor($$source: Partial<StyleTheme> = {}) {
@@ -316,6 +389,9 @@ export class StyleTheme {
         if (!("uiLabels" in $$source)) {
             this["uiLabels"] = (new UILabelsDetail());
         }
+        if (!("icons" in $$source)) {
+            this["icons"] = (new IconsDetail());
+        }
 
         Object.assign(this, $$source);
     }
@@ -325,9 +401,13 @@ export class StyleTheme {
      */
     static createFrom($$source: any = {}): StyleTheme {
         const $$createField15_0 = $$createType5;
+        const $$createField16_0 = $$createType6;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("uiLabels" in $$parsedSource) {
             $$parsedSource["uiLabels"] = $$createField15_0($$parsedSource["uiLabels"]);
+        }
+        if ("icons" in $$parsedSource) {
+            $$parsedSource["icons"] = $$createField16_0($$parsedSource["icons"]);
         }
         return new StyleTheme($$parsedSource as Partial<StyleTheme>);
     }
@@ -460,8 +540,8 @@ export class TerminalDetail {
      * Creates a new TerminalDetail instance from a string or object.
      */
     static createFrom($$source: any = {}): TerminalDetail {
-        const $$createField0_0 = $$createType6;
-        const $$createField1_0 = $$createType7;
+        const $$createField0_0 = $$createType7;
+        const $$createField1_0 = $$createType8;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("colors" in $$parsedSource) {
             $$parsedSource["colors"] = $$createField0_0($$parsedSource["colors"]);
@@ -524,9 +604,9 @@ export class ThemeDetail {
      * Creates a new ThemeDetail instance from a string or object.
      */
     static createFrom($$source: any = {}): ThemeDetail {
-        const $$createField1_0 = $$createType8;
-        const $$createField2_0 = $$createType9;
-        const $$createField8_0 = $$createType10;
+        const $$createField1_0 = $$createType9;
+        const $$createField2_0 = $$createType10;
+        const $$createField8_0 = $$createType11;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("colors" in $$parsedSource) {
             $$parsedSource["colors"] = $$createField1_0($$parsedSource["colors"]);
@@ -588,6 +668,8 @@ export class UILabelsDetail {
     "contributors": string;
     "styles": string;
     "settings": string;
+    "generateButton": string;
+    "storyButton": string;
 
     /** Creates a new UILabelsDetail instance. */
     constructor($$source: Partial<UILabelsDetail> = {}) {
@@ -611,6 +693,12 @@ export class UILabelsDetail {
         }
         if (!("settings" in $$source)) {
             this["settings"] = "";
+        }
+        if (!("generateButton" in $$source)) {
+            this["generateButton"] = "";
+        }
+        if (!("storyButton" in $$source)) {
+            this["storyButton"] = "";
         }
 
         Object.assign(this, $$source);
@@ -668,8 +756,9 @@ const $$createType2 = $Create.Map($Create.Any, $Create.Any);
 const $$createType3 = ThemeDetail.createFrom;
 const $$createType4 = TerminalDetail.createFrom;
 const $$createType5 = UILabelsDetail.createFrom;
-const $$createType6 = TermColorsDetail.createFrom;
-const $$createType7 = DecorDetail.createFrom;
-const $$createType8 = ColorsDetail.createFrom;
-const $$createType9 = TypoDetail.createFrom;
-const $$createType10 = WinControlDetail.createFrom;
+const $$createType6 = IconsDetail.createFrom;
+const $$createType7 = TermColorsDetail.createFrom;
+const $$createType8 = DecorDetail.createFrom;
+const $$createType9 = ColorsDetail.createFrom;
+const $$createType10 = TypoDetail.createFrom;
+const $$createType11 = WinControlDetail.createFrom;

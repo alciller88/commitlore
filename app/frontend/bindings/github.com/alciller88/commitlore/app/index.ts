@@ -17,6 +17,7 @@ export {
 export {
     ColorsDetail,
     DecorDetail,
+    IconsDetail,
     LLMConfig,
     RecentRepo,
     StyleDetail,

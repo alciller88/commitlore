@@ -43,10 +43,20 @@
   }
   function closeGHModal() { showGHModal = false }
 
+  function normalizeGitHubRepo(input: string): string | null {
+    const ownerRepo = /^[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+$/
+    const ghUrl = /^(?:https?:\/\/)?github\.com\/([a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+)\/?$/
+    if (ownerRepo.test(input)) return input
+    const m = ghUrl.exec(input)
+    if (m) return m[1]
+    return null
+  }
+
   async function connectGitHub() {
-    const repo = ghRepo.trim()
-    if (!repo) { ghError = 'Enter a repository (owner/repo)'; return }
-    if (!/^[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+$/.test(repo)) { ghError = 'Invalid format. Use owner/repo'; return }
+    const raw = ghRepo.trim()
+    if (!raw) { ghError = 'Enter a repository (owner/repo or GitHub URL)'; return }
+    const repo = normalizeGitHubRepo(raw)
+    if (!repo) { ghError = 'Invalid format. Use owner/repo or https://github.com/owner/repo'; return }
     ghError = ''; ghLoading = true
     try {
       const token = ghToken.trim()
@@ -179,7 +189,7 @@
 
       <div class="modal-field">
         <label>Repository</label>
-        <input type="text" bind:value={ghRepo} placeholder="owner/repo" autofocus />
+        <input type="text" bind:value={ghRepo} placeholder="owner/repo or https://github.com/owner/repo" autofocus />
       </div>
 
       <div class="modal-field">

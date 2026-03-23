@@ -76,6 +76,10 @@ func writeTypeBadgeCSS(buf *strings.Builder, t styles.Theme) {
 	fmt.Fprintf(buf, ".type-feat { background: %s33; color: %s; }\n", t.Colors.Accent, t.Colors.Primary)
 	fmt.Fprintf(buf, ".type-fix { background: #3fb95033; color: #3fb950; }\n")
 	fmt.Fprintf(buf, ".type-breaking { background: #f8514933; color: #f85149; }\n")
+	fmt.Fprintf(buf, ".type-refactor { background: %s33; color: %s; }\n", t.Colors.Secondary, t.Colors.Secondary)
+	fmt.Fprintf(buf, ".type-docs { background: %s33; color: %s; }\n", t.Colors.Secondary, t.Colors.Secondary)
+	fmt.Fprintf(buf, ".type-test { background: %s33; color: %s; }\n", t.Colors.Secondary, t.Colors.Secondary)
+	fmt.Fprintf(buf, ".type-chore { background: %s33; color: %s; }\n", t.Colors.Secondary, t.Colors.Secondary)
 	fmt.Fprintf(buf, ".type-other { background: %s; color: %s; }\n", t.Colors.Surface, t.Colors.Text)
 }
 

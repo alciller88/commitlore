@@ -13,7 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const topPeaks = 3
+const topPeaks = 12
 
 func init() {
 	rootCmd.AddCommand(newStoryCmd())

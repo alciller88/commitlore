@@ -34,13 +34,14 @@ type HTMLTheme struct {
 }
 
 // Render formats the given content according to the specified format.
-func Render(content string, cl changelog.Changelog, style styles.Style, format Format, repoName ...string) (string, error) {
-	rn := extractRepoName(repoName)
+// Optional variadic args: opts[0] = repoName, opts[1] = version.
+func Render(content string, cl changelog.Changelog, style styles.Style, format Format, opts ...string) (string, error) {
+	rn, version := extractOpts(opts)
 	switch format {
 	case FormatJSON:
 		return renderJSON(cl)
 	case FormatHTML:
-		return renderChangelogHTML(content, cl, style, rn)
+		return renderChangelogHTML(content, cl, style, rn, version)
 	case FormatPDF:
 		return "", fmt.Errorf("PDF format has been removed. Use --format html instead.")
 	case FormatTerminal:
@@ -52,11 +53,23 @@ func Render(content string, cl changelog.Changelog, style styles.Style, format F
 
 // RenderWithTheme renders with an optional theme override for HTML output.
 // If override is nil, uses the style's own theme (same as Render).
-func RenderWithTheme(content string, cl changelog.Changelog, style styles.Style, format Format, override *HTMLTheme, repoName ...string) (string, error) {
+// Optional variadic args: opts[0] = repoName, opts[1] = version.
+func RenderWithTheme(content string, cl changelog.Changelog, style styles.Style, format Format, override *HTMLTheme, opts ...string) (string, error) {
 	if override != nil {
 		style = applyHTMLThemeOverride(style, override)
 	}
-	return Render(content, cl, style, format, repoName...)
+	return Render(content, cl, style, format, opts...)
+}
+
+func extractOpts(opts []string) (repoName, version string) {
+	repoName = "Repository"
+	if len(opts) > 0 && opts[0] != "" {
+		repoName = opts[0]
+	}
+	if len(opts) > 1 {
+		version = opts[1]
+	}
+	return
 }
 
 func extractRepoName(names []string) string {

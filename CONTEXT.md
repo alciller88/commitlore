@@ -223,6 +223,11 @@ fix/story-template-fieldsFixed ironic {{.Commits}}→{{.Count}}, ContributorEntr
 feat/styles-screen-simplifiedStyles screen rework: read-only detail panel, removed editor/create/save, import/export/delete/set-active, marketplace link2026-03-23feat/styles-screen-simplified
 fix/styles-screen-buildFixed Browser.OpenURL import from @wailsio/runtime namespace2026-03-23fix/styles-screen-build
 feat/p3-html-templates-storySplit html_template into html_template_changelog + html_template_story, unique story templates per style2026-03-23feat/p3-html-templates-story
+fix/renderer-criticalCritical renderer fixes: SVG logo escaping, Generated date, FontSizeH default, mul/divf/divi funcmap2026-03-23fix/renderer-critical
+fix/renderer-dataRenderer data bugs: version from semver, contributor count, firstAuthor fallback, type badge CSS2026-03-23fix/renderer-data
+fix/renderer-visualVisual and style-specific bugs: formal banner date, patchnotes fade-in fallback, epic canvas IDs, ironic titles and contributor table2026-03-23fix/renderer-visual
+fix/charts-and-cacheChart color-mix fix, story peaks 3→12, commit cache for GitHub API, stats card ordering2026-03-23fix/charts-and-cache
+fix/charts-iframeChart.js setTimeout wrap, Clippy sticky, ironic icons/title, formal stat sizes2026-03-23fix/charts-iframe
 
 Add a row here when completing each phase.
 

@@ -362,11 +362,13 @@ html_template_changelog: |
         gap: 6px;
       }
 
-      /* Clippy — fixed bottom-right */
+      /* Clippy — sticky at bottom of document */
       .clippy-bubble {
-        position: fixed;
+        position: sticky;
         bottom: 24px;
-        right: 24px;
+        align-self: flex-end;
+        margin-left: auto;
+        margin-top: 24px;
         width: 220px;
         background: {{.Theme.Colors.Surface}};
         border: 2px solid {{.Theme.Colors.Accent}};
@@ -416,7 +418,7 @@ html_template_changelog: |
     <div class="word-page-area">
       <div class="word-document">
 
-        <div class="doc-title">{{.Title}}{{if not .Title}}changelog{{end}}</div>
+        <div class="doc-title">{{if eq .Title "Changelog"}}changelog{{else}}{{.Title}}{{end}}</div>
         <div class="doc-subtitle">{{.RepoName}} &nbsp;·&nbsp; {{.Generated}}{{if .Version}} &nbsp;·&nbsp; {{.Version}}{{end}}</div>
         <hr class="doc-divider">
 
@@ -431,7 +433,7 @@ html_template_changelog: |
         <ul class="doc-commit-list">
           {{range .Items}}
           <li>
-            <span class="doc-bullet">{{$.Icons.Bullet}}</span>
+            <span class="doc-bullet">{{.Icon}}</span>
             <span class="doc-commit-msg">{{.Message}}</span>
             <span class="doc-commit-meta">{{.Author}} · {{.Date}}</span>
           </li>
@@ -460,39 +462,41 @@ html_template_changelog: |
           var data = labels.map(function(k) { return counts[k]; });
           var ctx = document.getElementById("activityChart");
           if (ctx && typeof Chart !== "undefined") {
-            try {
-              new Chart(ctx, {
-                type: "bar",
-                data: {
-                  labels: labels,
-                  datasets: [{
-                    label: "commits",
-                    data: data,
-                    backgroundColor: "{{.Theme.Colors.Primary}}",
-                    borderWidth: 0,
-                    borderRadius: 2
-                  }]
-                },
-                options: {
-                  indexAxis: "y",
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: { display: false }
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: "commits",
+                      data: data,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
                   },
-                  scales: {
-                    x: {
-                      grid: { color: "{{.Theme.Colors.Border}}" },
-                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
                     },
-                    y: {
-                      grid: { display: false },
-                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    scales: {
+                      x: {
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
                     }
                   }
-                }
-              });
-            } catch(e) { console.error("Chart error:", e); }
+                });
+              } catch(e) { console.error("Chart error:", e); }
+            }, 100);
           }
         })();
         </script>
@@ -515,39 +519,41 @@ html_template_changelog: |
           var data = [{{range .Peaks}}{{.Count}},{{end}}];
           var ctx = document.getElementById("peaksChart");
           if (ctx && typeof Chart !== "undefined") {
-            try {
-              new Chart(ctx, {
-                type: "bar",
-                data: {
-                  labels: labels,
-                  datasets: [{
-                    label: "commits",
-                    data: data,
-                    backgroundColor: "{{.Theme.Colors.Primary}}",
-                    borderWidth: 0,
-                    borderRadius: 2
-                  }]
-                },
-                options: {
-                  indexAxis: "y",
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: { display: false }
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: "commits",
+                      data: data,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
                   },
-                  scales: {
-                    x: {
-                      grid: { color: "{{.Theme.Colors.Border}}" },
-                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
                     },
-                    y: {
-                      grid: { display: false },
-                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    scales: {
+                      x: {
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
                     }
                   }
-                }
-              });
-            } catch(e) { console.error("Chart error:", e); }
+                });
+              } catch(e) { console.error("Chart error:", e); }
+            }, 100);
           }
         })();
         </script>
@@ -582,13 +588,13 @@ html_template_changelog: |
           <span>generated by commitlore. you're welcome i suppose.</span>
         </div>
 
-      </div>
-    </div>
+        <!-- Clippy -->
+        <div class="clippy-bubble">
+          <span class="clippy-label">📎 Clippy</span>
+          It looks like you're writing a changelog. Nobody will read this.
+        </div>
 
-    <!-- Clippy -->
-    <div class="clippy-bubble">
-      <span class="clippy-label">📎 Clippy</span>
-      It looks like you're writing a changelog. Nobody will read this.
+      </div>
     </div>
 
   </body>
@@ -840,11 +846,13 @@ html_template_story: |
         gap: 6px;
       }
 
-      /* Clippy — fixed bottom-right */
+      /* Clippy — sticky at bottom of document */
       .clippy-bubble {
-        position: fixed;
+        position: sticky;
         bottom: 24px;
-        right: 24px;
+        align-self: flex-end;
+        margin-left: auto;
+        margin-top: 24px;
         width: 240px;
         background: {{.Theme.Colors.Surface}};
         border: 2px solid {{.Theme.Colors.Accent}};
@@ -894,7 +902,7 @@ html_template_story: |
     <div class="word-page-area">
       <div class="word-document">
 
-        <div class="doc-title">{{.Title}}{{if not .Title}}a story i guess{{end}}</div>
+        <div class="doc-title">{{if eq .Title "Repository Story"}}a story i guess{{else}}{{.Title}}{{end}}</div>
         <div class="doc-subtitle">
           {{.RepoName}} &nbsp;·&nbsp; {{.Generated}}{{if .Version}} &nbsp;·&nbsp; {{.Version}}{{end}}
           {{if .TotalCommits}} &nbsp;·&nbsp; {{.TotalCommits}} commits. someone was busy.{{end}}
@@ -929,7 +937,6 @@ html_template_story: |
         {{if .Peaks}}
         <div class="doc-section-label">when people actually worked</div>
         <div class="doc-chart-wrap">
-          <div class="doc-chart-title">when people actually worked</div>
           <div class="doc-chart-canvas-wrap">
             <canvas id="activityChart"></canvas>
           </div>
@@ -941,39 +948,41 @@ html_template_story: |
           var data = [{{range .Peaks}}{{.Count}},{{end}}];
           var ctx = document.getElementById("activityChart");
           if (ctx && typeof Chart !== "undefined") {
-            try {
-              new Chart(ctx, {
-                type: "bar",
-                data: {
-                  labels: labels,
-                  datasets: [{
-                    label: "commits",
-                    data: data,
-                    backgroundColor: "{{.Theme.Colors.Primary}}",
-                    borderWidth: 0,
-                    borderRadius: 2
-                  }]
-                },
-                options: {
-                  indexAxis: "y",
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: { display: false }
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: "commits",
+                      data: data,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
                   },
-                  scales: {
-                    x: {
-                      grid: { color: "{{.Theme.Colors.Border}}" },
-                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
                     },
-                    y: {
-                      grid: { display: false },
-                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    scales: {
+                      x: {
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
                     }
                   }
-                }
-              });
-            } catch(e) { console.error("Chart error:", e); }
+                });
+              } catch(e) { console.error("Chart error:", e); }
+            }, 100);
           }
         })();
         </script>
@@ -986,7 +995,7 @@ html_template_story: |
             <tr>
               <th>Name</th>
               <th>Commits</th>
-              <th>primarily responsible for:</th>
+              <th>joined</th>
             </tr>
           </thead>
           <tbody>
@@ -994,7 +1003,7 @@ html_template_story: |
             <tr>
               <td>{{.Name}}</td>
               <td>{{.Count}}</td>
-              <td>{{.Name}} · since {{.Date}}</td>
+              <td>since {{.Date}}</td>
             </tr>
             {{end}}
           </tbody>
@@ -1006,13 +1015,13 @@ html_template_story: |
           <span>the end. you made it.</span>
         </div>
 
-      </div>
-    </div>
+        <!-- Clippy -->
+        <div class="clippy-bubble">
+          <span class="clippy-label">📎 Clippy</span>
+          It looks like you're writing a story about code. I have concerns.
+        </div>
 
-    <!-- Clippy -->
-    <div class="clippy-bubble">
-      <span class="clippy-label">📎 Clippy</span>
-      It looks like you're writing a story about code. I have concerns.
+      </div>
     </div>
 
   </body>

@@ -5,6 +5,49 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (Chart iframe timing and visual bugs)
+- styles/builtin: all 14 `new Chart()` calls across 4 styles wrapped in `setTimeout(..., 100)` — fixes blank charts in Wails WebView iframe where canvas reports width:0 before layout completes
+- styles/builtin/ironic.shipstyle: Clippy bubble changed from `position: fixed` to `position: sticky` and moved inside `.word-document` div — no longer covers content in iframe
+- styles/builtin/ironic.shipstyle: removed duplicate "when people actually worked" chart title in story template (was showing as section label + chart title)
+- styles/builtin/ironic.shipstyle: commit list now uses `{{.Icon}}` per-item instead of `{{$.Icons.Bullet}}` — breaking changes show `!` icon instead of generic `→`
+- styles/builtin/formal.shipstyle: stat cells "First Commit" and "Most Active Month" inline `style="font-size:14px/16px"` replaced with `.rp-stat-value.is-date` CSS class (consistent 15px)
+- Tests: 4 new test cases (setTimeout wrapping, ironic duplicate title, ironic icon distinction, formal inline font-size removal)
+
+### Fixed (Charts, cache, and story peaks)
+- styles/builtin: replaced all `color-mix()` in Chart.js `<script>` blocks with `hexToRgba()` JS helper across all 4 styles (11 occurrences) — Chart.js cannot parse CSS functions, was silently discarding colors causing blank charts
+- app/story_app.go, cmd/story.go: `storyTopPeaks` increased from 3 to 12 — story charts now show up to 12 months of data for meaningful line/bar visualizations
+- app/repo_cache.go: new in-memory commit cache keyed by repo ref — avoids re-fetching commits from GitHub API when user changes style on the same repo
+- app/changelog_app.go, app/story_app.go: Generate/GenerateStory use commit cache for default opts (no author/since/until filters), bypass cache when filters are active
+- app/git_app.go: ClearCommitCache() binding exposed for frontend to call when user switches repos
+- Tests: TestBuiltinStyles_noColorMixInScripts (verifies no color-mix in script blocks), 6 commit cache tests (miss/hit/invalidate/shouldUseCache)
+
+### Fixed (Visual and style-specific bugs)
+- styles/builtin/formal.shipstyle: story banner meta no longer shows Generated date twice — restructured to show date range OR standalone date, not both
+- styles/builtin/patchnotes.shipstyle: added 300ms setTimeout fallback in both changelog and story IntersectionObserver scripts — fixes blank page in Wails iframe when observer never fires
+- styles/builtin/epic.shipstyle: changelog canvas IDs changed from generic "activityChart" to "epic-cl-type-chart" and "epic-cl-activity-chart" — prevents Chart.js ID collision
+- styles/builtin/ironic.shipstyle: changelog title now shows "changelog" (ironic lowercase) instead of generic "Changelog", story title shows "a story i guess" instead of "Repository Story" — uses `eq` template function to detect and replace generic titles
+- styles/builtin/ironic.shipstyle: story contributor table third column changed from redundant "Name · since Date" to just "since Date", header changed to "joined"
+- Tests: 8 new test cases covering all 5 visual bugs
+
+### Fixed (Renderer data bugs)
+- internal/renderer: Version field now threaded from `until` param through Render/RenderWithTheme to buildChangelogContext — version badges ({{if .Version}}) now render when `until` is a semver tag
+- internal/renderer: SemverFromString exported helper validates vMAJOR.MINOR.PATCH format, returns "" for non-semver strings
+- app/changelog_app.go: Generate() passes `SemverFromString(until)` as version to renderChangelog
+- internal/renderer: FirstAuthor fallback — if ch.FirstCommit.Author is empty, defaults to "an unknown contributor" instead of leaving blank
+- internal/renderer/css.go: writeTypeBadgeCSS now includes .type-refactor, .type-docs, .type-test, .type-chore CSS rules (were missing, only feat/fix/breaking/other existed)
+- internal/renderer/html.go: typeBadgeClass returns specific classes for refactor/docs/test/chore types instead of falling through to "type-other"
+- styles/builtin/formal.shipstyle: added CSS rules for .cl-type-badge.type-refactor/docs/test/chore and .type-other in the custom HTML template
+- internal/renderer/html_test.go: sampleStoryChronology contributors now include Count (42/20) matching real data
+- Tests: 11 new test cases (semverFromString table test, version propagation, version badge rendering, contributor count context/output, firstAuthor fallback, type badges default+custom renderer)
+
+### Fixed (Renderer critical fixes)
+- internal/renderer: writeSiteHeaderLogo now detects inline SVG logos (starts with `<svg`) and writes them raw into a `<div class="logo-svg">` instead of escaping into an `<img>` tag — fixes patchnotes/epic/ironic logos rendering as escaped text
+- styles/builtin: all `{{.Theme.Logo}}` references in patchnotes.shipstyle (3 occurrences) and formal.shipstyle (1 occurrence) replaced with `{{safeHTML .Theme.Logo}}` to prevent auto-escaping in html/template
+- internal/renderer: `Generated` field in buildChangelogContext/buildStoryContext changed from hardcoded "Generated by CommitLore" to `time.Now().Format("2 Jan 2006")` — templates now show actual generation date
+- internal/renderer: `mul`, `divf`, and `divi` template functions added to FuncMap — fixes patchnotes story template parse errors for percentage bar calculations
+- styles/builtin/patchnotes.shipstyle: `$pct` initialized as `0.0` (float64) instead of `0` (int), `ge .Count (divf ...)` changed to `ge .Count (divi ...)` for type-safe comparison
+- Tests: 10 new test cases covering all 4 bugs (SVG logo rendering, URL logo, safeHTML in custom templates, Generated date format, FontSizeH default, mul/divf/divi functions, divf-by-zero, patchnotes story render)
+
 ### Added (Story HTML templates)
 - internal/styles: HTMLTemplate field split into HTMLTemplateChangelog + HTMLTemplateStory — separate templates for changelog and story output
 - html_template_changelog: renamed from html_template, keeps existing changelog templates

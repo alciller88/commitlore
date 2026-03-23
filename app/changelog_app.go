@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/alciller88/commitlore/internal/changelog"
+	"github.com/alciller88/commitlore/internal/git"
 	"github.com/alciller88/commitlore/internal/llm"
 	"github.com/alciller88/commitlore/internal/narrative"
 	"github.com/alciller88/commitlore/internal/renderer"
@@ -32,9 +33,18 @@ func (c *ChangelogApp) Generate(repo, since, until, styleName string) (string, e
 		return "", err
 	}
 
-	commits, err := fetchCommits(repo, opts)
-	if err != nil {
-		return "", cleanError(err)
+	var commits []git.Commit
+	if shouldUseCache(opts) {
+		commits, _ = globalCommitCache.get(repo)
+	}
+	if commits == nil {
+		commits, err = fetchCommits(repo, opts)
+		if err != nil {
+			return "", cleanError(err)
+		}
+		if shouldUseCache(opts) {
+			globalCommitCache.set(repo, commits)
+		}
 	}
 
 	if len(commits) == 0 {
@@ -44,10 +54,11 @@ func (c *ChangelogApp) Generate(repo, since, until, styleName string) (string, e
 	cl := changelog.GroupCommits(commits)
 	provider, model := loadLLMSettings()
 	repoName := renderer.RepoNameFromPath(repo)
-	return renderChangelog(cl, styleName, provider, model, repoName)
+	version := renderer.SemverFromString(until)
+	return renderChangelog(cl, styleName, provider, model, repoName, version)
 }
 
-func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel, repoName string) (string, error) {
+func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel, repoName, version string) (string, error) {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return "", cleanError(err)
@@ -61,7 +72,7 @@ func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel, r
 	text = tryEnrich(llmProvider, llmModel, style.LLMPrompt, text)
 
 	override := buildHTMLThemeOverride(styleName)
-	rendered, err := renderer.RenderWithTheme(text, cl, style, renderer.Format("html"), override, repoName)
+	rendered, err := renderer.RenderWithTheme(text, cl, style, renderer.Format("html"), override, repoName, version)
 	if err != nil {
 		return "", cleanError(err)
 	}

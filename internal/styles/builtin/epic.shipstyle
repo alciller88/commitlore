@@ -540,13 +540,21 @@ html_template_changelog: |
         <div class="cl-chart-card">
           <div class="cl-chart-title">Chronicles of Activity</div>
           <div class="cl-chart-wrap">
-            <canvas id="activityChart"></canvas>
+            <canvas id="epic-cl-type-chart"></canvas>
           </div>
         </div>
       </section>
 
       <script>
       (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
         var items = [
           {{range .Items}}
           { type: "{{lower .Type}}" },
@@ -561,38 +569,40 @@ html_template_changelog: |
 
         var labels = Object.keys(counts);
         var data = labels.map(function(k) { return counts[k]; });
-        var ctx = document.getElementById("activityChart");
+        var ctx = document.getElementById("epic-cl-type-chart");
         if (ctx) {
-          try {
-            new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: "Decrees",
-                  data: data,
-                  backgroundColor: "{{.Theme.Colors.Primary}}",
-                  borderRadius: 3,
-                  borderSkipped: false
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                  x: {
-                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
-                  },
-                  y: {
-                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "Decrees",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    },
+                    y: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    }
                   }
                 }
-              }
-            });
-          } catch(e) { console.error("Chart error:", e); }
+              });
+            } catch(e) { console.error("Chart error:", e); }
+          }, 100);
         }
       })();
       </script>
@@ -627,47 +637,57 @@ html_template_changelog: |
         <div class="cl-chart-card">
           <div class="cl-chart-title">Chronicles of Activity</div>
           <div class="cl-chart-wrap">
-            <canvas id="activityChart"></canvas>
+            <canvas id="epic-cl-activity-chart"></canvas>
           </div>
         </div>
       </section>
 
       <script>
       (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
         var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
         var data   = [{{range .Peaks}}{{.Count}},{{end}}];
-        var ctx = document.getElementById("activityChart");
+        var ctx = document.getElementById("epic-cl-activity-chart");
         if (ctx) {
-          try {
-            new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: "Deeds",
-                  data: data,
-                  backgroundColor: "{{.Theme.Colors.Primary}}",
-                  borderRadius: 3,
-                  borderSkipped: false
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                  x: {
-                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
-                  },
-                  y: {
-                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "Deeds",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    },
+                    y: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    }
                   }
                 }
-              }
-            });
-          } catch(e) { console.error("Chart error:", e); }
+              });
+            } catch(e) { console.error("Chart error:", e); }
+          }, 100);
         }
       })();
       </script>
@@ -1337,12 +1357,21 @@ html_template_story: |
 
         /* Activity chart */
         if (typeof Chart === 'undefined') return;
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
         var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
         var data   = [{{range .Peaks}}{{.Count}},{{end}}];
         var ctx = document.getElementById('sg-activity-chart');
         if (!ctx) return;
-        try {
-          new Chart(ctx, {
+        setTimeout(function() {
+          try {
+            new Chart(ctx, {
             type: 'bar',
             data: {
               labels: labels,
@@ -1360,14 +1389,14 @@ html_template_story: |
               plugins: { legend: { display: false } },
               scales: {
                 x: {
-                  grid: { color: 'color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)' },
+                  grid: { color: hexToRgba('{{.Theme.Colors.Primary}}', 0.15) },
                   ticks: {
                     color: '{{.Theme.Colors.Secondary}}',
                     font: { family: "'Cinzel', serif", size: 10 }
                   }
                 },
                 y: {
-                  grid: { color: 'color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)' },
+                  grid: { color: hexToRgba('{{.Theme.Colors.Primary}}', 0.15) },
                   ticks: {
                     color: '{{.Theme.Colors.Secondary}}',
                     font: { family: "'Cinzel', serif", size: 10 }
@@ -1376,7 +1405,8 @@ html_template_story: |
               }
             }
           });
-        } catch(e) { console.error('Chart error:', e); }
+          } catch(e) { console.error('Chart error:', e); }
+        }, 100);
       })();
       </script>
       {{end}}

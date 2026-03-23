@@ -15,9 +15,9 @@ import (
 	"github.com/alciller88/commitlore/internal/styles"
 )
 
-func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style, repoName string) (string, error) {
+func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style, repoName, version string) (string, error) {
 	if style.HTMLTemplateChangelog != "" {
-		return renderCustomChangelogHTML(content, cl, style, repoName)
+		return renderCustomChangelogHTML(content, cl, style, repoName, version)
 	}
 	return renderDefaultChangelogHTML(content, cl, style)
 }
@@ -195,8 +195,12 @@ func writeSiteHeader(buf *bytes.Buffer, theme styles.Theme) {
 
 func writeSiteHeaderLogo(buf *bytes.Buffer, theme styles.Theme) {
 	if theme.Logo != "" {
-		fmt.Fprintf(buf, "<img class=\"logo\" src=\"%s\" alt=\"logo\">\n",
-			template.HTMLEscapeString(theme.Logo))
+		if strings.HasPrefix(strings.TrimSpace(strings.ToLower(theme.Logo)), "<svg") {
+			fmt.Fprintf(buf, "<div class=\"logo-svg\">%s</div>\n", theme.Logo)
+		} else {
+			fmt.Fprintf(buf, "<img class=\"logo\" src=\"%s\" alt=\"logo\">\n",
+				template.HTMLEscapeString(theme.Logo))
+		}
 		return
 	}
 	logoSVG := strings.Replace(assets.LogoSVG, "<svg ", `<svg width="100" height="100" `, 1)
@@ -257,6 +261,14 @@ func typeBadgeClass(t changelog.CommitType) string {
 		return "type-fix"
 	case changelog.TypeBreaking:
 		return "type-breaking"
+	case changelog.TypeRefactor:
+		return "type-refactor"
+	case changelog.TypeDocs:
+		return "type-docs"
+	case changelog.TypeTest:
+		return "type-test"
+	case changelog.TypeChore:
+		return "type-chore"
 	default:
 		return "type-other"
 	}

@@ -352,6 +352,19 @@ html_template_changelog: |
         color: #dc3545;
         border-color: color-mix(in srgb, #dc3545 25%, transparent);
       }
+      .cl-type-badge.type-refactor,
+      .cl-type-badge.type-docs,
+      .cl-type-badge.type-test,
+      .cl-type-badge.type-chore {
+        background: color-mix(in srgb, {{.Theme.Colors.Secondary}} 10%, {{.Theme.Colors.Surface}});
+        color: {{.Theme.Colors.Secondary}};
+        border-color: color-mix(in srgb, {{.Theme.Colors.Secondary}} 20%, transparent);
+      }
+      .cl-type-badge.type-other {
+        background: {{.Theme.Colors.Surface}};
+        color: {{.Theme.Colors.Secondary}};
+        border-color: {{.Theme.Colors.Border}};
+      }
       .cl-hash {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 11px;
@@ -492,7 +505,7 @@ html_template_changelog: |
   <body>
     <header class="cl-header">
       {{if .Theme.Logo}}
-      <div class="cl-header-logo">{{.Theme.Logo}}</div>
+      <div class="cl-header-logo">{{safeHTML .Theme.Logo}}</div>
       {{end}}
       <span class="cl-header-repo">{{.RepoName}}</span>
       {{if .Title}}
@@ -602,33 +615,35 @@ html_template_changelog: |
         }
         var ctx = document.getElementById("typeChart");
         if (ctx) {
-          try {
-            new Chart(ctx, {
-              type: "doughnut",
-              data: {
-                labels: labels,
-                datasets: [{
-                  data: data,
-                  backgroundColor: palette.slice(0, labels.length),
-                  borderWidth: 0
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: "right",
-                    labels: {
-                      color: "{{.Theme.Colors.Text}}",
-                      font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 },
-                      padding: 12
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    data: data,
+                    backgroundColor: palette.slice(0, labels.length),
+                    borderWidth: 0
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "right",
+                      labels: {
+                        color: "{{.Theme.Colors.Text}}",
+                        font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 },
+                        padding: 12
+                      }
                     }
                   }
                 }
-              }
-            });
-          } catch(e) { console.error("Chart error:", e); }
+              });
+            } catch(e) { console.error("Chart error:", e); }
+          }, 100);
         }
       })();
       </script>
@@ -671,44 +686,46 @@ html_template_changelog: |
         var data = [{{range .Peaks}}{{.Count}},{{end}}];
         var ctx = document.getElementById("activityChart");
         if (ctx) {
-          try {
-            new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: "Commits",
-                  data: data,
-                  backgroundColor: "{{.Theme.Colors.Primary}}",
-                  borderRadius: 4,
-                  borderSkipped: false
-                }]
-              },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false }
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "Commits",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderRadius: 4,
+                    borderSkipped: false
+                  }]
                 },
-                scales: {
-                  x: {
-                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
-                    ticks: {
-                      color: "{{.Theme.Colors.Secondary}}",
-                      font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
-                    }
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false }
                   },
-                  y: {
-                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
-                    ticks: {
-                      color: "{{.Theme.Colors.Secondary}}",
-                      font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                  scales: {
+                    x: {
+                      grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                      ticks: {
+                        color: "{{.Theme.Colors.Secondary}}",
+                        font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                      }
+                    },
+                    y: {
+                      grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                      ticks: {
+                        color: "{{.Theme.Colors.Secondary}}",
+                        font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                      }
                     }
                   }
                 }
-              }
-            });
-          } catch(e) { console.error("Chart error:", e); }
+              });
+            } catch(e) { console.error("Chart error:", e); }
+          }, 100);
         }
       })();
       </script>
@@ -879,6 +896,12 @@ html_template_story: |
         margin-bottom: 6px;
       }
       .rp-stat-value.primary { color: {{.Theme.Colors.Primary}}; }
+      .rp-stat-value.is-date {
+        font-size: 15px;
+        letter-spacing: -0.01em;
+        padding-top: 6px;
+        line-height: 1.2;
+      }
       .rp-stat-label {
         font-size: 11px;
         font-weight: 500;
@@ -1165,8 +1188,11 @@ html_template_story: |
         <span class="rp-banner-repo">{{.RepoName}}</span>
       </div>
       <div class="rp-banner-meta">
-        {{if .FirstDate}}<span>{{.FirstDate}} &rarr; {{.Generated}}</span><span class="rp-banner-meta-sep">&middot;</span>{{end}}
+        {{if .FirstDate}}
+        <span>{{.FirstDate}} &rarr; {{.Generated}}</span>
+        {{else}}
         <span>{{.Generated}}</span>
+        {{end}}
         {{if .Version}}<span class="rp-banner-meta-sep">&middot;</span><span class="rp-version-badge">{{.Version}}</span>{{end}}
       </div>
     </div>
@@ -1187,7 +1213,7 @@ html_template_story: |
           </div>
           <div class="rp-stat-cell">
             {{if .FirstDate}}
-            <div class="rp-stat-value" style="font-size:14px;letter-spacing:-0.01em;padding-top:9px;">{{.FirstDate}}</div>
+            <div class="rp-stat-value is-date">{{.FirstDate}}</div>
             {{else}}
             <div class="rp-stat-value">—</div>
             {{end}}
@@ -1195,7 +1221,7 @@ html_template_story: |
           </div>
           <div class="rp-stat-cell">
             {{if .Peaks}}
-            <div class="rp-stat-value" style="font-size:16px;letter-spacing:-0.01em;padding-top:8px;">{{(index .Peaks 0).Month}}</div>
+            <div class="rp-stat-value is-date">{{(index .Peaks 0).Month}}</div>
             {{else}}
             <div class="rp-stat-value">—</div>
             {{end}}
@@ -1240,14 +1266,23 @@ html_template_story: |
       <script>
       (function() {
         if (typeof Chart === "undefined") { console.error("Chart.js not loaded"); return; }
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
 
         // --- Line chart: commit arc ---
         var arcLabels = [{{range .Peaks}}"{{.Month}}",{{end}}];
         var arcData   = [{{range .Peaks}}{{.Count}},{{end}}];
         var ctxArc = document.getElementById("arcChart");
         if (ctxArc) {
-          try {
-            new Chart(ctxArc, {
+          setTimeout(function() {
+            try {
+              new Chart(ctxArc, {
               type: "line",
               data: {
                 labels: arcLabels,
@@ -1255,7 +1290,7 @@ html_template_story: |
                   label: "Commits",
                   data: arcData,
                   borderColor: "{{.Theme.Colors.Primary}}",
-                  backgroundColor: "color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, transparent)",
+                  backgroundColor: hexToRgba("{{.Theme.Colors.Primary}}", 0.12),
                   borderWidth: 2,
                   pointBackgroundColor: "{{.Theme.Colors.Primary}}",
                   pointRadius: 4,
@@ -1281,7 +1316,8 @@ html_template_story: |
                 }
               }
             });
-          } catch(e) { console.error("arcChart error:", e); }
+            } catch(e) { console.error("arcChart error:", e); }
+          }, 100);
         }
 
         // --- Horizontal bar chart: contributor ranking ---
@@ -1289,8 +1325,9 @@ html_template_story: |
         var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
         var ctxContrib = document.getElementById("contribChart");
         if (ctxContrib && contribNames.length > 0) {
-          try {
-            new Chart(ctxContrib, {
+          setTimeout(function() {
+            try {
+              new Chart(ctxContrib, {
               type: "bar",
               data: {
                 labels: contribNames,
@@ -1320,7 +1357,8 @@ html_template_story: |
                 }
               }
             });
-          } catch(e) { console.error("contribChart error:", e); }
+            } catch(e) { console.error("contribChart error:", e); }
+          }, 100);
         }
       })();
       </script>

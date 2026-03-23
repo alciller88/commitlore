@@ -11,6 +11,14 @@
 import { Call as $Call, CancellablePromise as $CancellablePromise, Create as $Create } from "@wailsio/runtime";
 
 /**
+ * ClearCommitCache invalidates the in-memory commit cache.
+ * Call when the user switches to a different repository.
+ */
+export function ClearCommitCache(): $CancellablePromise<void> {
+    return $Call.ByID(964494651);
+}
+
+/**
  * Contributors returns aggregated contributor data as JSON.
  */
 export function Contributors(repo: string, since: string, top: number): $CancellablePromise<string> {
@@ -30,4 +38,12 @@ export function History(repo: string, author: string, since: string, until: stri
  */
 export function OpenFolderPicker(): $CancellablePromise<string> {
     return $Call.ByID(3331723587);
+}
+
+/**
+ * SetGitHubToken sets the GITHUB_TOKEN env var for the current session.
+ * The token is not persisted to disk. Pass empty string to clear.
+ */
+export function SetGitHubToken(token: string): $CancellablePromise<void> {
+    return $Call.ByID(2742073765, token);
 }

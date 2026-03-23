@@ -10,7 +10,7 @@ import (
 	"github.com/alciller88/commitlore/internal/styles"
 )
 
-const storyTopPeaks = 3
+const storyTopPeaks = 12
 
 // StoryApp exposes story generation to the frontend.
 type StoryApp struct{}
@@ -28,9 +28,18 @@ func (s *StoryApp) GenerateStory(repo, from, styleName string) (string, error) {
 		return "", err
 	}
 
-	commits, err := fetchCommits(repo, opts)
-	if err != nil {
-		return "", cleanError(err)
+	var commits []git.Commit
+	if shouldUseCache(opts) {
+		commits, _ = globalCommitCache.get(repo)
+	}
+	if commits == nil {
+		commits, err = fetchCommits(repo, opts)
+		if err != nil {
+			return "", cleanError(err)
+		}
+		if shouldUseCache(opts) {
+			globalCommitCache.set(repo, commits)
+		}
 	}
 
 	if len(commits) == 0 {
