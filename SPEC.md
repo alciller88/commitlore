@@ -120,12 +120,9 @@ commitlore style <subcommand> [flags]
 
 | Subcommand | Description |
 |------------|-------------|
-| `list` | List available styles (built-in + installed) |
+| `list` | List available styles (built-in + marketplace-installed) |
 | `show` | Show a style definition |
-| `create` | Create a new style (flags only; interactive wizard is roadmap) |
-| `import` | Import a style from URL or local path |
-| `export` | Export a style to `.shipstyle` file |
-| `delete` | Delete an installed style (does not delete built-ins) |
+| `delete` | Delete a marketplace-installed style (does not affect built-ins) |
 
 ---
 
@@ -319,7 +316,8 @@ The app shares all logic from `internal/`. It only adds a UI layer on top.
 | **Story** | Narrative visualization of the repo history. Same two-column layout as Generate. |
 | **History** | Commit explorer with filters. Dense table rows with click-to-copy hash. |
 | **Contributors** | Visual contribution map with avatar initials and activity bars. |
-| **Styles** | Read-only browser: preview styles, import, export, set active. No in-app editing. |
+| **Styles** | Read-only browser: preview styles, install from marketplace, delete, set active. No in-app editing. |
+| **Marketplace** | Browse and install community styles from the official commitlore-styles repository. Requires internet connection. Built-in styles are always available offline regardless of connectivity. |
 | **Settings** | LLM provider configuration, API key management via OS keychain, app style selection. |
 
 ### Repo Picker
@@ -346,9 +344,60 @@ The app shares all logic from `internal/`. It only adds a UI layer on top.
 
 - Two-column layout: style card list + read-only detail panel.
 - Detail panel shows: logo, name/version/author, description, theme color circles, font preview, mode badge, UI labels (if custom), icons (if custom), collapsible LLM prompt.
-- Actions: Export (all styles), Delete (user only with confirmation), Set as active.
-- Import style via file picker. "Get more styles" opens browser to marketplace URL.
-- Styles are managed via import/export — not edited in-app.
+- Actions available:
+  - **Set as active** — applies the style to the entire app immediately.
+  - **Delete** — marketplace-installed styles only, with confirmation dialog. Built-in styles cannot be deleted.
+  - **Browse marketplace** — opens the in-app marketplace screen.
+- Styles are installed exclusively from the marketplace. Import and export are not supported.
+
+### Marketplace Architecture
+
+The marketplace is backed by a private GitHub repository (`commitlore-styles`)
+controlled by the CommitLore team. The app fetches a catalog file directly
+from the repository — no backend or additional infrastructure required.
+
+**Repository structure:**
+```
+commitlore-styles/
+├── index.json          # catalog with metadata for all available styles
+├── <style-name>/
+│   ├── style.shipstyle
+│   └── preview.png
+└── ...
+```
+
+**index.json format:**
+```json
+[
+  {
+    "name": "style-name",
+    "description": "One-line description",
+    "author": "author",
+    "version": "1.0.0",
+    "tags": ["dark", "colorful"],
+    "preview": "https://raw.githubusercontent.com/commitlore/commitlore-styles/main/<name>/preview.png",
+    "download": "https://raw.githubusercontent.com/commitlore/commitlore-styles/main/<name>/style.shipstyle"
+  }
+]
+```
+
+**App behavior:**
+- On opening the Marketplace screen, the app fetches `index.json` and displays
+  the catalog with name, description, author, tags, and preview image.
+- Installing a style fetches the `.shipstyle` file from `download` URL and saves
+  it to `~/.config/commitlore/styles/`.
+- If the fetch fails (no connection, rate limit), the screen shows an error with
+  a retry option. Already-installed styles remain available offline.
+- The four built-in styles are always embedded in the binary and are never
+  fetched from the marketplace.
+
+**Security:**
+- Only `.shipstyle` files from the official `commitlore-styles` repository are
+  installable via the marketplace UI.
+- The app validates the full `.shipstyle` schema after download before saving,
+  rejecting unknown fields.
+- The `llm_prompt` field in marketplace styles triggers the existing warning
+  to the user before the style is activated with an LLM.
 
 ### LLM Configuration (Settings screen)
 
@@ -438,6 +487,7 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 11 | Wails app — screens and complete UI | Completed |
 | Phase 12 | Release pipeline + cross-platform binaries | In Progress |
 | Phase 13 | Polish, docs, README, examples | In Progress |
+| Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Planned |
 
 > **Phase 12 — In Progress, UNDOCUMENTED:** Release workflow exists (`.github/workflows/release.yml`) with CLI binary builds for 3 platforms on `v*` tag push. **Missing:** Wails desktop app builds per platform; automatic CHANGELOG.md update on release. Not yet documented in CHANGELOG.md.
 
@@ -469,6 +519,24 @@ No P0 items at this time.
 - Define and add project license.
   - _Acceptance:_ LICENSE file in repo root; license badge in README links to it.
 
+**Phase 14: Marketplace**
+
+- Create `commitlore-styles` GitHub repository with `index.json` catalog
+  and at least the four built-in styles as downloadable entries.
+  - _Acceptance:_ Repository is public, `index.json` is valid, each style
+    has a `style.shipstyle` and a `preview.png`.
+- Implement Marketplace screen in the desktop app: fetch catalog, display
+  style cards with preview, install and delete actions.
+  - _Acceptance:_ User can browse available styles, install one, and see
+    it appear in the Styles screen and Settings dropdown immediately.
+- Add `commitlore style delete` CLI subcommand for marketplace-installed styles.
+  - _Acceptance:_ Command deletes the style file from
+    `~/.config/commitlore/styles/`, rejects built-in style names with a
+    clear error.
+- Handle offline and error states gracefully.
+  - _Acceptance:_ If `index.json` fetch fails, the screen shows an error
+    with a retry button. No crash. Built-in styles unaffected.
+
 ### P2 — Planned but not scheduled
 
 **Internationalisation (i18n)**
@@ -480,11 +548,6 @@ No P0 items at this time.
 
 - Styles control sidebar navigation icons via inline SVG strings.
   - _Acceptance:_ New `ui_icons` block in `.shipstyle` with fields for each nav item (`dashboard`, `generate`, `story`, `history`, `contributors`, `styles`, `settings`, `local_repo`, `github_repo`). Icons are inline SVG strings. Falls back to current default icons when not defined.
-
-**LLM prompt security layers in Styles screen**
-
-- Layered protection for the `llm_prompt` field when editing user styles.
-  - _Acceptance:_ (1) `llm_prompt` field is read-only when no LLM is configured, with message "Connect an LLM in Settings to edit this field." (2) On save, if `llm_prompt` was modified, a silent validation request to the configured LLM checks for injection patterns; blocked if flagged or if LLM call fails.
 
 **`contributors --with-files` for remote repos**
 
@@ -503,8 +566,6 @@ No P0 items at this time.
 
 ### Future — Roadmap / out of scope v1
 
-- **Interactive style create wizard** — interactive stdin-based style creation (currently flags-only via `commitlore style create`).
-- **Style marketplace** — public repository of community `.shipstyle` files.
 - **GitLab support** — GitLab API integration as an additional data source.
 - **VS Code / Cursor plugin** — editor extension for generating changelogs from within the IDE.
 - **Slack / Discord integration** — publish changelogs automatically to messaging platforms.
