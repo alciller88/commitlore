@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **Cyberpunk style**: Completed all missing fields — `preview_url`, `homepage`, `custom_css` (Google Fonts import), full LLM prompt with `{{.Data}}` delimiters, vocabulary entries for `error`/`warning`, contributors section ("Known Operatives") in changelog template, 5th stat card (Last Scan) in story template, contributor ranking chart canvas id
+- **Cyberpunk style**: Changelog charts stacked vertically (320px height each), logo redesigned as bold angular CL monogram legible at 32px
+- **Adeptus Mechanicus style**: Changelog charts stacked vertically (320px height each), story `story_contributor` template field error resolved (removed `.Count` — not available on `contributorData`), logo redesigned as bold cog-with-eye legible at 32px, story title `mechanicus-boot` animation added with binary-reveal subtitle (respects `prefers-reduced-motion`)
 
 ### Removed
 
