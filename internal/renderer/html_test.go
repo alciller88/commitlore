@@ -803,6 +803,69 @@ func TestAllStyles_storyHasContributorRankingChart(t *testing.T) {
 	}
 }
 
+// Phase 8 — Executive summary, epic seps, ironic narrative
+
+func TestFormalStory_noInlineFontSizeInStats(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	ch := sampleStoryChronology()
+	out, err := RenderStory("", ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.NotContains(t, out, `style="font-size:14px`,
+		"formal story: inline font-size:14px overrides must be removed")
+	assert.NotContains(t, out, `style="font-size:16px`,
+		"formal story: inline font-size:16px overrides must be removed")
+}
+
+func TestFormalStory_isDateClassPresent(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	ch := sampleStoryChronology()
+	out, err := RenderStory("", ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "is-date",
+		"formal story: date stat cells must use is-date CSS class")
+}
+
+func TestEpic_noConsecutiveSeparators(t *testing.T) {
+	s := loadTestStyle(t, "epic")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	checkNoConsecutiveSeps(t, out, "epic changelog")
+
+	ch := sampleStoryChronology()
+	out, err = RenderStory("", ch, s, FormatHTML)
+	require.NoError(t, err)
+	checkNoConsecutiveSeps(t, out, "epic story")
+}
+
+func checkNoConsecutiveSeps(t *testing.T, html, label string) {
+	t.Helper()
+	sep := "\u2694\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2694"
+	idx := strings.Index(html, sep)
+	for idx >= 0 {
+		rest := strings.TrimSpace(html[idx+len(sep):])
+		if strings.HasPrefix(rest, sep) {
+			t.Errorf("%s: consecutive separators found with nothing between them", label)
+			return
+		}
+		next := strings.Index(html[idx+len(sep):], sep)
+		if next < 0 {
+			break
+		}
+		idx = idx + len(sep) + next
+	}
+}
+
+func TestIronicStory_narrativeWrapped(t *testing.T) {
+	s := loadTestStyle(t, "ironic")
+	ch := sampleStoryChronology()
+	out, err := RenderStory("A story narrative.", ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, `class="doc-narrative"`,
+		"ironic story: narrative must be wrapped in doc-narrative div")
+	assert.Contains(t, out, "A story narrative.",
+		"ironic story: narrative content must appear in output")
+}
+
 // Phase 7 — Visual polish tests
 
 func TestDonutStyles_paletteHasDistinctColors(t *testing.T) {

@@ -5,6 +5,12 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (Executive summary, ironic narrative, epic separators)
+- styles/builtin/formal.shipstyle: Executive Summary stat row changed from `grid repeat(4,1fr)` to flex layout — date values use 14px monospace via `.is-date` class, no inline style overrides
+- styles/builtin/ironic.shipstyle: narrative `text-indent: 2em` removed (replaced with `text-indent: 0`) — flat left-aligned text fits deadpan aesthetic
+- styles/builtin/ironic.shipstyle: `.doc-narrative ul/li` overrides added — prevents commit list CSS from bleeding into narrative lists
+- Tests: 5 new (formal stat inline styles removed, is-date class present, epic consecutive separators, ironic narrative wrapping)
+
 ### Fixed (Visual polish)
 - styles/builtin/formal.shipstyle, patchnotes.shipstyle: donut chart palette replaced with 7 visually distinct colors (theme primary/accent/secondary + 4 hardcoded: red, teal, amber, purple) — fixes invisible legend entries when border/surface colors match background
 - styles/builtin/formal.shipstyle, patchnotes.shipstyle: donut chart card centered with `margin: 0 auto`

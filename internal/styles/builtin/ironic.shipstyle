@@ -236,9 +236,11 @@ html_template_changelog: |
         margin-bottom: 24px;
       }
       .doc-narrative p {
-        text-indent: 2em;
-        margin-bottom: 10px;
-        line-height: 1.8;
+        text-indent: 0;
+        margin-bottom: 8px;
+        line-height: 1.7;
+        color: {{.Theme.Colors.Text}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
       }
       .doc-narrative h1, .doc-narrative h2, .doc-narrative h3 {
         font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
@@ -251,10 +253,16 @@ html_template_changelog: |
       .doc-narrative h2 { font-size: 16px; }
       .doc-narrative h3 { font-size: 14px; }
       .doc-narrative ul, .doc-narrative ol {
-        padding-left: 2em;
+        list-style: disc;
+        padding-left: 1.5em;
         margin-bottom: 10px;
       }
-      .doc-narrative li { margin-bottom: 4px; }
+      .doc-narrative li {
+        padding: 2px 0;
+        border-bottom: none;
+        display: list-item;
+        margin-bottom: 4px;
+      }
       .doc-narrative strong { color: {{.Theme.Colors.Text}}; }
       .doc-narrative em { color: {{.Theme.Colors.Secondary}}; }
       .doc-narrative code {
@@ -776,9 +784,11 @@ html_template_story: |
         margin-bottom: 24px;
       }
       .doc-narrative p {
-        text-indent: 2em;
-        margin-bottom: 10px;
-        line-height: 1.8;
+        text-indent: 0;
+        margin-bottom: 8px;
+        line-height: 1.7;
+        color: {{.Theme.Colors.Text}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
       }
       .doc-narrative h1, .doc-narrative h2, .doc-narrative h3 {
         font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
@@ -791,10 +801,16 @@ html_template_story: |
       .doc-narrative h2 { font-size: 16px; }
       .doc-narrative h3 { font-size: 14px; }
       .doc-narrative ul, .doc-narrative ol {
-        padding-left: 2em;
+        list-style: disc;
+        padding-left: 1.5em;
         margin-bottom: 10px;
       }
-      .doc-narrative li { margin-bottom: 4px; }
+      .doc-narrative li {
+        padding: 2px 0;
+        border-bottom: none;
+        display: list-item;
+        margin-bottom: 4px;
+      }
       .doc-narrative strong { color: {{.Theme.Colors.Text}}; }
       .doc-narrative em { color: {{.Theme.Colors.Secondary}}; }
       .doc-narrative code {
