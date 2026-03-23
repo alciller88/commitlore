@@ -5,6 +5,9 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed (Dashboard GitHub card)
+- Dashboard: GitHub repo picker card restructured — input and Connect button now in a joined horizontal row (shared border, no gap), input takes full width, button never wraps, Enter key triggers connect, loading shows "..."
+
 ### Changed (P3 ironic style v2)
 - ironic.shipstyle v2.0.0: deadpan minimalist aesthetic (monochrome grays on #1A1A1A), JetBrains Mono font, Phosphor Minus SVG logo, minimal card style, ui_labels (whatever, fine, a story i guess, stuff that happened, people, aesthetics, knobs), anti-hallucination LLM prompt, simplified vocabulary
 
