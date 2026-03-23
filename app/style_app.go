@@ -65,6 +65,20 @@ type StyleTheme struct {
 	WinMinimize string         `json:"winMinimize"`
 	WinMaximize string         `json:"winMaximize"`
 	UILabels    UILabelsDetail `json:"uiLabels"`
+	Icons       IconsDetail    `json:"icons"`
+}
+
+// IconsDetail holds per-style icon/emoji characters.
+type IconsDetail struct {
+	Feature   string `json:"feature"`
+	Fix       string `json:"fix"`
+	Breaking  string `json:"breaking"`
+	Chore     string `json:"chore"`
+	Docs      string `json:"docs"`
+	Test      string `json:"test"`
+	StoryPeak string `json:"storyPeak"`
+	Bullet    string `json:"bullet"`
+	Separator string `json:"separator"`
 }
 
 // UILabelsDetail holds navigation label overrides for the frontend.
@@ -107,6 +121,21 @@ func buildStyleTheme(st styles.Style) StyleTheme {
 		WinMinimize: withDefault(st.Theme.WindowControls.Minimize, "#FEBC2E"),
 		WinMaximize: withDefault(st.Theme.WindowControls.Maximize, "#28C840"),
 		UILabels:    buildUILabels(st.UILabels),
+		Icons:       buildIcons(st.Icons),
+	}
+}
+
+func buildIcons(i styles.Icons) IconsDetail {
+	return IconsDetail{
+		Feature:   withDefault(i.Feature, "✦"),
+		Fix:       withDefault(i.Fix, "✔"),
+		Breaking:  withDefault(i.Breaking, "⚠"),
+		Chore:     withDefault(i.Chore, "⚙"),
+		Docs:      withDefault(i.Docs, "📄"),
+		Test:      withDefault(i.Test, "🧪"),
+		StoryPeak: withDefault(i.StoryPeak, "🔥"),
+		Bullet:    withDefault(i.Bullet, "•"),
+		Separator: withDefault(i.Separator, "────────────────────────────────────────"),
 	}
 }
 
@@ -185,6 +214,7 @@ type StyleDetail struct {
 	Theme       ThemeDetail       `json:"theme"`
 	Terminal    TerminalDetail    `json:"terminal"`
 	UILabels    UILabelsDetail    `json:"uiLabels"`
+	Icons       IconsDetail       `json:"icons"`
 }
 
 // TemplatesDetail holds all template strings.
@@ -297,6 +327,7 @@ func styleToDetail(st styles.Style) StyleDetail {
 		Theme:      themeToDetail(st.Theme),
 		Terminal:   terminalToDetail(st.Terminal),
 		UILabels:   buildUILabels(st.UILabels),
+		Icons:       buildIcons(st.Icons),
 	}
 }
 
@@ -394,6 +425,13 @@ func detailToStyle(d StyleDetail) styles.Style {
 				Separator: d.Terminal.Decorators.Separator, Bullet: d.Terminal.Decorators.Bullet,
 				Indent: d.Terminal.Decorators.Indent,
 			},
+		},
+		Icons: styles.Icons{
+			Feature: d.Icons.Feature, Fix: d.Icons.Fix,
+			Breaking: d.Icons.Breaking, Chore: d.Icons.Chore,
+			Docs: d.Icons.Docs, Test: d.Icons.Test,
+			StoryPeak: d.Icons.StoryPeak, Bullet: d.Icons.Bullet,
+			Separator: d.Icons.Separator,
 		},
 	}
 }

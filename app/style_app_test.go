@@ -147,6 +147,26 @@ func TestGetStyleTheme_windowControls_defaults(t *testing.T) {
 	assert.NotEmpty(t, theme.WinMaximize)
 }
 
+func TestIcons_defaults(t *testing.T) {
+	s := NewStyleApp()
+	theme, err := s.GetStyleTheme("formal")
+	require.NoError(t, err)
+	assert.Equal(t, "+", theme.Icons.Feature)
+	assert.Equal(t, "✓", theme.Icons.Fix)
+	assert.Equal(t, "!", theme.Icons.Breaking)
+	assert.Equal(t, "•", theme.Icons.Bullet)
+}
+
+func TestIcons_epic(t *testing.T) {
+	s := NewStyleApp()
+	theme, err := s.GetStyleTheme("epic")
+	require.NoError(t, err)
+	assert.Equal(t, "⚜", theme.Icons.Feature)
+	assert.Equal(t, "⚔", theme.Icons.Fix)
+	assert.Equal(t, "☠", theme.Icons.Breaking)
+	assert.Equal(t, "⚜", theme.Icons.Bullet)
+}
+
 func TestSaveStyleDetail_builtinRejected(t *testing.T) {
 	s := NewStyleApp()
 	detail := StyleDetail{Name: "formal", Version: "1.0.0"}
