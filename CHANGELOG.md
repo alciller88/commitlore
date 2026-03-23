@@ -5,6 +5,21 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (HTML template system)
+- internal/styles: HTMLTemplate string field added to Style struct — per-style custom HTML templates using Go html/template syntax
+- internal/renderer: HTMLTemplateContext with all style fields (Theme, Icons, UILabels), unified for both changelog and story contexts
+- internal/renderer: renderCustomChangelogHTML / renderCustomStoryHTML — uses HTMLTemplate when set, falls back to default renderer when empty
+- Template helper functions: upper, lower, initials (extracts 1-2 initials from a name)
+- formal.shipstyle: Stripe/GitHub docs template — Inter font, 60px header, stats cards, commits table, Chart.js bar+donut charts, contributors with initials circles
+- patchnotes.shipstyle: Steam/game studio template — Rajdhani font, 120px gradient header, highlights cards, Chart.js charts, fade-in animations on scroll
+- epic.shipstyle: Medieval chronicle template — Cinzel font, parchment texture, drop cap, decree scroll entries, separator ornaments, "Chronicles of Activity" chart, Fellowship contributors
+- ironic.shipstyle: Fake Word 95 template — Comic Sans, titlebar+toolbar chrome, Clippy speech bubble, bulleted list (no table), horizontal bar chart, Word-style table
+- All 4 templates: Chart.js from CDN, all colors from .shipstyle theme (no hardcoded hex), client-side chart rendering
+- Styles.svelte: new "HTML" tab with monospace textarea (min 20 rows) for raw HTML template editing, template variable syntax warning
+- app/style_app.go: HTMLTemplate field in StyleDetail, styleToDetail/detailToStyle mappings
+- Tests: TestRenderChangelog_usesHTMLTemplate, TestRenderChangelog_fallsBackToDefault, TestHTMLTemplateContext_allFieldsPopulated
+- SPEC.md: html_template field documented in .shipstyle schema
+
 ### Changed (GitHub Connect modal)
 - Dashboard: GitHub entry card replaced with clean button that opens a centered modal (400px) with owner/repo input, optional token (password field, session-only), format validation, keyboard support (Enter/Escape)
 - app/git_app.go: SetGitHubToken() binding — sets GITHUB_TOKEN env var for session without persisting to disk

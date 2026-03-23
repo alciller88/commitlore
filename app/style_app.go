@@ -388,7 +388,7 @@ func detailToStyle(d StyleDetail) styles.Style {
 			Dashboard: d.UILabels.Dashboard, Generate: d.UILabels.Generate,
 			Story: d.UILabels.Story, History: d.UILabels.History,
 			Contributors: d.UILabels.Contributors, Styles: d.UILabels.Styles,
-			Settings: d.UILabels.Settings,
+			Settings:       d.UILabels.Settings,
 			GenerateButton: d.UILabels.GenerateButton, StoryButton: d.UILabels.StoryButton,
 		},
 		Templates: styles.Templates{
