@@ -55,7 +55,7 @@ func TestGenerateStory_patchnotes(t *testing.T) {
 func TestGenerateStory_ironic(t *testing.T) {
 	out, err := GenerateStory(sampleChronology(), loadStyle(t, "ironic"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "a repository existed")
+	assert.Contains(t, out, "a repository, as promised")
 	assert.Contains(t, out, "the end. finally.")
 }
 
