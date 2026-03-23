@@ -185,6 +185,7 @@ ui_labels:                  # navigation and button label overrides (optional)
   history: "History"
   contributors: "Contributors"
   styles: "Styles"
+  marketplace: "Marketplace"
   settings: "Settings"
 
 icons:                      # per-style icon/emoji characters (optional)
@@ -487,7 +488,7 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 11 | Wails app — screens and complete UI | Completed |
 | Phase 12 | Release pipeline + cross-platform binaries | In Progress |
 | Phase 13 | Polish, docs, README, examples | In Progress |
-| Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Planned |
+| Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Completed |
 
 > **Phase 12 — In Progress, UNDOCUMENTED:** Release workflow exists (`.github/workflows/release.yml`) with CLI binary builds for 3 platforms on `v*` tag push. **Missing:** Wails desktop app builds per platform; automatic CHANGELOG.md update on release. Not yet documented in CHANGELOG.md.
 
@@ -518,24 +519,6 @@ No P0 items at this time.
   - _Acceptance:_ At least one screenshot per screen (Dashboard, Generate, Story, History, Contributors, Styles, Settings).
 - Define and add project license.
   - _Acceptance:_ LICENSE file in repo root; license badge in README links to it.
-
-**Phase 14: Marketplace**
-
-- Create `commitlore-styles` GitHub repository with `index.json` catalog
-  and at least the four built-in styles as downloadable entries.
-  - _Acceptance:_ Repository is public, `index.json` is valid, each style
-    has a `style.shipstyle` and a `preview.png`.
-- Implement Marketplace screen in the desktop app: fetch catalog, display
-  style cards with preview, install and delete actions.
-  - _Acceptance:_ User can browse available styles, install one, and see
-    it appear in the Styles screen and Settings dropdown immediately.
-- Add `commitlore style delete` CLI subcommand for marketplace-installed styles.
-  - _Acceptance:_ Command deletes the style file from
-    `~/.config/commitlore/styles/`, rejects built-in style names with a
-    clear error.
-- Handle offline and error states gracefully.
-  - _Acceptance:_ If `index.json` fetch fails, the screen shows an error
-    with a retry button. No crash. Built-in styles unaffected.
 
 ### P2 — Planned but not scheduled
 

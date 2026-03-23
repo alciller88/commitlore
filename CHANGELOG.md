@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Marketplace screen**: Browse and install community styles from the official `commitlore-styles` repository. Displays style cards with preview image, name, author, description, tags, and version. Install button with loading/installed states. Full-screen error state with retry button for offline scenarios.
+- **MarketplaceApp binding**: `FetchCatalog`, `InstallStyle`, `IsInstalled` — fetches catalog from the official repository, downloads and validates `.shipstyle` files with strict schema checking (rejects unknown fields), saves to user styles directory.
+- **`marketplace` ui_label field**: Styles can now customize the Marketplace navigation label via `ui_labels.marketplace` in `.shipstyle` schema.
+
+### Removed
+
+- **`commitlore style create`, `import`, `export` subcommands**: Styles are now managed exclusively via the marketplace. Only `list`, `show`, and `delete` remain.
+
+### Previously added
+
 - **HTML template system**: Each built-in style now has a unique, self-contained HTML report template with Chart.js visualizations, theme-driven colors, and client-side rendering. Styles can define separate templates for changelog and story output.
   - Formal: Stripe/GitHub docs aesthetic with stats cards, commit tables, and bar/donut charts
   - Patchnotes: Steam/game studio look with gradient header, highlights cards, and scroll-triggered fade-in animations
