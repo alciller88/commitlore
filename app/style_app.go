@@ -89,6 +89,7 @@ type UILabelsDetail struct {
 	History        string `json:"history"`
 	Contributors   string `json:"contributors"`
 	Styles         string `json:"styles"`
+	Marketplace    string `json:"marketplace"`
 	Settings       string `json:"settings"`
 	GenerateButton string `json:"generateButton"`
 	StoryButton    string `json:"storyButton"`
@@ -147,6 +148,7 @@ func buildUILabels(l styles.UILabels) UILabelsDetail {
 		History:        withDefault(l.History, "History"),
 		Contributors:   withDefault(l.Contributors, "Contributors"),
 		Styles:         withDefault(l.Styles, "Styles"),
+		Marketplace:    withDefault(l.Marketplace, "Marketplace"),
 		Settings:       withDefault(l.Settings, "Settings"),
 		GenerateButton: withDefault(l.GenerateButton, "Generate"),
 		StoryButton:    withDefault(l.StoryButton, "Tell the story"),
@@ -169,34 +171,9 @@ func (s *StyleApp) ShowStyle(name string) (string, error) {
 	return toJSON(st)
 }
 
-// ImportStyle imports a style from a local file path.
-func (s *StyleApp) ImportStyle(path string) (string, error) {
-	st, err := styles.ImportFromPath(path)
-	if err != nil {
-		return "", cleanError(err)
-	}
-	return st.Name, nil
-}
-
-// ExportStyle exports a style to the given output path.
-func (s *StyleApp) ExportStyle(name, output string) error {
-	return cleanError(styles.Export(name, output))
-}
-
 // DeleteStyle removes a user-installed style.
 func (s *StyleApp) DeleteStyle(name string) error {
 	return cleanError(styles.Delete(name))
-}
-
-// CreateStyle creates a new user style with the given parameters.
-func (s *StyleApp) CreateStyle(name, description, author string) error {
-	st := styles.Style{
-		Name:        name,
-		Description: description,
-		Author:      author,
-		Version:     "1.0.0",
-	}
-	return cleanError(styles.Save(st))
 }
 
 // StyleDetail holds all .shipstyle fields for the editor UI.
@@ -391,7 +368,7 @@ func detailToStyle(d StyleDetail) styles.Style {
 			Dashboard: d.UILabels.Dashboard, Generate: d.UILabels.Generate,
 			Story: d.UILabels.Story, History: d.UILabels.History,
 			Contributors: d.UILabels.Contributors, Styles: d.UILabels.Styles,
-			Settings:       d.UILabels.Settings,
+			Marketplace: d.UILabels.Marketplace, Settings: d.UILabels.Settings,
 			GenerateButton: d.UILabels.GenerateButton, StoryButton: d.UILabels.StoryButton,
 		},
 		Templates: styles.Templates{

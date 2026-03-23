@@ -1,6 +1,7 @@
 package styles
 
 import (
+	"bytes"
 	"embed"
 	"fmt"
 
@@ -106,6 +107,7 @@ type UILabels struct {
 	History        string `yaml:"history"`
 	Contributors   string `yaml:"contributors"`
 	Styles         string `yaml:"styles"`
+	Marketplace    string `yaml:"marketplace"`
 	Settings       string `yaml:"settings"`
 	GenerateButton string `yaml:"generate_button"`
 	StoryButton    string `yaml:"story_button"`
@@ -160,6 +162,20 @@ func loadBuiltin(name string) (Style, error) {
 func parseStyle(data []byte) (Style, error) {
 	var s Style
 	if err := yaml.Unmarshal(data, &s); err != nil {
+		return Style{}, fmt.Errorf("parsing style: %w", err)
+	}
+	if err := validate(s); err != nil {
+		return Style{}, err
+	}
+	return s, nil
+}
+
+// ParseStyleStrict parses a .shipstyle rejecting unknown fields.
+func ParseStyleStrict(data []byte) (Style, error) {
+	dec := yaml.NewDecoder(bytes.NewReader(data))
+	dec.KnownFields(true)
+	var s Style
+	if err := dec.Decode(&s); err != nil {
 		return Style{}, fmt.Errorf("parsing style: %w", err)
 	}
 	if err := validate(s); err != nil {

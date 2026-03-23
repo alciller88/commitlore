@@ -24,6 +24,7 @@ export interface UILabelsType {
   history: string
   contributors: string
   styles: string
+  marketplace: string
   settings: string
   generateButton: string
   storyButton: string
@@ -36,6 +37,7 @@ export const uiLabels = writable<UILabelsType>({
   history: 'History',
   contributors: 'Contributors',
   styles: 'Styles',
+  marketplace: 'Marketplace',
   settings: 'Settings',
   generateButton: 'Generate',
   storyButton: 'Tell the story',

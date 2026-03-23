@@ -72,6 +72,7 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
         history: labels.history || 'History',
         contributors: labels.contributors || 'Contributors',
         styles: labels.styles || 'Styles',
+        marketplace: labels.marketplace || 'Marketplace',
         settings: labels.settings || 'Settings',
         generateButton: labels.generateButton || 'Generate',
         storyButton: labels.storyButton || 'Tell the story',
@@ -79,7 +80,8 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
     } else {
       uiLabels.set({
         dashboard: 'Dashboard', generate: 'Generate', story: 'Story',
-        history: 'History', contributors: 'Contributors', styles: 'Styles', settings: 'Settings',
+        history: 'History', contributors: 'Contributors', styles: 'Styles',
+        marketplace: 'Marketplace', settings: 'Settings',
         generateButton: 'Generate', storyButton: 'Tell the story',
       })
     }
@@ -87,7 +89,8 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
     currentTheme = { ...DEFAULTS }
     uiLabels.set({
       dashboard: 'Dashboard', generate: 'Generate', story: 'Story',
-      history: 'History', contributors: 'Contributors', styles: 'Styles', settings: 'Settings',
+      history: 'History', contributors: 'Contributors', styles: 'Styles',
+      marketplace: 'Marketplace', settings: 'Settings',
       generateButton: 'Generate', storyButton: 'Tell the story',
     })
   }

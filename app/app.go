@@ -22,6 +22,7 @@ func run() error {
 	changelogApp := NewChangelogApp()
 	storyApp := NewStoryApp()
 	styleApp := NewStyleApp()
+	marketplaceApp := NewMarketplaceApp()
 	configApp := NewConfigApp()
 
 	app := application.New(application.Options{
@@ -31,6 +32,7 @@ func run() error {
 			application.NewService(changelogApp),
 			application.NewService(storyApp),
 			application.NewService(styleApp),
+			application.NewService(marketplaceApp),
 			application.NewService(configApp),
 		},
 		Assets: application.AssetOptions{

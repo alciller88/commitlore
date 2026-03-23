@@ -6,8 +6,5 @@ import "github.com/spf13/cobra"
 func Register(parent *cobra.Command) {
 	parent.AddCommand(newListCmd())
 	parent.AddCommand(newShowCmd())
-	parent.AddCommand(newCreateCmd())
-	parent.AddCommand(newImportCmd())
-	parent.AddCommand(newExportCmd())
 	parent.AddCommand(newDeleteCmd())
 }
