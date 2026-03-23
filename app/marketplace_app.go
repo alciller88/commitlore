@@ -12,7 +12,7 @@ import (
 )
 
 // CatalogURL is the URL of the official style catalog index.
-const CatalogURL = "https://raw.githubusercontent.com/commitlore/commitlore-styles/main/index.json"
+const CatalogURL = "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/index.json"
 
 const maxCatalogSize = 5 * 1024 * 1024 // 5MB
 
