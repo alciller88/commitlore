@@ -201,20 +201,21 @@ func (s *StyleApp) CreateStyle(name, description, author string) error {
 
 // StyleDetail holds all .shipstyle fields for the editor UI.
 type StyleDetail struct {
-	Name        string            `json:"name"`
-	Version     string            `json:"version"`
-	Description string            `json:"description"`
-	Author      string            `json:"author"`
-	LLMPrompt   string            `json:"llmPrompt"`
-	Tags        []string          `json:"tags"`
-	PreviewURL  string            `json:"previewUrl"`
-	Homepage    string            `json:"homepage"`
-	Templates   TemplatesDetail   `json:"templates"`
-	Vocabulary  map[string]string `json:"vocabulary"`
-	Theme       ThemeDetail       `json:"theme"`
-	Terminal    TerminalDetail    `json:"terminal"`
-	UILabels    UILabelsDetail    `json:"uiLabels"`
-	Icons       IconsDetail       `json:"icons"`
+	Name         string            `json:"name"`
+	Version      string            `json:"version"`
+	Description  string            `json:"description"`
+	Author       string            `json:"author"`
+	LLMPrompt    string            `json:"llmPrompt"`
+	Tags         []string          `json:"tags"`
+	PreviewURL   string            `json:"previewUrl"`
+	Homepage     string            `json:"homepage"`
+	Templates    TemplatesDetail   `json:"templates"`
+	Vocabulary   map[string]string `json:"vocabulary"`
+	Theme        ThemeDetail       `json:"theme"`
+	Terminal     TerminalDetail    `json:"terminal"`
+	UILabels     UILabelsDetail    `json:"uiLabels"`
+	Icons        IconsDetail       `json:"icons"`
+	HTMLTemplate string            `json:"htmlTemplate"`
 }
 
 // TemplatesDetail holds all template strings.
@@ -322,12 +323,13 @@ func styleToDetail(st styles.Style) StyleDetail {
 		Name: st.Name, Version: st.Version, Description: st.Description,
 		Author: st.Author, LLMPrompt: st.LLMPrompt,
 		Tags: st.Tags, PreviewURL: st.PreviewURL, Homepage: st.Homepage,
-		Vocabulary: st.Vocabulary,
-		Templates:  templatesToDetail(st.Templates),
-		Theme:      themeToDetail(st.Theme),
-		Terminal:   terminalToDetail(st.Terminal),
-		UILabels:   buildUILabels(st.UILabels),
-		Icons:       buildIcons(st.Icons),
+		Vocabulary:   st.Vocabulary,
+		Templates:    templatesToDetail(st.Templates),
+		Theme:        themeToDetail(st.Theme),
+		Terminal:     terminalToDetail(st.Terminal),
+		UILabels:     buildUILabels(st.UILabels),
+		Icons:        buildIcons(st.Icons),
+		HTMLTemplate: st.HTMLTemplate,
 	}
 }
 
@@ -380,12 +382,13 @@ func detailToStyle(d StyleDetail) styles.Style {
 		Name: d.Name, Version: d.Version, Description: d.Description,
 		Author: d.Author, LLMPrompt: d.LLMPrompt,
 		Tags: d.Tags, PreviewURL: d.PreviewURL, Homepage: d.Homepage,
-		Vocabulary: d.Vocabulary,
+		Vocabulary:   d.Vocabulary,
+		HTMLTemplate: d.HTMLTemplate,
 		UILabels: styles.UILabels{
 			Dashboard: d.UILabels.Dashboard, Generate: d.UILabels.Generate,
 			Story: d.UILabels.Story, History: d.UILabels.History,
 			Contributors: d.UILabels.Contributors, Styles: d.UILabels.Styles,
-			Settings: d.UILabels.Settings,
+			Settings:       d.UILabels.Settings,
 			GenerateButton: d.UILabels.GenerateButton, StoryButton: d.UILabels.StoryButton,
 		},
 		Templates: styles.Templates{

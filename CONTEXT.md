@@ -218,6 +218,7 @@ fix/dashboard-github-inputGitHub card: input+button joined row, proper alignment
 feat/style-ui-buttonsButton labels in UILabels (generate_button, story_button), Styles editor UI Labels section, patchnotes llm fix2026-03-23feat/style-ui-buttons
 feat/style-icons-systemIcons struct in .shipstyle schema, all 4 styles with icons, Styles editor Icons tab2026-03-23feat/style-icons-system
 fix/github-connect-modalGitHub card → modal with repo input + optional token, SetGitHubToken binding2026-03-23fix/github-connect-modal
+feat/p3-html-templatesHTML template system: HTMLTemplate field in .shipstyle, per-style templates (formal/patchnotes/epic/ironic), Chart.js, Styles editor HTML tab2026-03-23feat/p3-html-templates
 
 Add a row here when completing each phase.
 
@@ -316,12 +317,17 @@ Add a row here when completing each phase.
   ui_icons.contributors, ui_icons.styles, ui_icons.settings
   Icons are inline SVG strings stored in the .shipstyle file
 
-#### P3.4 — HTML report visual overhaul
-- Reports must visually reflect the active style beyond just colors
-- Per-style elements: header image (theme.header_image), style logo (theme.logo),
-  card style (minimal/bordered/glassmorphism), separators, font
-- Wordmark in report header: "Commit"(primary color) + "Lore"(accent color) + style logo
-- Each style should feel like a completely different report, not just a recolor
+#### P3.4 — HTML report visual overhaul (feat/p3-html-templates) — COMPLETED 2026-03-23
+- ~~Reports must visually reflect the active style beyond just colors~~ — implemented: HTMLTemplate field in .shipstyle
+- ~~Per-style elements~~ — implemented: each built-in style has a unique HTML template
+- ~~Each style should feel like a completely different report~~ — implemented:
+  - formal: Stripe/GitHub docs aesthetic (Inter font, clean table, stats cards)
+  - patchnotes: Steam/game studio (Rajdhani font, gradient header, highlights cards, fade-in animations)
+  - epic: Medieval chronicle (Cinzel font, drop cap, parchment texture, separator ornaments)
+  - ironic: Fake Word 95 (Comic Sans, titlebar/toolbar chrome, Clippy speech bubble)
+- All templates use Chart.js for activity/type charts, colors from .shipstyle theme
+- Styles editor: new HTML tab with monospace textarea + template variable warning
+- Architecture: HTMLTemplate string field in Style struct, HTMLTemplateContext with all fields, fallback to default renderer when empty
 
 #### P3.5 — General UI polish (feat/p3-visual-overhaul) — COMPLETED 2026-03-22
 - ~~Typography, spacing, iconography, micro-interactions~~ — implemented: design.css with --space-*, --text-*, --radius-*, --transition-* tokens

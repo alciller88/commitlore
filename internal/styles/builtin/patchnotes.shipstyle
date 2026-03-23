@@ -108,3 +108,700 @@ templates:
   story_peak: "Peak development: {{.Month}} — {{.Count}} commits"
   story_contributor: "- **{{.Name}}** — joined {{.Date}}"
   story_footer: "*End of dev diary — CommitLore*"
+
+html_template: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} — {{.RepoName}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: {{.Theme.Typography.FontSizeBase}}; }
+      body {
+        font-family: {{.Theme.Typography.FontFamily}};
+        background: {{.Theme.Colors.Background}};
+        color: {{.Theme.Colors.Text}};
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      a { color: {{.Theme.Colors.Primary}}; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 0.55s ease forwards;
+      }
+      .fade-in.visible { opacity: 1; }
+
+      /* Header banner */
+      .pn-header {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 6px;
+        background: linear-gradient(135deg, {{.Theme.Colors.Primary}} 0%, {{.Theme.Colors.Background}} 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      .pn-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 60px,
+          color-mix(in srgb, {{.Theme.Colors.Primary}} 8%, transparent) 60px,
+          color-mix(in srgb, {{.Theme.Colors.Primary}} 8%, transparent) 61px
+        );
+        pointer-events: none;
+      }
+      .pn-header-inner {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .pn-header-logo {
+        color: {{.Theme.Colors.Text}};
+        display: flex;
+        align-items: center;
+        margin-bottom: 2px;
+        opacity: 0.9;
+      }
+      .pn-header-logo svg { width: 28px; height: 28px; }
+      .pn-header-title {
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: {{.Theme.Colors.Text}};
+        line-height: 1;
+        text-shadow: 0 2px 12px color-mix(in srgb, {{.Theme.Colors.Primary}} 60%, transparent);
+      }
+      .pn-header-meta {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        font-size: 13px;
+        font-weight: 500;
+        color: color-mix(in srgb, {{.Theme.Colors.Text}} 70%, transparent);
+        letter-spacing: 0.04em;
+      }
+      .pn-header-version {
+        color: {{.Theme.Colors.Primary}};
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+      }
+
+      /* Layout */
+      .pn-page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 32px 80px;
+      }
+
+      /* Section label */
+      .pn-section-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: {{.Theme.Colors.Primary}};
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid {{.Theme.Colors.Primary}};
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .pn-section-label::before {
+        content: "//";
+        opacity: 0.5;
+      }
+
+      /* Highlights — top 3 items */
+      .pn-highlights {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 48px;
+      }
+      .pn-highlight-card {
+        background: {{.Theme.Colors.Surface}};
+        border-left: 3px solid {{.Theme.Colors.Primary}};
+        border-radius: 0 8px 8px 0;
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+      }
+      .pn-highlight-icon {
+        font-size: 20px;
+        line-height: 1;
+        flex-shrink: 0;
+        margin-top: 1px;
+        color: {{.Theme.Colors.Primary}};
+      }
+      .pn-highlight-content {}
+      .pn-highlight-type {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: {{.Theme.Colors.Primary}};
+        margin-bottom: 4px;
+      }
+      .pn-highlight-msg {
+        font-size: 15px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        line-height: 1.4;
+      }
+      .pn-highlight-meta {
+        font-size: 11px;
+        color: color-mix(in srgb, {{.Theme.Colors.Text}} 55%, transparent);
+        margin-top: 4px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      /* Narrative */
+      .pn-narrative {
+        max-width: 720px;
+        margin: 0 auto 48px;
+      }
+      .pn-narrative h1, .pn-narrative h2, .pn-narrative h3 {
+        color: {{.Theme.Colors.Text}};
+        font-weight: 700;
+        margin-bottom: 12px;
+        margin-top: 28px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .pn-narrative h1 { font-size: 22px; margin-top: 0; }
+      .pn-narrative h2 { font-size: 17px; color: {{.Theme.Colors.Primary}}; }
+      .pn-narrative h3 { font-size: 14px; color: {{.Theme.Colors.Primary}}; }
+      .pn-narrative p {
+        line-height: 1.8;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 14px;
+        font-size: 14px;
+      }
+      .pn-narrative ul, .pn-narrative ol {
+        padding-left: 20px;
+        margin-bottom: 14px;
+      }
+      .pn-narrative li { line-height: 1.8; margin-bottom: 4px; color: {{.Theme.Colors.Text}}; }
+      .pn-narrative strong { font-weight: 700; color: {{.Theme.Colors.Text}}; }
+      .pn-narrative em { color: {{.Theme.Colors.Secondary}}; }
+      .pn-narrative code {
+        background: {{.Theme.Colors.Surface}};
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: {{.Theme.Typography.FontSizeCode}};
+        color: {{.Theme.Colors.Primary}};
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+      .pn-narrative pre {
+        background: {{.Theme.Colors.Surface}};
+        border-radius: 6px;
+        padding: 16px;
+        overflow-x: auto;
+        margin-bottom: 16px;
+      }
+      .pn-narrative pre code { background: none; padding: 0; color: {{.Theme.Colors.Text}}; }
+      .pn-narrative hr {
+        border: none;
+        border-top: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        margin: 24px 0;
+      }
+      .pn-narrative blockquote {
+        border-left: 3px solid {{.Theme.Colors.Primary}};
+        padding-left: 16px;
+        color: {{.Theme.Colors.Secondary}};
+        margin: 0 0 14px;
+      }
+
+      /* Commit groups */
+      .pn-groups {
+        margin-bottom: 48px;
+      }
+      .pn-item-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent);
+        font-size: 13px;
+        color: {{.Theme.Colors.Text}};
+      }
+      .pn-item-row:last-child { border-bottom: none; }
+      .pn-item-icon {
+        font-size: 14px;
+        color: {{.Theme.Colors.Primary}};
+        flex-shrink: 0;
+        margin-top: 1px;
+        min-width: 18px;
+        text-align: center;
+      }
+      .pn-item-msg {
+        flex: 1;
+        line-height: 1.5;
+      }
+      .pn-item-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 10px;
+        color: color-mix(in srgb, {{.Theme.Colors.Text}} 45%, transparent);
+        flex-shrink: 0;
+        align-self: center;
+      }
+
+      /* Charts */
+      .pn-charts {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 48px;
+      }
+      .pn-chart-card {
+        background: {{.Theme.Colors.Surface}};
+        border-radius: 8px;
+        padding: 24px;
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 20%, transparent);
+      }
+      .pn-chart-title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: {{.Theme.Colors.Primary}};
+        margin-bottom: 20px;
+      }
+      .pn-chart-wrap {
+        position: relative;
+        height: 200px;
+      }
+
+      /* Stats row */
+      .pn-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 48px;
+      }
+      .pn-stat-card {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 25%, transparent);
+        border-radius: 8px;
+        padding: 20px 24px;
+        text-align: center;
+      }
+      .pn-stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .pn-stat-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: color-mix(in srgb, {{.Theme.Colors.Text}} 60%, transparent);
+      }
+
+      /* Contributors grid */
+      .pn-contributors {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin-bottom: 48px;
+      }
+      .pn-contributor-card {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 20%, transparent);
+        border-radius: 8px;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .pn-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: {{.Theme.Colors.Primary}};
+        color: {{.Theme.Colors.Background}};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+        letter-spacing: 0.02em;
+      }
+      .pn-contributor-info {}
+      .pn-contributor-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        line-height: 1.2;
+      }
+      .pn-contributor-count {
+        font-size: 11px;
+        color: {{.Theme.Colors.Primary}};
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      /* Tags / Milestones */
+      .pn-tags {
+        margin-bottom: 48px;
+      }
+      .pn-tag-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent);
+        font-size: 13px;
+      }
+      .pn-tag-row:last-child { border-bottom: none; }
+      .pn-tag-name {
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        min-width: 100px;
+        letter-spacing: 0.04em;
+      }
+      .pn-tag-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, transparent);
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
+      .pn-tag-date {
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-left: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      /* Footer */
+      .pn-footer {
+        border-top: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        padding-top: 24px;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.02em;
+      }
+      .pn-footer-logo {
+        display: flex;
+        align-items: center;
+        color: {{.Theme.Colors.Secondary}};
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .pn-footer-logo svg { width: 24px; height: 24px; }
+    </style>
+  </head>
+  <body>
+
+    <header class="pn-header">
+      <div class="pn-header-inner">
+        {{if .Theme.Logo}}
+        <div class="pn-header-logo">{{.Theme.Logo}}</div>
+        {{end}}
+        <div class="pn-header-title">Patch Notes</div>
+        <div class="pn-header-meta">
+          {{if .Version}}<span class="pn-header-version">{{.Version}}</span>{{end}}
+          {{if .Version}}{{if .Generated}}<span>·</span>{{end}}{{end}}
+          {{if .Generated}}<span>{{.Generated}}</span>{{end}}
+        </div>
+      </div>
+    </header>
+
+    <main class="pn-page">
+
+      {{if .Content}}
+      <div class="pn-narrative fade-in">{{.Content}}</div>
+      {{end}}
+
+      {{if .Items}}
+      {{/* Changelog mode */}}
+
+      {{/* Top 3 highlights */}}
+      <div class="pn-section-label fade-in" style="animation-delay:0.05s">Highlights</div>
+      <div class="pn-highlights fade-in" style="animation-delay:0.1s">
+        {{range $i, $item := .Items}}{{if lt $i 3}}
+        <div class="pn-highlight-card">
+          <div class="pn-highlight-icon">{{$item.Icon}}</div>
+          <div class="pn-highlight-content">
+            <div class="pn-highlight-type">{{$item.Type}}</div>
+            <div class="pn-highlight-msg">{{$item.Message}}</div>
+            <div class="pn-highlight-meta">{{$item.Hash}} · {{$item.Author}}</div>
+          </div>
+        </div>
+        {{end}}{{end}}
+      </div>
+
+      {{/* Stats row */}}
+      <div class="pn-stats fade-in" style="animation-delay:0.15s">
+        <div class="pn-stat-card">
+          <div class="pn-stat-value">{{len .Items}}</div>
+          <div class="pn-stat-label">Total Commits</div>
+        </div>
+        <div class="pn-stat-card">
+          <div class="pn-stat-value" id="pn-feat-count">—</div>
+          <div class="pn-stat-label">Features</div>
+        </div>
+        <div class="pn-stat-card">
+          <div class="pn-stat-value" id="pn-fix-count">—</div>
+          <div class="pn-stat-label">Fixes</div>
+        </div>
+      </div>
+
+      {{/* All commits list */}}
+      <div class="pn-section-label fade-in" style="animation-delay:0.2s">All Changes</div>
+      <div class="pn-groups fade-in" style="animation-delay:0.25s">
+        {{range .Items}}
+        <div class="pn-item-row">
+          <span class="pn-item-icon">{{.Icon}}</span>
+          <span class="pn-item-msg">{{.Message}}</span>
+          <span class="pn-item-hash">{{.Hash}}</span>
+        </div>
+        {{end}}
+      </div>
+
+      {{/* Donut chart — commit type distribution */}}
+      <div class="pn-section-label fade-in" style="animation-delay:0.3s">Commit Distribution</div>
+      <div class="pn-charts fade-in" style="animation-delay:0.35s; grid-template-columns: 1fr;">
+        <div class="pn-chart-card" style="max-width: 440px;">
+          <div class="pn-chart-title">Commit Types</div>
+          <div class="pn-chart-wrap">
+            <canvas id="pnTypeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function() {
+        var items = [
+          {{range .Items}}
+          { type: "{{lower .Type}}" },
+          {{end}}
+        ];
+        var counts = {};
+        items.forEach(function(i) {
+          counts[i.type] = (counts[i.type] || 0) + 1;
+        });
+        var featCount = counts["feat"] || counts["feature"] || 0;
+        var fixCount  = counts["fix"] || 0;
+        var el1 = document.getElementById("pn-feat-count");
+        var el2 = document.getElementById("pn-fix-count");
+        if (el1) el1.textContent = featCount;
+        if (el2) el2.textContent = fixCount;
+
+        var labels = Object.keys(counts);
+        var data   = labels.map(function(k) { return counts[k]; });
+        var primary   = "{{.Theme.Colors.Primary}}";
+        var secondary = "{{.Theme.Colors.Secondary}}";
+        var accent    = "{{.Theme.Colors.Accent}}";
+        var surface   = "{{.Theme.Colors.Surface}}";
+        var border    = "{{.Theme.Colors.Border}}";
+        var palette   = [primary, accent, secondary, border, surface];
+        while (palette.length < labels.length) { palette.push(palette[palette.length - 1]); }
+
+        var ctx = document.getElementById("pnTypeChart");
+        if (ctx) {
+          new Chart(ctx, {
+            type: "doughnut",
+            data: {
+              labels: labels,
+              datasets: [{
+                data: data,
+                backgroundColor: palette.slice(0, labels.length),
+                borderWidth: 0
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "right",
+                  labels: {
+                    color: "{{.Theme.Colors.Text}}",
+                    font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 },
+                    padding: 12
+                  }
+                }
+              }
+            }
+          });
+        }
+      })();
+      </script>
+
+      {{end}}{{/* end .Items */}}
+
+      {{if .Peaks}}
+      {{/* Story mode */}}
+
+      {{/* Stats row */}}
+      <div class="pn-stats fade-in" style="animation-delay:0.05s">
+        <div class="pn-stat-card">
+          <div class="pn-stat-value">{{.TotalCommits}}</div>
+          <div class="pn-stat-label">Total Commits</div>
+        </div>
+        <div class="pn-stat-card">
+          <div class="pn-stat-value">{{len .Contributors}}</div>
+          <div class="pn-stat-label">Developers</div>
+        </div>
+        <div class="pn-stat-card">
+          <div class="pn-stat-value">{{len .Tags}}</div>
+          <div class="pn-stat-label">Milestones</div>
+        </div>
+      </div>
+
+      {{/* Activity bar chart */}}
+      <div class="pn-section-label fade-in" style="animation-delay:0.1s">Development Activity</div>
+      <div class="pn-charts fade-in" style="animation-delay:0.15s; grid-template-columns: 1fr;">
+        <div class="pn-chart-card">
+          <div class="pn-chart-title">Commit Activity</div>
+          <div class="pn-chart-wrap">
+            <canvas id="pnActivityChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <script>
+      (function() {
+        var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+        var data   = [{{range .Peaks}}{{.Count}},{{end}}];
+        var ctx    = document.getElementById("pnActivityChart");
+        if (ctx) {
+          new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: labels,
+              datasets: [{
+                label: "Commits",
+                data: data,
+                backgroundColor: "{{.Theme.Colors.Primary}}",
+                borderRadius: 4,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
+                  ticks: {
+                    color: "{{.Theme.Colors.Secondary}}",
+                    font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                  }
+                },
+                y: {
+                  grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
+                  ticks: {
+                    color: "{{.Theme.Colors.Secondary}}",
+                    font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                  }
+                }
+              }
+            }
+          });
+        }
+      })();
+      </script>
+
+      {{if .Tags}}
+      <div class="pn-section-label fade-in" style="animation-delay:0.2s">Milestones</div>
+      <div class="pn-tags fade-in" style="animation-delay:0.25s">
+        {{range .Tags}}
+        <div class="pn-tag-row">
+          <span class="pn-tag-name">{{.Name}}</span>
+          <span class="pn-tag-hash">{{.Hash}}</span>
+          <span class="pn-tag-date">{{.Date}}</span>
+        </div>
+        {{end}}
+      </div>
+      {{end}}
+
+      {{if .Contributors}}
+      <div class="pn-section-label fade-in" style="animation-delay:0.3s">Dev Team</div>
+      <div class="pn-contributors fade-in" style="animation-delay:0.35s">
+        {{range .Contributors}}
+        <div class="pn-contributor-card">
+          <div class="pn-avatar">{{initials .Name}}</div>
+          <div class="pn-contributor-info">
+            <div class="pn-contributor-name">{{.Name}}</div>
+            <div class="pn-contributor-count">{{.Count}} commits</div>
+          </div>
+        </div>
+        {{end}}
+      </div>
+      {{end}}
+
+      {{end}}{{/* end .Peaks */}}
+
+      <footer class="pn-footer fade-in">
+        {{if .Theme.Logo}}
+        <div class="pn-footer-logo">{{.Theme.Logo}}</div>
+        {{end}}
+        <span>Patch notes generated by CommitLore</span>
+      </footer>
+
+    </main>
+
+    <script>
+    (function() {
+      var els = document.querySelectorAll(".fade-in");
+      if ("IntersectionObserver" in window) {
+        var obs = new IntersectionObserver(function(entries) {
+          entries.forEach(function(e) {
+            if (e.isIntersecting) {
+              e.target.style.animationPlayState = "running";
+              obs.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        els.forEach(function(el) {
+          el.style.animationPlayState = "paused";
+          obs.observe(el);
+        });
+      } else {
+        els.forEach(function(el) { el.classList.add("visible"); });
+      }
+    })();
+    </script>
+  </body>
+  </html>

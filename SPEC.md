@@ -141,8 +141,14 @@ Complete structure of a .shipstyle file:
     bullet: "•"
     separator: "────────────────────────────────────────"
 
-All vocabulary, theme, terminal, ui_labels, and icons fields are optional
-with sensible zero-value defaults.
+  html_template: |            # custom HTML template (optional, Go html/template syntax)
+    <!DOCTYPE html>...        # complete self-contained HTML document
+                              # receives HTMLTemplateContext with all style fields:
+                              # {{.Theme.Colors.Primary}}, {{.Icons.Feature}}, etc.
+                              # When empty, the default renderer is used.
+
+All vocabulary, theme, terminal, ui_labels, icons, and html_template fields
+are optional with sensible zero-value defaults.
 
 Built-in Styles (v1)
 

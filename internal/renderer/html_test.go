@@ -53,8 +53,11 @@ func TestRender_htmlEscapesContent(t *testing.T) {
 	s := loadTestStyle(t, "formal")
 	out, err := Render("", cl, s, FormatHTML)
 	require.NoError(t, err)
-	assert.NotContains(t, out, "<script>")
+	// The author "<script>" must be HTML-escaped; it must never appear unescaped
+	// as a raw HTML tag (bare "<script>" only from our own Chart.js blocks is acceptable).
 	assert.Contains(t, out, "&lt;script&gt;")
+	assert.NotContains(t, out, `class="cl-author"><script>`)
+	assert.NotContains(t, out, `class="cl-author"><script>`)
 }
 
 func TestRender_htmlUsesThemeColors(t *testing.T) {
@@ -118,7 +121,7 @@ func TestRenderStory_htmlIncludesNarrativeContent(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, out, "THE SAGA BEGINS")
 	assert.Contains(t, out, "Alice laid the first stone")
-	assert.Contains(t, out, "class=\"narrative\"")
+	assert.Contains(t, out, "narrative")
 }
 
 func TestRender_htmlIncludesNarrativeContent(t *testing.T) {
@@ -128,7 +131,7 @@ func TestRender_htmlIncludesNarrativeContent(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, out, "CHANGELOG REPORT")
 	assert.Contains(t, out, "New features have been added")
-	assert.Contains(t, out, "class=\"narrative\"")
+	assert.Contains(t, out, "narrative")
 }
 
 func TestRenderStory_htmlRendersMarkdown(t *testing.T) {
@@ -219,4 +222,50 @@ func sampleStoryChronology() git.Chronology {
 		},
 		TotalCommits: 62,
 	}
+}
+
+func TestRenderChangelog_usesHTMLTemplate(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	assert.NotEmpty(t, s.HTMLTemplate, "formal style must have html_template set")
+	out, err := Render("Test narrative", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<!DOCTYPE html>")
+	assert.Contains(t, out, "Chart.js")
+	assert.Contains(t, out, "add login")
+	assert.Contains(t, out, "Alice")
+}
+
+func TestRenderChangelog_fallsBackToDefault(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	s.HTMLTemplate = ""
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<!DOCTYPE html>")
+	assert.Contains(t, out, "Changelog")
+	assert.Contains(t, out, "Features")
+	assert.NotContains(t, out, "Chart.js")
+}
+
+func TestHTMLTemplateContext_allFieldsPopulated(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	cl := sampleChangelog()
+	ctx := buildChangelogContext("some narrative", cl, s)
+	assert.Equal(t, "Changelog", ctx.Title)
+	assert.NotEmpty(t, ctx.Content)
+	assert.NotEmpty(t, ctx.Items)
+	assert.NotEmpty(t, ctx.Theme.Colors.Primary)
+	assert.NotEmpty(t, ctx.Theme.Colors.Background)
+	assert.NotEmpty(t, ctx.Theme.Typography.FontFamily)
+	assert.NotEmpty(t, ctx.Generated)
+
+	ch := sampleStoryChronology()
+	sCtx := buildStoryContext("story text", ch, s)
+	assert.Equal(t, "Repository Story", sCtx.Title)
+	assert.NotEmpty(t, sCtx.Content)
+	assert.Equal(t, 62, sCtx.TotalCommits)
+	assert.Equal(t, "Alice", sCtx.FirstAuthor)
+	assert.NotEmpty(t, sCtx.FirstDate)
+	assert.Len(t, sCtx.Tags, 1)
+	assert.Len(t, sCtx.Peaks, 2)
+	assert.Len(t, sCtx.Contributors, 2)
 }

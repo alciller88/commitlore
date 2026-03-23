@@ -107,3 +107,485 @@ templates:
   story_peak: "{{.Month}} was apparently quite the month. {{.Count}} commits."
   story_contributor: "- {{.Name}} showed up on {{.Date}}."
   story_footer: "*the end. finally.*"
+
+html_template: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>changelog.doc — {{.RepoName}}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        background: {{.Theme.Colors.Background}};
+        color: {{.Theme.Colors.Text}};
+        font-size: 13px;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Fake Word 95 title bar */
+      .word-titlebar {
+        height: 32px;
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 2px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 6px;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .word-titlebar-icon {
+        width: 16px;
+        height: 16px;
+        background: {{.Theme.Colors.Border}};
+        flex-shrink: 0;
+      }
+      .word-titlebar-name {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        flex: 1;
+      }
+      .word-titlebar-buttons {
+        display: flex;
+        gap: 3px;
+        margin-left: auto;
+      }
+      .word-titlebar-btn {
+        display: inline-block;
+        width: 16px;
+        height: 14px;
+        background: {{.Theme.Colors.Border}};
+        border: 1px solid {{.Theme.Colors.Secondary}};
+        font-size: 9px;
+        line-height: 12px;
+        text-align: center;
+        color: {{.Theme.Colors.Secondary}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        cursor: default;
+        user-select: none;
+      }
+
+      /* Fake Word 95 toolbar */
+      .word-toolbar {
+        height: 28px;
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 12px;
+      }
+      .word-toolbar-item {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        padding: 2px 5px;
+        border: 1px solid transparent;
+        cursor: default;
+        user-select: none;
+      }
+      .word-toolbar-sep {
+        width: 1px;
+        height: 16px;
+        background: {{.Theme.Colors.Border}};
+      }
+
+      /* Page / document area */
+      .word-page-area {
+        padding: 32px;
+        min-height: calc(100vh - 60px);
+      }
+      .word-document {
+        background: {{.Theme.Colors.Surface}};
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+        border: 1px solid {{.Theme.Colors.Border}};
+      }
+
+      /* Document heading */
+      .doc-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 22px;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 4px;
+      }
+      .doc-subtitle {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 24px;
+      }
+      .doc-divider {
+        border: none;
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        margin: 20px 0;
+      }
+
+      /* Narrative content */
+      .doc-narrative {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 24px;
+      }
+      .doc-narrative p {
+        text-indent: 2em;
+        margin-bottom: 10px;
+        line-height: 1.8;
+      }
+      .doc-narrative h1, .doc-narrative h2, .doc-narrative h3 {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        margin: 20px 0 8px;
+        text-indent: 0;
+      }
+      .doc-narrative h1 { font-size: 20px; }
+      .doc-narrative h2 { font-size: 16px; }
+      .doc-narrative h3 { font-size: 14px; }
+      .doc-narrative ul, .doc-narrative ol {
+        padding-left: 2em;
+        margin-bottom: 10px;
+      }
+      .doc-narrative li { margin-bottom: 4px; }
+      .doc-narrative strong { color: {{.Theme.Colors.Text}}; }
+      .doc-narrative em { color: {{.Theme.Colors.Secondary}}; }
+      .doc-narrative code {
+        background: {{.Theme.Colors.Background}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 1px 4px;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Primary}};
+      }
+
+      /* Section label */
+      .doc-section-label {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+        margin-top: 28px;
+      }
+
+      /* Commit list */
+      .doc-commit-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 24px 0;
+      }
+      .doc-commit-list li {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        padding: 5px 0;
+        border-bottom: 1px dotted {{.Theme.Colors.Border}};
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .doc-commit-list li:last-child { border-bottom: none; }
+      .doc-bullet {
+        color: {{.Theme.Colors.Primary}};
+        flex-shrink: 0;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+      .doc-commit-msg {
+        flex: 1;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+      .doc-commit-meta {
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        white-space: nowrap;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+
+      /* Chart area */
+      .doc-chart-wrap {
+        margin-bottom: 28px;
+      }
+      .doc-chart-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 13px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 10px;
+      }
+      .doc-chart-canvas-wrap {
+        position: relative;
+        height: 180px;
+        background: {{.Theme.Colors.Background}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 12px;
+      }
+
+      /* Contributors table — Word style */
+      .doc-contrib-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        margin-bottom: 28px;
+      }
+      .doc-contrib-table th {
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 6px 10px;
+        text-align: left;
+        color: {{.Theme.Colors.Secondary}};
+        font-weight: normal;
+        background: {{.Theme.Colors.Background}};
+      }
+      .doc-contrib-table td {
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 6px 10px;
+        color: {{.Theme.Colors.Text}};
+        vertical-align: top;
+      }
+
+      /* Footer */
+      .doc-footer {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-top: 32px;
+        padding-top: 12px;
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Clippy — fixed bottom-right */
+      .clippy-bubble {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 220px;
+        background: {{.Theme.Colors.Surface}};
+        border: 2px solid {{.Theme.Colors.Accent}};
+        padding: 10px 12px;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Text}};
+        z-index: 100;
+        line-height: 1.5;
+      }
+      .clippy-label {
+        display: block;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 4px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Fake Word 95 title bar -->
+    <div class="word-titlebar">
+      <div class="word-titlebar-icon"></div>
+      <span class="word-titlebar-name">changelog.doc - Microsoft Word</span>
+      <div class="word-titlebar-buttons">
+        <span class="word-titlebar-btn">_</span>
+        <span class="word-titlebar-btn">□</span>
+        <span class="word-titlebar-btn">×</span>
+      </div>
+    </div>
+
+    <!-- Fake Word 95 toolbar -->
+    <div class="word-toolbar">
+      <span class="word-toolbar-item">File</span>
+      <span class="word-toolbar-item">Edit</span>
+      <span class="word-toolbar-item">View</span>
+      <div class="word-toolbar-sep"></div>
+      <span class="word-toolbar-item"><b>B</b></span>
+      <span class="word-toolbar-item"><i>I</i></span>
+      <span class="word-toolbar-item"><u>U</u></span>
+      <div class="word-toolbar-sep"></div>
+      <span class="word-toolbar-item">Normal</span>
+      <span class="word-toolbar-item">Comic Sans MS</span>
+      <span class="word-toolbar-item">12</span>
+    </div>
+
+    <div class="word-page-area">
+      <div class="word-document">
+
+        <div class="doc-title">{{.Title}}{{if not .Title}}changelog{{end}}</div>
+        <div class="doc-subtitle">{{.RepoName}} &nbsp;·&nbsp; {{.Generated}}{{if .Version}} &nbsp;·&nbsp; {{.Version}}{{end}}</div>
+        <hr class="doc-divider">
+
+        {{if .Content}}
+        <div class="doc-narrative">{{.Content}}</div>
+        <hr class="doc-divider">
+        {{end}}
+
+        {{if .Items}}
+
+        <div class="doc-section-label">commits ({{len .Items}} of them)</div>
+        <ul class="doc-commit-list">
+          {{range .Items}}
+          <li>
+            <span class="doc-bullet">{{$.Icons.Bullet}}</span>
+            <span class="doc-commit-msg">{{.Message}}</span>
+            <span class="doc-commit-meta">{{.Author}} · {{.Date}}</span>
+          </li>
+          {{end}}
+        </ul>
+
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-title">stuff that happened</div>
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="activityChart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var items = [
+            {{range .Items}}
+            { type: "{{lower .Type}}", date: "{{.Date}}" },
+            {{end}}
+          ];
+          var counts = {};
+          items.forEach(function(i) {
+            counts[i.type] = (counts[i.type] || 0) + 1;
+          });
+          var labels = Object.keys(counts);
+          var data = labels.map(function(k) { return counts[k]; });
+          var ctx = document.getElementById("activityChart");
+          if (ctx && typeof Chart !== "undefined") {
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: "commits",
+                  data: data,
+                  backgroundColor: "{{.Theme.Colors.Primary}}",
+                  borderWidth: 0,
+                  borderRadius: 2
+                }]
+              },
+              options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false }
+                },
+                scales: {
+                  x: {
+                    grid: { color: "{{.Theme.Colors.Border}}" },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  },
+                  y: {
+                    grid: { display: false },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  }
+                }
+              }
+            });
+          }
+        })();
+        </script>
+
+        {{end}}{{/* end .Items */}}
+
+        {{if .Peaks}}
+
+        <div class="doc-section-label">stuff that happened (over time)</div>
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-title">stuff that happened</div>
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="peaksChart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+          var data = [{{range .Peaks}}{{.Count}},{{end}}];
+          var ctx = document.getElementById("peaksChart");
+          if (ctx && typeof Chart !== "undefined") {
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: "commits",
+                  data: data,
+                  backgroundColor: "{{.Theme.Colors.Primary}}",
+                  borderWidth: 0,
+                  borderRadius: 2
+                }]
+              },
+              options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false }
+                },
+                scales: {
+                  x: {
+                    grid: { color: "{{.Theme.Colors.Border}}" },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  },
+                  y: {
+                    grid: { display: false },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  }
+                }
+              }
+            });
+          }
+        })();
+        </script>
+
+        {{if .Contributors}}
+        <div class="doc-section-label">the guilty parties</div>
+        <table class="doc-contrib-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Commits</th>
+              <th>responsible for:</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Contributors}}
+            <tr>
+              <td>{{.Name}}</td>
+              <td>{{.Commits}}</td>
+              <td>{{.Name}} · since {{.Date}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+        {{end}}
+
+        {{end}}{{/* end .Peaks */}}
+
+        <div class="doc-footer">
+          <span>{{.Icons.Separator}}</span>
+          <span>{{.Icons.Bullet}}</span>
+          <span>generated by commitlore. you're welcome i suppose.</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Clippy -->
+    <div class="clippy-bubble">
+      <span class="clippy-label">📎 Clippy</span>
+      It looks like you're writing a changelog. Nobody will read this.
+    </div>
+
+  </body>
+  </html>
