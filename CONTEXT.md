@@ -219,6 +219,8 @@ feat/style-ui-buttonsButton labels in UILabels (generate_button, story_button), 
 feat/style-icons-systemIcons struct in .shipstyle schema, all 4 styles with icons, Styles editor Icons tab2026-03-23feat/style-icons-system
 fix/github-connect-modalGitHub card → modal with repo input + optional token, SetGitHubToken binding2026-03-23fix/github-connect-modal
 feat/p3-html-templatesHTML template system: HTMLTemplate field in .shipstyle, per-style templates (formal/patchnotes/epic/ironic), Chart.js, Styles editor HTML tab2026-03-23feat/p3-html-templates
+fix/story-template-fieldsFixed ironic {{.Commits}}→{{.Count}}, ContributorEntry.Count, Chart.js try/catch error handling2026-03-23fix/story-template-fields
+feat/styles-screen-simplifiedStyles screen rework: read-only detail panel, removed editor/create/save, import/export/delete/set-active, marketplace link2026-03-23feat/styles-screen-simplified
 
 Add a row here when completing each phase.
 
@@ -285,26 +287,16 @@ Add a row here when completing each phase.
 - ~~Custom drag region~~ — implemented: sidebar is drag region, interactive elements excluded
 - ~~Window controls~~ — implemented: macOS-style circles (close/min/max) in sidebar header, hover colors
 
-#### P3.2 — Styles screen overhaul (feat/p3-styles-screen) — COMPLETED 2026-03-22
-- ~~Layout: style list on the left, full template editor on the right in tabs~~ — implemented
-- ~~Tabs: Colors / Typography / Images & Icons / Templates / Advanced~~ — implemented (5 tabs)
-- ~~Built-in styles immutable~~ — implemented: read-only banner, disabled fields, no Save/Delete
-- ~~User styles fully editable and deletable~~ — implemented: Save, Delete (with confirm), Export
-- ~~Side panel replaced with tabbed editor~~ — implemented: covers all .shipstyle fields
-- ~~New style flow~~ — implemented: name validation, default values, inline errors
-- Editor covers ALL .shipstyle fields:
-  - theme.colors (primary, secondary, background, surface, text, accent, border)
-  - theme.typography (font_family, font_size_base, font_size_header, font_size_code)
-  - theme.header_image (URL or base64 upload)
-  - theme.logo (URL or base64 upload)
-  - theme.card_style (minimal / bordered / glassmorphism)
-  - theme.animations (toggle)
-  - theme.custom_css (textarea)
-  - terminal.colors (header, feature, fix, breaking, footer — ANSI color names)
-  - terminal.decorators (separator, bullet, indent)
-  - terminal.density (compact / normal / verbose)
-  - vocabulary (key→value pairs, add/remove rows)
-  - templates (header, feature, fix, breaking, footer, story_* — textarea per field)
+#### P3.2 — Styles screen (feat/p3-styles-screen → feat/styles-screen-simplified) — COMPLETED 2026-03-23
+- ~~Layout: style list on the left, full template editor on the right in tabs~~ — REPLACED
+- Styles screen simplified to read-only detail panel (feat/styles-screen-simplified):
+  - Two-column layout: 260px card list + flex detail panel
+  - Detail panel: logo, name/version/author, description, theme colors (7 circles with tooltips),
+    font preview, mode badge, UI labels (if custom), icons (if custom), LLM prompt (collapsible)
+  - Actions: Export (all styles), Delete (user only, with confirm), Set as active
+  - Left column: Import style (file picker), Get more styles (opens browser)
+  - Removed entirely: tab editors, create/new form, save button, SaveStyleDetail calls
+  - Styles are managed via import/export and future marketplace — not edited in-app
 
 #### P3.3 — Style system expansion (partially implemented)
 - ~~ui_labels: per-style navigation label overrides~~ — IMPLEMENTED (feat/p3-style-patchnotes):

@@ -196,7 +196,7 @@ Generate — form to configure and generate a changelog.
 Story — narrative visualization of the repo history.
 History — commit explorer with filters.
 Contributors — visual contribution map.
-Styles — visual manager: create, import, export, preview styles.
+Styles — read-only browser: preview styles, import, export, set active. No in-app editing.
 Settings — LLM provider configuration, API key management via OS keychain, app style selection.
 
 Repo Picker (all screens)

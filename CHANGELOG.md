@@ -5,6 +5,14 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed (Styles screen simplified)
+- Styles.svelte: complete rework — removed full editor (Colors/Typography/Icons/Images/Templates/HTML/Advanced tabs), create form, save functionality
+- New read-only detail panel: logo (48px), name/version badge, author, description, 7 color circles (20px) with hex tooltip, font preview, mode badge, UI labels (if custom), icons (if custom), collapsible LLM prompt
+- Actions: "Set as active" (changes app theme immediately), Export (all styles), Delete (user only with confirmation)
+- Left column bottom: "Import style" (file picker), "Get more styles" (opens https://commitlore.dev/styles in browser)
+- Styles are managed via import/export — no in-app creation or editing
+- Removed bindings: SaveStyleDetail no longer called from Styles screen
+
 ### Added (HTML template system)
 - internal/styles: HTMLTemplate string field added to Style struct — per-style custom HTML templates using Go html/template syntax
 - internal/renderer: HTMLTemplateContext with all style fields (Theme, Icons, UILabels), unified for both changelog and story contexts

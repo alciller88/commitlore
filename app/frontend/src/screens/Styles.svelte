@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { ListStyles, GetStyleDetail, SaveStyleDetail, DeleteStyle, ImportStyle, ExportStyle, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
-  import { GetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
+  import { ListStyles, GetStyleDetail, DeleteStyle, ImportStyle, ExportStyle, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { SetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
   import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
+  import { OpenURL } from '@wailsio/runtime'
   import { activeStyle } from '../lib/store'
 
   type StyleListItem = { name: string; builtIn: boolean; primary: string; accent: string; background: string }
@@ -11,14 +12,12 @@
   let selectedName = ''
   let detail: any = null
   let isBuiltIn = false
-  let activeTab = 'colors'
   let error = ''
   let success = ''
   let loading = false
-  let creating = false
-  let newName = ''
   let confirmDelete = false
   let currentActiveStyle = 'formal'
+  let llmOpen = false
 
   const unsubStyle = activeStyle.subscribe(v => { currentActiveStyle = v })
   onDestroy(() => unsubStyle())
@@ -49,63 +48,16 @@
   }
 
   async function selectStyle(name: string) {
-    creating = false
     selectedName = name
     error = ''
+    confirmDelete = false
+    llmOpen = false
     try {
       detail = await GetStyleDetail(name)
       isBuiltIn = styles.find(s => s.name === name)?.builtIn ?? false
-      activeTab = 'colors'
     } catch (e: any) {
       error = e?.message || 'Failed to load style'
       detail = null
-    }
-  }
-
-  function startCreate() {
-    creating = true
-    selectedName = ''
-    newName = ''
-    detail = {
-      name: '', version: '1.0.0', description: '', author: '',
-      llmPrompt: '', tags: [], previewUrl: '', homepage: '',
-      templates: { header: '# Changelog {{.Version}}\n', feature: '- {{.Message}}\n', fix: '- {{.Message}}\n', breaking: '- {{.Message}}\n', footer: '', storyIntro: '', storyMilestone: '', storyPeak: '', storyContributor: '', storyFooter: '' },
-      vocabulary: {},
-      uiLabels: { dashboard: '', generate: '', story: '', history: '', contributors: '', styles: '', settings: '', generateButton: '', storyButton: '' },
-      icons: { feature: '✦', fix: '✔', breaking: '⚠', chore: '⚙', docs: '📄', test: '🧪', storyPeak: '🔥', bullet: '•', separator: '────────────────────────────────────────' },
-      theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '', windowControls: { default: '#666666', close: '#FF5F57', minimize: '#FEBC2E', maximize: '#28C840' } },
-      terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' },
-      htmlTemplate: ''
-    }
-    isBuiltIn = false
-    activeTab = 'colors'
-  }
-
-  async function saveStyle() {
-    error = ''
-    success = ''
-    if (creating) {
-      if (!newName.trim() || !/^[a-zA-Z0-9_-]+$/.test(newName.trim())) {
-        error = 'Name must contain only letters, numbers, hyphens, underscores'
-        return
-      }
-      if (styles.some(s => s.name === newName.trim())) {
-        error = 'A style with this name already exists'
-        return
-      }
-      detail.name = newName.trim()
-    }
-    try {
-      await SaveStyleDetail(detail)
-      success = 'Style saved.'
-      setTimeout(() => success = '', 3000)
-      if (creating) {
-        creating = false
-        selectedName = detail.name
-      }
-      await loadStyles()
-    } catch (e: any) {
-      error = e?.message || 'Save failed'
     }
   }
 
@@ -147,59 +99,68 @@
     }
   }
 
-  let vocabKey = ''
-  let vocabVal = ''
-  function addVocab() {
-    if (!vocabKey.trim()) return
-    if (!detail.vocabulary) detail.vocabulary = {}
-    detail.vocabulary[vocabKey.trim()] = vocabVal.trim()
-    detail = detail
-    vocabKey = ''
-    vocabVal = ''
-  }
-  function removeVocab(key: string) {
-    delete detail.vocabulary[key]
-    detail = detail
+  async function setActive() {
+    if (!selectedName) return
+    error = ''
+    try {
+      activeStyle.set(selectedName)
+      await SetActiveStyle(selectedName)
+      success = 'Active style changed.'
+      setTimeout(() => success = '', 3000)
+    } catch (e: any) {
+      error = e?.message || 'Failed to set active style'
+    }
   }
 
-  const tabs = [
-    { id: 'colors', label: 'Colors' },
-    { id: 'typography', label: 'Typography' },
-    { id: 'icons', label: 'Icons' },
-    { id: 'images', label: 'Images' },
-    { id: 'templates', label: 'Templates' },
-    { id: 'html', label: 'HTML' },
-    { id: 'advanced', label: 'Advanced' },
-  ]
+  function openMarketplace() {
+    OpenURL('https://commitlore.dev/styles')
+  }
 
   const colorFields = ['primary', 'secondary', 'background', 'surface', 'text', 'accent', 'border'] as const
-  const templateFields = [
-    { key: 'header', label: 'Header', hint: '{{.Version}}, {{.Date}}' },
-    { key: 'feature', label: 'Feature', hint: '{{.Message}}, {{.Hash}}, {{.Author}}' },
-    { key: 'fix', label: 'Fix', hint: '{{.Message}}, {{.Hash}}, {{.Author}}' },
-    { key: 'breaking', label: 'Breaking', hint: '{{.Message}}, {{.Hash}}' },
-    { key: 'footer', label: 'Footer', hint: '{{.Date}}' },
-    { key: 'storyIntro', label: 'Story Intro', hint: '{{.FirstAuthor}}, {{.TotalCommits}}' },
-    { key: 'storyMilestone', label: 'Story Milestone', hint: '{{.Tag}}, {{.Date}}' },
-    { key: 'storyPeak', label: 'Story Peak', hint: '{{.Month}}, {{.Count}}' },
-    { key: 'storyContributor', label: 'Story Contributor', hint: '{{.Name}}, {{.Date}}' },
-    { key: 'storyFooter', label: 'Story Footer', hint: '' },
+
+  const uiLabelKeys: [string, string][] = [
+    ['dashboard', 'Dashboard'],
+    ['generate', 'Generate'],
+    ['generateButton', 'Generate button'],
+    ['story', 'Story'],
+    ['storyButton', 'Story button'],
+    ['history', 'History'],
+    ['contributors', 'Contributors'],
+    ['styles', 'Styles'],
+    ['settings', 'Settings'],
   ]
+
+  const iconKeys: [string, string][] = [
+    ['feature', 'feature'],
+    ['fix', 'fix'],
+    ['breaking', 'breaking'],
+    ['chore', 'chore'],
+    ['docs', 'docs'],
+    ['test', 'test'],
+    ['bullet', 'bullet'],
+  ]
+
+  function hasCustomLabels(d: any): boolean {
+    if (!d?.uiLabels) return false
+    return uiLabelKeys.some(([k]) => d.uiLabels[k] && d.uiLabels[k] !== '')
+  }
+
+  function hasCustomIcons(d: any): boolean {
+    if (!d?.icons) return false
+    return iconKeys.some(([k]) => d.icons[k] && d.icons[k] !== '')
+  }
 </script>
 
 <div class="two-col">
   <div class="left-col">
     <div class="left-header">
       <h1>Styles</h1>
-      <button class="small-action" on:click={importStyle} title="Import .shipstyle file">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </button>
     </div>
     <div class="style-cards">
       {#each styles as s}
         <button
           class="style-card"
-          class:selected={selectedName === s.name && !creating}
+          class:selected={selectedName === s.name}
           class:is-active={currentActiveStyle === s.name}
           on:click={() => selectStyle(s.name)}
         >
@@ -215,10 +176,16 @@
         </button>
       {/each}
     </div>
-    <button class="new-style-btn" on:click={startCreate}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M12 5v14M5 12h14"/></svg>
-      New style
-    </button>
+    <div class="left-actions">
+      <button class="left-btn" on:click={importStyle}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Import style
+      </button>
+      <button class="left-btn" on:click={openMarketplace}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        Get more styles
+      </button>
+    </div>
   </div>
 
   <div class="right-col">
@@ -229,291 +196,127 @@
       <div class="banner success">{success}</div>
     {/if}
 
-    {#if !detail && !creating}
-      <div class="empty-editor">
-        <p>Select a style to view or edit</p>
+    {#if !detail}
+      <div class="empty-state">
+        <p>Select a style to preview</p>
       </div>
-    {:else if detail}
-      {#if isBuiltIn}
-        <div class="banner info">Built-in styles cannot be modified</div>
-      {/if}
-
-      {#if creating}
-        <div class="name-field">
-          <label>Name</label>
-          <input type="text" bind:value={newName} placeholder="my-style-name" />
+    {:else}
+      <div class="detail-panel">
+        <!-- Header -->
+        <div class="detail-header">
+          {#if detail.theme?.logo}
+            <div class="detail-logo">{@html detail.theme.logo}</div>
+          {/if}
+          <div class="detail-meta">
+            <div class="detail-name-row">
+              <span class="detail-name">{detail.name}</span>
+              {#if detail.version}
+                <span class="detail-version">v{detail.version}</span>
+              {/if}
+            </div>
+            {#if detail.author}
+              <div class="detail-author">by {detail.author}</div>
+            {/if}
+          </div>
         </div>
-      {:else}
-        <div class="editor-header">{detail.name}</div>
-      {/if}
 
-      <div class="tab-bar">
-        {#each tabs as tab}
-          <button class="tab" class:active={activeTab === tab.id} on:click={() => activeTab = tab.id}>{tab.label}</button>
-        {/each}
-      </div>
+        {#if detail.description}
+          <div class="detail-desc">{detail.description}</div>
+        {/if}
 
-      <div class="tab-content">
-        {#if activeTab === 'colors'}
-          <div class="field-group">
-            <label>Mode</label>
-            <div class="radio-group">
-              <label><input type="radio" bind:group={detail.theme.mode} value="dark" disabled={isBuiltIn} /> Dark</label>
-              <label><input type="radio" bind:group={detail.theme.mode} value="light" disabled={isBuiltIn} /> Light</label>
-            </div>
-          </div>
-          {#each colorFields as cf}
-            <div class="color-field">
-              <label>{cf}</label>
-              <div class="color-input-row">
-                <input type="color" value={detail.theme.colors[cf] || '#000000'} on:input={(e) => { detail.theme.colors[cf] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} />
-                <input type="text" bind:value={detail.theme.colors[cf]} disabled={isBuiltIn} class="hex-input" />
-              </div>
-            </div>
-          {/each}
+        <div class="section-sep"></div>
 
-        {:else if activeTab === 'typography'}
-          <div class="field-group">
-            <label>Font Family</label>
-            <input type="text" bind:value={detail.theme.typography.fontFamily} disabled={isBuiltIn} />
-            <div class="font-preview" style="font-family:{detail.theme.typography.fontFamily || 'sans-serif'}">The quick brown fox jumps over the lazy dog</div>
-          </div>
-          <div class="field-group">
-            <label>Base Font Size</label>
-            <input type="text" bind:value={detail.theme.typography.fontSizeBase} disabled={isBuiltIn} placeholder="14px" />
-          </div>
-          <div class="field-group">
-            <label>Header Font Size</label>
-            <input type="text" bind:value={detail.theme.typography.fontSizeHeader} disabled={isBuiltIn} placeholder="24px" />
-          </div>
-          <div class="field-group">
-            <label>Code Font Size</label>
-            <input type="text" bind:value={detail.theme.typography.fontSizeCode} disabled={isBuiltIn} placeholder="13px" />
-          </div>
-
-        {:else if activeTab === 'icons'}
-          <div class="field-group">
-            <label class="section-divider">Commit icons</label>
-          </div>
-          {#each [
-            ['feature', 'Feature'],
-            ['fix', 'Fix'],
-            ['breaking', 'Breaking'],
-            ['chore', 'Chore'],
-            ['docs', 'Docs'],
-            ['test', 'Test'],
-          ] as [key, label]}
-            <div class="icon-field">
-              <label>{label}</label>
-              <div class="icon-input-row">
-                <input type="text" value={detail.icons?.[key] || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} style="width:80px;" />
-                <span class="icon-preview">{detail.icons?.[key] || ''}</span>
-              </div>
-            </div>
-          {/each}
-          <div class="field-group" style="margin-top:8px;">
-            <label class="section-divider">Story icons</label>
-          </div>
-          <div class="icon-field">
-            <label>Story peak</label>
-            <div class="icon-input-row">
-              <input type="text" value={detail.icons?.storyPeak || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons.storyPeak = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} style="width:80px;" />
-              <span class="icon-preview">{detail.icons?.storyPeak || ''}</span>
-            </div>
-          </div>
-          <div class="field-group" style="margin-top:8px;">
-            <label class="section-divider">Decorators</label>
-          </div>
-          <div class="icon-field">
-            <label>Bullet</label>
-            <div class="icon-input-row">
-              <input type="text" value={detail.icons?.bullet || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons.bullet = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} style="width:80px;" />
-              <span class="icon-preview">{detail.icons?.bullet || ''}</span>
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Separator</label>
-            <input type="text" value={detail.icons?.separator || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons.separator = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} class="mono" />
-          </div>
-
-        {:else if activeTab === 'images'}
-          <div class="field-group">
-            <label>Logo</label>
-            {#if detail.theme.logo}
-              <img src={detail.theme.logo} alt="logo" class="img-preview-sm" />
-            {/if}
-            <input type="text" bind:value={detail.theme.logo} disabled={isBuiltIn} placeholder="URL or base64" />
-            {#if !isBuiltIn}
-              <button class="small-action" on:click={() => { detail.theme.logo = ''; detail = detail }}>Clear</button>
-            {/if}
-          </div>
-          <div class="field-group">
-            <label>Header Image</label>
-            {#if detail.theme.headerImage}
-              <img src={detail.theme.headerImage} alt="header" class="img-preview-wide" />
-            {/if}
-            <input type="text" bind:value={detail.theme.headerImage} disabled={isBuiltIn} placeholder="URL or base64" />
-            {#if !isBuiltIn}
-              <button class="small-action" on:click={() => { detail.theme.headerImage = ''; detail = detail }}>Clear</button>
-            {/if}
-          </div>
-          <div class="field-group">
-            <label>Card Style</label>
-            <div class="radio-group">
-              <label><input type="radio" bind:group={detail.theme.cardStyle} value="minimal" disabled={isBuiltIn} /> Minimal</label>
-              <label><input type="radio" bind:group={detail.theme.cardStyle} value="bordered" disabled={isBuiltIn} /> Bordered</label>
-              <label><input type="radio" bind:group={detail.theme.cardStyle} value="glassmorphism" disabled={isBuiltIn} /> Glassmorphism</label>
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Animations</label>
-            <label class="toggle-label">
-              <input type="checkbox" bind:checked={detail.theme.animations} disabled={isBuiltIn} />
-              {detail.theme.animations ? 'On' : 'Off'}
-            </label>
-          </div>
-          <div class="field-group">
-            <label>Window Controls</label>
-            <div class="inline-fields">
-              {#each [['default', 'Default'], ['close', 'Close'], ['minimize', 'Minimize'], ['maximize', 'Maximize']] as [key, label]}
-                <div class="mini-field">
-                  <span class="mini-label">{label}</span>
-                  <div class="color-input-row">
-                    <input type="color" value={detail.theme.windowControls?.[key] || '#666666'} on:input={(e) => { if (!detail.theme.windowControls) detail.theme.windowControls = {}; detail.theme.windowControls[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} />
-                    <input type="text" value={detail.theme.windowControls?.[key] || ''} on:input={(e) => { if (!detail.theme.windowControls) detail.theme.windowControls = {}; detail.theme.windowControls[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} class="hex-input" />
-                  </div>
-                </div>
+        <!-- Theme -->
+        <div class="section">
+          <div class="section-title">Theme</div>
+          <div class="section-row">
+            <span class="section-label">Colors</span>
+            <div class="color-circles">
+              {#each colorFields as cf}
+                <span
+                  class="color-circle"
+                  style="background:{detail.theme?.colors?.[cf] || '#333'}"
+                  title="{cf}: {detail.theme?.colors?.[cf] || 'not set'}"
+                ></span>
               {/each}
             </div>
           </div>
+          {#if detail.theme?.typography?.fontFamily}
+            <div class="section-row">
+              <span class="section-label">Font</span>
+              <span class="font-preview" style="font-family:{detail.theme.typography.fontFamily}">The quick brown fox</span>
+            </div>
+          {/if}
+          <div class="section-row">
+            <span class="section-label">Mode</span>
+            <span class="mode-badge">{detail.theme?.mode || 'dark'}</span>
+          </div>
+        </div>
 
-        {:else if activeTab === 'templates'}
-          <div class="field-group">
-            <label class="section-divider">UI Labels</label>
-          </div>
-          {#each [
-            ['dashboard', 'Dashboard label'],
-            ['generate', 'Generate label'],
-            ['generateButton', 'Generate button'],
-            ['story', 'Story label'],
-            ['storyButton', 'Story button'],
-            ['history', 'History label'],
-            ['contributors', 'Contributors label'],
-            ['styles', 'Styles label'],
-            ['settings', 'Settings label'],
-          ] as [key, label]}
-            <div class="field-group">
-              <label>{label}</label>
-              <input type="text" value={detail.uiLabels?.[key] || ''} on:input={(e) => { if (!detail.uiLabels) detail.uiLabels = {}; detail.uiLabels[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} placeholder={label} style="height:36px;" />
-            </div>
-          {/each}
-          <div class="field-group" style="margin-top:8px;">
-            <label class="section-divider">Templates</label>
-          </div>
-          {#each templateFields as tf}
-            <div class="field-group">
-              <label>{tf.label} {#if tf.hint}<span class="hint">{tf.hint}</span>{/if}</label>
-              <textarea bind:value={detail.templates[tf.key]} disabled={isBuiltIn} rows="3" class="mono"></textarea>
-            </div>
-          {/each}
-          <div class="field-group">
-            <label>Vocabulary</label>
-            <div class="vocab-table">
-              {#if detail.vocabulary}
-                {#each Object.entries(detail.vocabulary) as [k, v]}
-                  <div class="vocab-row">
-                    <span class="vocab-key">{k}</span>
-                    <span class="vocab-val">{v}</span>
-                    {#if !isBuiltIn}
-                      <button class="vocab-del" on:click={() => removeVocab(k)}>x</button>
-                    {/if}
-                  </div>
-                {/each}
-              {/if}
-              {#if !isBuiltIn}
-                <div class="vocab-add">
-                  <input type="text" bind:value={vocabKey} placeholder="key" />
-                  <input type="text" bind:value={vocabVal} placeholder="value" />
-                  <button class="small-action" on:click={addVocab}>Add</button>
+        <!-- UI Labels -->
+        {#if hasCustomLabels(detail)}
+          <div class="section-sep"></div>
+          <div class="section">
+            <div class="section-title">UI Labels</div>
+            {#each uiLabelKeys as [key, label]}
+              {#if detail.uiLabels?.[key]}
+                <div class="label-row">
+                  <span class="label-default">{label}</span>
+                  <span class="label-arrow">&rarr;</span>
+                  <span class="label-custom">{detail.uiLabels[key]}</span>
                 </div>
               {/if}
-            </div>
-          </div>
-
-        {:else if activeTab === 'html'}
-          <div class="field-group">
-            <label class="section-divider">HTML Template</label>
-          </div>
-          <div class="html-warning">Advanced: editing the HTML template directly. Use <code>{"{{.Theme.Colors.Primary}}"}</code>, <code>{"{{.Icons.Feature}}"}</code> etc. for style variables.</div>
-          <div class="field-group">
-            <textarea bind:value={detail.htmlTemplate} disabled={isBuiltIn} rows="20" class="mono html-editor" placeholder="<!DOCTYPE html>&#10;<html>&#10;  ...&#10;</html>"></textarea>
-          </div>
-
-        {:else if activeTab === 'advanced'}
-          <div class="field-group">
-            <label>Terminal Colors (ANSI names)</label>
-            <div class="inline-fields">
-              {#each ['header', 'feature', 'fix', 'breaking', 'footer'] as tc}
-                <div class="mini-field">
-                  <span class="mini-label">{tc}</span>
-                  <input type="text" bind:value={detail.terminal.colors[tc]} disabled={isBuiltIn} placeholder="e.g. cyan" />
-                </div>
-              {/each}
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Terminal Decorators</label>
-            <div class="inline-fields">
-              <div class="mini-field">
-                <span class="mini-label">separator</span>
-                <input type="text" bind:value={detail.terminal.decorators.separator} disabled={isBuiltIn} />
-              </div>
-              <div class="mini-field">
-                <span class="mini-label">bullet</span>
-                <input type="text" bind:value={detail.terminal.decorators.bullet} disabled={isBuiltIn} />
-              </div>
-              <div class="mini-field">
-                <span class="mini-label">indent</span>
-                <input type="text" bind:value={detail.terminal.decorators.indent} disabled={isBuiltIn} />
-              </div>
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Terminal Density</label>
-            <div class="radio-group">
-              <label><input type="radio" bind:group={detail.terminal.density} value="compact" disabled={isBuiltIn} /> Compact</label>
-              <label><input type="radio" bind:group={detail.terminal.density} value="normal" disabled={isBuiltIn} /> Normal</label>
-              <label><input type="radio" bind:group={detail.terminal.density} value="verbose" disabled={isBuiltIn} /> Verbose</label>
-            </div>
-          </div>
-          <div class="field-group">
-            <label>Custom CSS</label>
-            <textarea bind:value={detail.theme.customCss} disabled={isBuiltIn} rows="6" class="mono" placeholder="Additional CSS injected at end of HTML reports"></textarea>
-          </div>
-          <div class="field-group">
-            <label>LLM Prompt
-              <span class="hint-warn">Injected into LLM calls. Keep it focused on tone and format.</span>
-            </label>
-            <textarea bind:value={detail.llmPrompt} disabled={isBuiltIn} rows="6" class="mono"></textarea>
+            {/each}
           </div>
         {/if}
-      </div>
 
-      {#if !isBuiltIn}
-        <div class="editor-actions">
-          <button class="action-btn" on:click={saveStyle}>Save</button>
-          {#if !creating && selectedName}
-            <button class="small-action" on:click={exportStyle}>Export</button>
+        <!-- Icons -->
+        {#if hasCustomIcons(detail)}
+          <div class="section-sep"></div>
+          <div class="section">
+            <div class="section-title">Icons</div>
+            <div class="icon-row">
+              {#each iconKeys as [key, label]}
+                {#if detail.icons?.[key]}
+                  <span class="icon-item">{label}: <span class="icon-char">{detail.icons[key]}</span></span>
+                {/if}
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <!-- LLM Prompt -->
+        {#if detail.llmPrompt}
+          <div class="section-sep"></div>
+          <div class="section">
+            <button class="section-toggle" on:click={() => llmOpen = !llmOpen}>
+              <span class="section-title">LLM Prompt</span>
+              <span class="toggle-arrow" class:open={llmOpen}>&rsaquo;</span>
+            </button>
+            {#if llmOpen}
+              <textarea class="llm-preview" readonly rows="8">{detail.llmPrompt}</textarea>
+            {/if}
+          </div>
+        {/if}
+
+        <!-- Actions -->
+        <div class="section-sep"></div>
+        <div class="actions">
+          <button class="action-btn primary" on:click={setActive} disabled={currentActiveStyle === selectedName}>
+            {currentActiveStyle === selectedName ? 'Active' : 'Set as active'}
+          </button>
+          <button class="action-btn outline" on:click={exportStyle}>Export</button>
+          {#if !isBuiltIn}
             {#if !confirmDelete}
-              <button class="delete-btn" on:click={() => confirmDelete = true}>Delete</button>
+              <button class="action-btn danger" on:click={() => confirmDelete = true}>Delete</button>
             {:else}
               <span class="confirm-text">Delete "{selectedName}"?</span>
-              <button class="delete-btn" on:click={doDelete}>Confirm</button>
-              <button class="small-action" on:click={() => confirmDelete = false}>Cancel</button>
+              <button class="action-btn danger" on:click={doDelete}>Confirm</button>
+              <button class="action-btn outline" on:click={() => confirmDelete = false}>Cancel</button>
             {/if}
           {/if}
         </div>
-      {/if}
+      </div>
     {/if}
   </div>
 </div>
@@ -552,144 +355,133 @@
   .card-badge.builtin { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 20%, transparent); color: var(--cl-accent, #58a6ff); }
 
   .card-swatches { display: flex; gap: 4px; }
-  .mini-swatch { width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--cl-border, #30363d); }
+  .mini-swatch { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--cl-border, #30363d); }
 
-  .new-style-btn {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 10px; margin: 8px 12px 0 0; background: transparent;
-    border: 1px dashed var(--cl-border, #30363d); border-radius: 6px;
-    color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 13px; font-family: inherit;
-    flex-shrink: 0;
+  .left-actions {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 10px 12px 0 0; flex-shrink: 0;
   }
-  .new-style-btn:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
+  .left-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px; background: transparent;
+    border: 1px solid var(--cl-border, #30363d); border-radius: 6px;
+    color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 12px; font-family: inherit;
+  }
+  .left-btn:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
 
   .right-col {
-    flex: 1; display: flex; flex-direction: column; gap: 10px;
+    flex: 1; display: flex; flex-direction: column; gap: 0;
     padding: 0 0 0 16px; overflow-y: auto; min-width: 0;
   }
 
-  .empty-editor {
+  .empty-state {
     flex: 1; display: flex; align-items: center; justify-content: center;
     color: var(--cl-secondary, #8b949e); font-size: 14px;
   }
-  .empty-editor p { margin: 0; }
+  .empty-state p { margin: 0; }
 
-  .editor-header { font-size: 18px; font-weight: 600; color: var(--cl-text, #e6edf3); }
+  .detail-panel { display: flex; flex-direction: column; gap: 0; padding-right: 8px; }
 
-  .name-field { display: flex; flex-direction: column; gap: 4px; }
-  .name-field label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; }
-  .name-field input {
-    padding: 7px 10px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 6px; color: var(--cl-text, #e6edf3); font-size: 14px; font-family: 'JetBrains Mono', monospace;
-    max-width: 300px;
+  .detail-header { display: flex; align-items: center; gap: 12px; }
+  .detail-logo { width: 48px; height: 48px; flex-shrink: 0; color: var(--cl-primary, #58a6ff); }
+  .detail-logo :global(svg) { width: 48px; height: 48px; }
+  .detail-meta { display: flex; flex-direction: column; gap: 2px; }
+  .detail-name-row { display: flex; align-items: baseline; gap: 8px; }
+  .detail-name { font-size: 18px; font-weight: 600; color: var(--cl-text, #e6edf3); }
+  .detail-version {
+    font-size: 11px; padding: 1px 6px; border-radius: 8px;
+    background: var(--cl-border, #30363d); color: var(--cl-secondary, #8b949e);
+    font-family: 'JetBrains Mono', monospace;
   }
-  .name-field input:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
+  .detail-author { font-size: 12px; color: var(--cl-secondary, #8b949e); }
+  .detail-desc { font-size: 13px; color: var(--cl-text, #e6edf3); margin-top: 8px; line-height: 1.5; }
 
-  .tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--cl-border, #30363d); flex-shrink: 0; }
-  .tab {
-    padding: 8px 14px; background: transparent; border: none; border-bottom: 2px solid transparent;
-    color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 12px; font-family: inherit;
-    transition: color 0.12s;
+  .section-sep {
+    height: 1px; background: var(--cl-border, #30363d); margin: 14px 0;
   }
-  .tab:hover { color: var(--cl-text, #e6edf3); }
-  .tab.active { color: var(--cl-accent, #58a6ff); border-bottom-color: var(--cl-accent, #58a6ff); }
 
-  .tab-content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
-
-  .field-group { display: flex; flex-direction: column; gap: 4px; }
-  .field-group > label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; display: flex; gap: 6px; align-items: center; }
-
-  .section-divider { font-size: 11px; font-weight: 600; color: var(--cl-text, #e6edf3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--cl-border, #30363d); padding-bottom: 4px; }
-  .icon-field { display: flex; align-items: center; gap: 8px; }
-  .icon-field label { width: 80px; color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; flex-shrink: 0; }
-  .icon-input-row { display: flex; align-items: center; gap: 8px; }
-  .icon-preview { font-size: 18px; min-width: 24px; text-align: center; }
-  .hint { font-size: 10px; color: var(--cl-secondary, #8b949e); opacity: 0.7; text-transform: none; }
-  .hint-warn { font-size: 10px; color: #D97706; text-transform: none; }
-
-  input[type="text"], textarea, select {
-    padding: 6px 8px; background: var(--cl-background, #0d1117); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 4px; color: var(--cl-text, #e6edf3); font-size: 12px; font-family: inherit;
+  .section { display: flex; flex-direction: column; gap: 6px; }
+  .section-title {
+    font-size: 11px; font-weight: 600; color: var(--cl-secondary, #8b949e);
+    text-transform: uppercase; letter-spacing: 0.06em;
   }
-  input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--cl-accent, #58a6ff); }
-  input:disabled, textarea:disabled, select:disabled { opacity: 0.6; cursor: not-allowed; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
 
-  .color-field { display: flex; align-items: center; gap: 8px; }
-  .color-field label { width: 80px; color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; flex-shrink: 0; }
-  .color-input-row { display: flex; align-items: center; gap: 6px; }
-  input[type="color"] { width: 28px; height: 28px; padding: 0; border: 1px solid var(--cl-border, #30363d); border-radius: 4px; cursor: pointer; background: none; }
-  input[type="color"]:disabled { cursor: not-allowed; }
-  .hex-input { width: 80px; font-family: 'JetBrains Mono', monospace; }
+  .section-row { display: flex; align-items: center; gap: 10px; }
+  .section-label { font-size: 12px; color: var(--cl-secondary, #8b949e); width: 55px; flex-shrink: 0; }
 
-  .radio-group { display: flex; gap: 12px; font-size: 12px; color: var(--cl-text, #e6edf3); }
-  .radio-group label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
-  .toggle-label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--cl-text, #e6edf3); cursor: pointer; }
+  .color-circles { display: flex; gap: 6px; }
+  .color-circle {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1px solid var(--cl-border, #30363d); cursor: default;
+  }
 
   .font-preview {
-    padding: 8px; background: var(--cl-surface, #161b22); border: 1px solid var(--cl-border, #30363d);
-    border-radius: 4px; font-size: 13px; color: var(--cl-text, #e6edf3);
+    font-size: 13px; color: var(--cl-text, #e6edf3);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  .img-preview-sm { width: 64px; height: 64px; object-fit: contain; border: 1px solid var(--cl-border, #30363d); border-radius: 4px; }
-  .img-preview-wide { width: 200px; height: 64px; object-fit: cover; border: 1px solid var(--cl-border, #30363d); border-radius: 4px; }
-
-  .inline-fields { display: flex; gap: 8px; flex-wrap: wrap; }
-  .mini-field { display: flex; flex-direction: column; gap: 2px; }
-  .mini-label { font-size: 10px; color: var(--cl-secondary, #8b949e); }
-  .mini-field input { width: 90px; }
-
-  .vocab-table { display: flex; flex-direction: column; gap: 4px; }
-  .vocab-row { display: flex; align-items: center; gap: 8px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
-  .vocab-key { color: var(--cl-accent, #58a6ff); min-width: 80px; }
-  .vocab-val { color: var(--cl-text, #e6edf3); flex: 1; }
-  .vocab-del { background: none; border: none; color: #f85149; cursor: pointer; font-size: 14px; padding: 0 4px; }
-  .vocab-add { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
-  .vocab-add input { width: 100px; }
-
-  .editor-actions {
-    display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--cl-border, #30363d);
-    flex-shrink: 0;
+  .mode-badge {
+    font-size: 11px; padding: 1px 8px; border-radius: 8px;
+    background: var(--cl-surface, #161b22); color: var(--cl-text, #e6edf3);
+    border: 1px solid var(--cl-border, #30363d);
   }
+
+  .label-row { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+  .label-default { color: var(--cl-secondary, #8b949e); width: 110px; flex-shrink: 0; }
+  .label-arrow { color: var(--cl-border, #30363d); }
+  .label-custom { color: var(--cl-text, #e6edf3); }
+
+  .icon-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .icon-item { font-size: 12px; color: var(--cl-secondary, #8b949e); }
+  .icon-char { font-size: 15px; }
+
+  .section-toggle {
+    display: flex; align-items: center; gap: 6px; background: none; border: none;
+    padding: 0; cursor: pointer; color: inherit; font-family: inherit;
+  }
+  .toggle-arrow {
+    font-size: 14px; color: var(--cl-secondary, #8b949e);
+    transition: transform 0.15s; display: inline-block;
+  }
+  .toggle-arrow.open { transform: rotate(90deg); }
+
+  .llm-preview {
+    width: 100%; padding: 8px; background: var(--cl-background, #0d1117);
+    border: 1px solid var(--cl-border, #30363d); border-radius: 4px;
+    color: var(--cl-secondary, #8b949e); font-size: 11px; line-height: 1.5;
+    font-family: 'JetBrains Mono', monospace; resize: none;
+  }
+
+  .actions {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
+
   .action-btn {
-    padding: 8px 16px; background: #238636; border: none; border-radius: 6px;
-    color: #fff; font-size: 13px; cursor: pointer; font-family: inherit;
+    padding: 7px 14px; border-radius: 6px; font-size: 12px;
+    cursor: pointer; font-family: inherit; border: none;
   }
-  .action-btn:hover { background: #2ea043; }
-
-  .small-action {
-    padding: 4px 10px; background: transparent; border: 1px solid var(--cl-border, #30363d);
-    border-radius: 4px; color: var(--cl-secondary, #8b949e); cursor: pointer; font-size: 12px; font-family: inherit;
-    display: flex; align-items: center; gap: 4px;
+  .action-btn.primary {
+    background: #238636; color: #fff;
   }
-  .small-action:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-text, #e6edf3); }
-
-  .delete-btn {
-    padding: 4px 10px; background: transparent; border: 1px solid #da3634;
-    border-radius: 4px; color: #f85149; cursor: pointer; font-size: 12px; font-family: inherit;
+  .action-btn.primary:hover { background: #2ea043; }
+  .action-btn.primary:disabled {
+    background: var(--cl-surface, #161b22); color: var(--cl-secondary, #8b949e);
+    cursor: default; border: 1px solid var(--cl-border, #30363d);
   }
-  .delete-btn:hover { background: #da363422; }
+  .action-btn.outline {
+    background: transparent; border: 1px solid var(--cl-border, #30363d);
+    color: var(--cl-secondary, #8b949e);
+  }
+  .action-btn.outline:hover { border-color: var(--cl-accent, #58a6ff); color: var(--cl-text, #e6edf3); }
+  .action-btn.danger {
+    background: transparent; border: 1px solid #da3634;
+    color: #f85149;
+  }
+  .action-btn.danger:hover { background: #da363422; }
 
   .confirm-text { font-size: 12px; color: #f85149; }
 
   .banner { padding: 6px 10px; border-radius: 4px; font-size: 12px; flex-shrink: 0; }
   .banner.error { background: #da363433; border: 1px solid #da3634; color: #f85149; }
   .banner.success { background: #23863633; border: 1px solid #238636; color: #3fb950; }
-  .banner.info { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 10%, transparent); border: 1px solid var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
-
-  .html-warning {
-    padding: 8px 10px; border-radius: 4px; font-size: 11px;
-    background: color-mix(in srgb, #D97706 12%, transparent);
-    border: 1px solid #D97706; color: #FBBF24;
-    line-height: 1.5;
-  }
-  .html-warning code {
-    background: color-mix(in srgb, #D97706 20%, transparent);
-    padding: 1px 4px; border-radius: 3px; font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .html-editor {
-    min-height: 400px; resize: vertical; font-size: 11px; line-height: 1.5;
-    tab-size: 2; white-space: pre; overflow-x: auto;
-  }
 </style>
