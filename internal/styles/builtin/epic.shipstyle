@@ -719,7 +719,6 @@ html_template_changelog: |
       {{- end}}{{/* end .Peaks */}}
 
       {{/* ── Footer ── */}}
-      <div class="cl-sep">{{.Icons.Separator}}</div>
       <footer class="cl-footer">
         <span class="cl-footer-sep">{{.Icons.Separator}}</span>
         {{.Icons.Bullet}} Thus the chronicle is sealed — CommitLore {{.Icons.Bullet}}
@@ -1519,7 +1518,6 @@ html_template_story: |
       {{end}}
 
       {{/* ════ FOOTER ════ */}}
-      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
       <footer class="sg-footer sg-animated">
         <span class="sg-footer-sep">{{.Icons.Separator}}</span>
         <span class="sg-footer-text">Thus the saga is sealed — CommitLore</span>
