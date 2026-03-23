@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`commitlore-styles` repository**: Official marketplace repository created at `alciller88/commitlore-styles` with `index.json` catalog.
 - **Cyberpunk style v1.0.0**: Night City aesthetic with glitch effects, neon colors (yellow/cyan/pink), Orbitron + Share Tech Mono typography, HUD-style cards with cut corners, scanlines overlay, and full changelog + story HTML templates with Chart.js visualizations. Includes cyberpunk vocabulary, themed UI labels (NIGHT CITY, COMPILE, NEURAL LINK, RIPPERDOC, etc.), and anti-hallucination LLM prompt.
 - **Marketplace end-to-end flow verified**: Catalog fetch, style install, theme activation, and UI label propagation all functional.
+- **Adeptus Mechanicus style v1.0.0**: Grimdark Warhammer 40k aesthetic with binary separators, servo-skull icons, Cinzel/Share Tech Mono/VT323 typography, sacred litany tone, red vignette overlay, binary rain animation, double-border cards, purity seal commit badges, and full changelog + story HTML templates with Chart.js visualizations.
 
 ### Fixed
 
