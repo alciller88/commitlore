@@ -1289,7 +1289,7 @@ html_template_story: |
         <div class="sg-chapters" id="sg-chapters-list">
           {{range $i, $p := .Peaks}}
           <div class="sg-chapter">
-            <div class="sg-chapter-numeral">{{$i}}</div>
+            <div class="sg-chapter-numeral">{{add $i 1}}</div>
             <div class="sg-chapter-body">
               <div class="sg-chapter-title">{{$p.Month}}</div>
               <div class="sg-chapter-deeds">{{$p.Count}} deeds inscribed</div>
