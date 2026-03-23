@@ -212,6 +212,8 @@ feat/p3-style-patchnotesPatchnotes v2.0 + UILabels schema: per-style nav labels,
 feat/p3-style-epicEpic v2.0: medieval fantasy aesthetic, Sword logo, ui_labels, anti-hallucination LLM prompt2026-03-22feat/p3-style-epic
 fix/epic-sword-iconCorrected Phosphor Sword SVG from upstream source2026-03-22fix/epic-sword-icon
 feat/p3-style-ironicIronic v2.0: deadpan minimalist aesthetic, Minus logo, ui_labels, anti-hallucination LLM prompt2026-03-23feat/p3-style-ironic
+fix/patchnotes-llm-promptAnti-hallucination instruction added to formal and patchnotes llm_prompts2026-03-23fix/patchnotes-llm-prompt
+fix/ironic-style-redesignIronic v2.1: coral/teal palette, Comic Sans, SmileyMeh logo, personality over nihilism2026-03-23fix/ironic-style-redesign
 
 Add a row here when completing each phase.
 
