@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from 'svelte'
   import { Generate } from '../../bindings/github.com/alciller88/commitlore/app/changelogapp.js'
   import { GetLLMConfig } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
-  import { activeRepo, activeStyle } from '../lib/store'
+  import { activeRepo, activeStyle, uiLabels } from '../lib/store'
   import type { ActiveRepo } from '../lib/store'
 
   let currentRepo: ActiveRepo | null = null
@@ -107,7 +107,7 @@
         {#if loading}
           <span class="spinner"></span> Generating...
         {:else}
-          Generate
+          {$uiLabels.generateButton}
         {/if}
       </button>
     </div>

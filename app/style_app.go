@@ -69,13 +69,15 @@ type StyleTheme struct {
 
 // UILabelsDetail holds navigation label overrides for the frontend.
 type UILabelsDetail struct {
-	Dashboard    string `json:"dashboard"`
-	Generate     string `json:"generate"`
-	Story        string `json:"story"`
-	History      string `json:"history"`
-	Contributors string `json:"contributors"`
-	Styles       string `json:"styles"`
-	Settings     string `json:"settings"`
+	Dashboard      string `json:"dashboard"`
+	Generate       string `json:"generate"`
+	Story          string `json:"story"`
+	History        string `json:"history"`
+	Contributors   string `json:"contributors"`
+	Styles         string `json:"styles"`
+	Settings       string `json:"settings"`
+	GenerateButton string `json:"generateButton"`
+	StoryButton    string `json:"storyButton"`
 }
 
 // GetStyleTheme returns only the theme fields for a style, with fallback defaults.
@@ -110,13 +112,15 @@ func buildStyleTheme(st styles.Style) StyleTheme {
 
 func buildUILabels(l styles.UILabels) UILabelsDetail {
 	return UILabelsDetail{
-		Dashboard:    withDefault(l.Dashboard, "Dashboard"),
-		Generate:     withDefault(l.Generate, "Generate"),
-		Story:        withDefault(l.Story, "Story"),
-		History:      withDefault(l.History, "History"),
-		Contributors: withDefault(l.Contributors, "Contributors"),
-		Styles:       withDefault(l.Styles, "Styles"),
-		Settings:     withDefault(l.Settings, "Settings"),
+		Dashboard:      withDefault(l.Dashboard, "Dashboard"),
+		Generate:       withDefault(l.Generate, "Generate"),
+		Story:          withDefault(l.Story, "Story"),
+		History:        withDefault(l.History, "History"),
+		Contributors:   withDefault(l.Contributors, "Contributors"),
+		Styles:         withDefault(l.Styles, "Styles"),
+		Settings:       withDefault(l.Settings, "Settings"),
+		GenerateButton: withDefault(l.GenerateButton, "Generate"),
+		StoryButton:    withDefault(l.StoryButton, "Tell the story"),
 	}
 }
 
@@ -351,6 +355,7 @@ func detailToStyle(d StyleDetail) styles.Style {
 			Story: d.UILabels.Story, History: d.UILabels.History,
 			Contributors: d.UILabels.Contributors, Styles: d.UILabels.Styles,
 			Settings: d.UILabels.Settings,
+			GenerateButton: d.UILabels.GenerateButton, StoryButton: d.UILabels.StoryButton,
 		},
 		Templates: styles.Templates{
 			Header: d.Templates.Header, Feature: d.Templates.Feature,
