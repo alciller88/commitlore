@@ -74,7 +74,8 @@
       uiLabels: { dashboard: '', generate: '', story: '', history: '', contributors: '', styles: '', settings: '', generateButton: '', storyButton: '' },
       icons: { feature: '✦', fix: '✔', breaking: '⚠', chore: '⚙', docs: '📄', test: '🧪', storyPeak: '🔥', bullet: '•', separator: '────────────────────────────────────────' },
       theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '', windowControls: { default: '#666666', close: '#FF5F57', minimize: '#FEBC2E', maximize: '#28C840' } },
-      terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' }
+      terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' },
+      htmlTemplate: ''
     }
     isBuiltIn = false
     activeTab = 'colors'
@@ -167,6 +168,7 @@
     { id: 'icons', label: 'Icons' },
     { id: 'images', label: 'Images' },
     { id: 'templates', label: 'Templates' },
+    { id: 'html', label: 'HTML' },
     { id: 'advanced', label: 'Advanced' },
   ]
 
@@ -438,6 +440,15 @@
             </div>
           </div>
 
+        {:else if activeTab === 'html'}
+          <div class="field-group">
+            <label class="section-divider">HTML Template</label>
+          </div>
+          <div class="html-warning">Advanced: editing the HTML template directly. Use <code>{"{{.Theme.Colors.Primary}}"}</code>, <code>{"{{.Icons.Feature}}"}</code> etc. for style variables.</div>
+          <div class="field-group">
+            <textarea bind:value={detail.htmlTemplate} disabled={isBuiltIn} rows="20" class="mono html-editor" placeholder="<!DOCTYPE html>&#10;<html>&#10;  ...&#10;</html>"></textarea>
+          </div>
+
         {:else if activeTab === 'advanced'}
           <div class="field-group">
             <label>Terminal Colors (ANSI names)</label>
@@ -665,4 +676,20 @@
   .banner.error { background: #da363433; border: 1px solid #da3634; color: #f85149; }
   .banner.success { background: #23863633; border: 1px solid #238636; color: #3fb950; }
   .banner.info { background: color-mix(in srgb, var(--cl-accent, #58a6ff) 10%, transparent); border: 1px solid var(--cl-accent, #58a6ff); color: var(--cl-accent, #58a6ff); }
+
+  .html-warning {
+    padding: 8px 10px; border-radius: 4px; font-size: 11px;
+    background: color-mix(in srgb, #D97706 12%, transparent);
+    border: 1px solid #D97706; color: #FBBF24;
+    line-height: 1.5;
+  }
+  .html-warning code {
+    background: color-mix(in srgb, #D97706 20%, transparent);
+    padding: 1px 4px; border-radius: 3px; font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .html-editor {
+    min-height: 400px; resize: vertical; font-size: 11px; line-height: 1.5;
+    tab-size: 2; white-space: pre; overflow-x: auto;
+  }
 </style>
