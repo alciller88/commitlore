@@ -118,7 +118,7 @@
           <button class="tool-btn" on:click={copyText}>Copy text</button>
           <button class="tool-btn" on:click={saveAsFile}>Save as .html</button>
         </div>
-        <iframe class="preview" srcdoc={htmlResult} sandbox="" title="Changelog preview"></iframe>
+        <iframe class="preview" srcdoc={htmlResult} sandbox="allow-scripts" title="Changelog preview"></iframe>
       {:else}
         <div class="empty-preview">
           <span class="empty-text">Preview will appear here</span>
