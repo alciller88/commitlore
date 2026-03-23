@@ -66,7 +66,8 @@ func TestRender_htmlUsesThemeColors(t *testing.T) {
 }
 
 func TestRender_htmlUsesCustomCSS(t *testing.T) {
-	s := loadTestStyle(t, "ironic")
+	s := loadTestStyle(t, "formal")
+	s.Theme.CustomCSS = "body { letter-spacing: 0.02em; }"
 	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "letter-spacing")
