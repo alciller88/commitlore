@@ -289,3 +289,33 @@ func TestHTMLTemplateContext_allFieldsPopulated(t *testing.T) {
 	assert.Len(t, sCtx.Peaks, 2)
 	assert.Len(t, sCtx.Contributors, 2)
 }
+
+func TestHTMLTemplateContext_repoNamePopulated(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	ch := sampleStoryChronology()
+	ctx := buildStoryContext("narrative", ch, s)
+	assert.NotEmpty(t, ctx.RepoName)
+	assert.Equal(t, "Repository", ctx.RepoName)
+}
+
+func TestHTMLTemplateContext_itemTypesInOutput(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	cl := sampleChangelog()
+	out, err := Render("", cl, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, `type: "feat"`)
+	assert.Contains(t, out, `type: "fix"`)
+}
+
+func TestHTMLTemplateContext_changelogItemsPopulated(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	cl := sampleChangelog()
+	ctx := buildChangelogContext("", cl, s)
+	assert.Len(t, ctx.Items, 3)
+	typeMap := make(map[string]int)
+	for _, item := range ctx.Items {
+		typeMap[item.Type]++
+	}
+	assert.Equal(t, 2, typeMap["feat"])
+	assert.Equal(t, 1, typeMap["fix"])
+}
