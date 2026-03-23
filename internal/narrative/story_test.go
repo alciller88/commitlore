@@ -55,8 +55,8 @@ func TestGenerateStory_patchnotes(t *testing.T) {
 func TestGenerateStory_ironic(t *testing.T) {
 	out, err := GenerateStory(sampleChronology(), loadStyle(t, "ironic"))
 	require.NoError(t, err)
-	assert.Contains(t, out, "nobody asked for")
-	assert.Contains(t, out, "One of us now")
+	assert.Contains(t, out, "a repository existed")
+	assert.Contains(t, out, "the end. finally.")
 }
 
 func TestGenerateStory_epic(t *testing.T) {

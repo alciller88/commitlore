@@ -5,6 +5,9 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed (P3 ironic style v2)
+- ironic.shipstyle v2.0.0: deadpan minimalist aesthetic (monochrome grays on #1A1A1A), JetBrains Mono font, Phosphor Minus SVG logo, minimal card style, ui_labels (whatever, fine, a story i guess, stuff that happened, people, aesthetics, knobs), anti-hallucination LLM prompt, simplified vocabulary
+
 ### Changed (P3 epic style v2)
 - epic.shipstyle v2.0.0: medieval fantasy aesthetic (gold #C9A84C / crimson #8B1A1A on dark #0F0A05), Cinzel serif font, Phosphor Sword inline SVG logo, bordered card style, ui_labels (The Keep, The Chronicle, The Saga, The Scrolls, The Fellowship, The Wardrobe, The Forge), refined LLM prompt with anti-hallucination instruction, simplified vocabulary
 
