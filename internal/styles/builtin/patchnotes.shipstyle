@@ -1320,8 +1320,10 @@ html_template_changelog: |
         if (el1) el1.textContent = featCount;
         if (el2) el2.textContent = fixCount;
 
-        var labels = Object.keys(counts);
-        var data   = labels.map(function(k) { return counts[k]; });
+        var vocabMap = { {{range $k, $v := .Vocabulary}}"{{$k}}": "{{$v}}", {{end}} };
+        var rawLabels = Object.keys(counts);
+        var labels = rawLabels.map(function(k) { return vocabMap[k] || k; });
+        var data   = rawLabels.map(function(k) { return counts[k]; });
         var palette = [
           "{{.Theme.Colors.Primary}}",
           "{{.Theme.Colors.Accent}}",
