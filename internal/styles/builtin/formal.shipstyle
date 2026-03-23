@@ -52,7 +52,11 @@ llm_prompt: |
   Begin with a 3-sentence executive summary describing what this release delivers.
   Normalize inconsistent commit messages into readable, consistent entries.
   Tone: neutral, precise, no marketing language, no exclamation marks.
-  Output clean markdown. Do not invent features that are not in the commits.
+  Output clean markdown.
+  IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the data
+  section below. Do not invent features, fixes, or changes that are not present
+  in the commit data. Every item must correspond to a real commit. Summarize
+  faithfully — do not embellish or expand beyond what is stated.
 
 vocabulary: {}
 
