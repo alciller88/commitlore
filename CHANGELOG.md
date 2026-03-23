@@ -5,6 +5,12 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (Icons system)
+- internal/styles: Icons struct (feature, fix, breaking, chore, docs, test, story_peak, bullet, separator) added to Style
+- app/style_app.go: IconsDetail in StyleTheme and StyleDetail, buildIcons() with fallback defaults
+- All 4 built-in styles: icons block with per-style characters (formal: minimal, patchnotes: gaming, epic: medieval, ironic: deadpan arrows)
+- Styles.svelte: new "Icons" tab with Commit icons, Story icons, and Decorators sections, emoji preview per field
+
 ### Added (UI button labels + Styles editor)
 - internal/styles: GenerateButton, StoryButton fields added to UILabels struct
 - app/style_app.go: UILabelsDetail extended with generateButton/storyButton, defaults "Generate"/"Tell the story"

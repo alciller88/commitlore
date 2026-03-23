@@ -79,6 +79,17 @@ ui_labels:
   generate_button: "Fine, generate"
   story_button: "Sure, a story"
 
+icons:
+  feature: "→"
+  fix: "→"
+  breaking: "!"
+  chore: "→"
+  docs: "→"
+  test: "→"
+  story_peak: "📈"
+  bullet: "→"
+  separator: "- - - - - - - - - - - - - - - - - - - -"
+
 templates:
   header: |
     # changelog — {{.Version}}

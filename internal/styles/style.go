@@ -25,6 +25,20 @@ type Style struct {
 	PreviewURL  string            `yaml:"preview_url"`
 	Homepage    string            `yaml:"homepage"`
 	UILabels    UILabels          `yaml:"ui_labels"`
+	Icons       Icons             `yaml:"icons"`
+}
+
+// Icons holds per-style icon/emoji characters for commit types and decorators.
+type Icons struct {
+	Feature   string `yaml:"feature"`
+	Fix       string `yaml:"fix"`
+	Breaking  string `yaml:"breaking"`
+	Chore     string `yaml:"chore"`
+	Docs      string `yaml:"docs"`
+	Test      string `yaml:"test"`
+	StoryPeak string `yaml:"story_peak"`
+	Bullet    string `yaml:"bullet"`
+	Separator string `yaml:"separator"`
 }
 
 // Templates holds the template strings for each commit type and story sections.

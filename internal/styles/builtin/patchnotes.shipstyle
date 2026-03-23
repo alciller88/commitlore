@@ -80,6 +80,17 @@ ui_labels:
   generate_button: "Deploy Patch"
   story_button: "Write the Dev Diary"
 
+icons:
+  feature: "★"
+  fix: "✔"
+  breaking: "⚠"
+  chore: "⚙"
+  docs: "📋"
+  test: "🧪"
+  story_peak: "🔥"
+  bullet: "▸"
+  separator: "═══════════════════════════════════════"
+
 templates:
   header: |
     # Patch Notes — {{.Version}}
