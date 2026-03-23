@@ -436,8 +436,12 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 9 | `internal/llm` — optional LLM integration (Anthropic + OpenAI) | Completed |
 | Phase 10 | Wails app — base structure + bindings | Completed |
 | Phase 11 | Wails app — screens and complete UI | Completed |
-| Phase 12 | Release pipeline + cross-platform binaries | Planned |
-| Phase 13 | Polish, docs, README, examples | Planned |
+| Phase 12 | Release pipeline + cross-platform binaries | In Progress |
+| Phase 13 | Polish, docs, README, examples | In Progress |
+
+> **Phase 12 — In Progress, UNDOCUMENTED:** Release workflow exists (`.github/workflows/release.yml`) with CLI binary builds for 3 platforms on `v*` tag push. **Missing:** Wails desktop app builds per platform; automatic CHANGELOG.md update on release. Not yet documented in CHANGELOG.md.
+
+> **Phase 13 — In Progress, UNDOCUMENTED:** README.md exists with features, quick start, styles table, LLM and desktop app sections, contributing guidelines. **Missing:** screenshots of each desktop app screen; license not yet defined. Not yet documented in CHANGELOG.md.
 
 ---
 
@@ -449,15 +453,21 @@ No P0 items at this time.
 
 ### P1 — Next planned phase
 
-**Phase 12: Release pipeline + cross-platform binaries**
+**Phase 12: Release pipeline + cross-platform binaries** _(In Progress)_
 
-- Build and release CLI binaries for linux/amd64, darwin/arm64, windows/amd64 on tag push.
-  - _Acceptance:_ `release.yml` workflow triggers on `v*` tag, runs full CI, builds all three CLI binaries, builds Wails app per platform, creates GitHub Release with all artifacts attached, and updates CHANGELOG.md automatically.
+- ~~Build and release CLI binaries for linux/amd64, darwin/arm64, windows/amd64 on tag push.~~ ✅ Done
+- Build and attach Wails desktop app binaries per platform to the GitHub Release.
+  - _Acceptance:_ Release workflow builds Wails app for linux, darwin, windows and attaches all binaries alongside CLI builds.
+- Automatic CHANGELOG.md update on release.
+  - _Acceptance:_ Release workflow or tag-push hook updates CHANGELOG.md with the new version heading.
 
-**Phase 13: Polish, docs, README, examples**
+**Phase 13: Polish, docs, README, examples** _(In Progress)_
 
-- Complete README with installation instructions, usage examples, and screenshots.
-  - _Acceptance:_ README covers CLI usage for all five commands, desktop app installation, style system overview, and LLM configuration. Includes at least one screenshot of each screen.
+- ~~Complete README with features, quick start, styles table, LLM and desktop app sections.~~ ✅ Done
+- Add screenshots of each desktop app screen to README.
+  - _Acceptance:_ At least one screenshot per screen (Dashboard, Generate, Story, History, Contributors, Styles, Settings).
+- Define and add project license.
+  - _Acceptance:_ LICENSE file in repo root; license badge in README links to it.
 
 ### P2 — Planned but not scheduled
 
