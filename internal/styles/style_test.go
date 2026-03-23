@@ -42,20 +42,20 @@ func TestLoad_ironic(t *testing.T) {
 	s, err := Load("ironic")
 	require.NoError(t, err)
 	assert.Equal(t, "ironic", s.Name)
-	assert.Equal(t, "2.0.0", s.Version)
+	assert.Equal(t, "2.1.0", s.Version)
 	assert.Contains(t, s.Templates.Header, "changelog")
 }
 
 func TestLoad_ironic_uiLabels(t *testing.T) {
 	s, err := Load("ironic")
 	require.NoError(t, err)
-	assert.Equal(t, "whatever", s.UILabels.Dashboard)
-	assert.Equal(t, "fine", s.UILabels.Generate)
-	assert.Equal(t, "a story i guess", s.UILabels.Story)
-	assert.Equal(t, "stuff that happened", s.UILabels.History)
-	assert.Equal(t, "people", s.UILabels.Contributors)
-	assert.Equal(t, "aesthetics", s.UILabels.Styles)
-	assert.Equal(t, "knobs", s.UILabels.Settings)
+	assert.Equal(t, "Home I Guess", s.UILabels.Dashboard)
+	assert.Equal(t, "Sure, Generate", s.UILabels.Generate)
+	assert.Equal(t, "A Story", s.UILabels.Story)
+	assert.Equal(t, "What Happened", s.UILabels.History)
+	assert.Equal(t, "The Guilty Parties", s.UILabels.Contributors)
+	assert.Equal(t, "Looks", s.UILabels.Styles)
+	assert.Equal(t, "Options I Suppose", s.UILabels.Settings)
 }
 
 func TestLoad_epic(t *testing.T) {
