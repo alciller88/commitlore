@@ -74,7 +74,8 @@ func runLocalStory(repoPath, from, styleName, format, output, llmProvider, llmBa
 		return err
 	}
 
-	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL, llmModel)
+	repoName := renderer.RepoNameFromPath(repoPath)
+	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL, llmModel, repoName)
 }
 
 func runRemoteStory(repoRef, from, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
@@ -98,7 +99,8 @@ func runRemoteStory(repoRef, from, styleName, format, output, llmProvider, llmBa
 	}
 
 	ch := git.BuildChronology(commits, nil, topPeaks)
-	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL, llmModel)
+	repoName := renderer.RepoNameFromPath(repoRef)
+	return renderStory(ch, styleName, format, output, llmProvider, llmBaseURL, llmModel, repoName)
 }
 
 func fetchStoryCommits(repo *git.Repo, from string) ([]git.Commit, error) {
@@ -121,7 +123,7 @@ func buildStoryChronology(repo *git.Repo, commits []git.Commit) (git.Chronology,
 	return git.BuildChronology(commits, tags, topPeaks), nil
 }
 
-func renderStory(ch git.Chronology, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
+func renderStory(ch git.Chronology, styleName, format, output, llmProvider, llmBaseURL, llmModel, repoName string) error {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return err
@@ -134,7 +136,7 @@ func renderStory(ch git.Chronology, styleName, format, output, llmProvider, llmB
 
 	text = enrichWithLLM(llmProvider, llmBaseURL, llmModel, style.LLMPrompt, text)
 
-	rendered, err := renderer.RenderStory(text, ch, style, renderer.Format(format))
+	rendered, err := renderer.RenderStory(text, ch, style, renderer.Format(format), repoName)
 	if err != nil {
 		return err
 	}

@@ -9,20 +9,21 @@ import (
 )
 
 // RenderStoryWithTheme renders story with an optional theme override for HTML output.
-func RenderStoryWithTheme(content string, ch git.Chronology, style styles.Style, format Format, override *HTMLTheme) (string, error) {
+func RenderStoryWithTheme(content string, ch git.Chronology, style styles.Style, format Format, override *HTMLTheme, repoName ...string) (string, error) {
 	if override != nil {
 		style = applyHTMLThemeOverride(style, override)
 	}
-	return RenderStory(content, ch, style, format)
+	return RenderStory(content, ch, style, format, repoName...)
 }
 
 // RenderStory formats story content according to the specified format.
-func RenderStory(content string, ch git.Chronology, style styles.Style, format Format) (string, error) {
+func RenderStory(content string, ch git.Chronology, style styles.Style, format Format, repoName ...string) (string, error) {
+	rn := extractRepoName(repoName)
 	switch format {
 	case FormatJSON:
 		return renderStoryJSON(ch)
 	case FormatHTML:
-		return renderStoryHTML(content, ch, style)
+		return renderStoryHTML(content, ch, style, rn)
 	case FormatPDF:
 		return "", fmt.Errorf("PDF format has been removed. Use --format html instead.")
 	case FormatTerminal:

@@ -3,6 +3,7 @@ package renderer
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/alciller88/commitlore/internal/changelog"
 	"github.com/alciller88/commitlore/internal/styles"
@@ -33,12 +34,13 @@ type HTMLTheme struct {
 }
 
 // Render formats the given content according to the specified format.
-func Render(content string, cl changelog.Changelog, style styles.Style, format Format) (string, error) {
+func Render(content string, cl changelog.Changelog, style styles.Style, format Format, repoName ...string) (string, error) {
+	rn := extractRepoName(repoName)
 	switch format {
 	case FormatJSON:
 		return renderJSON(cl)
 	case FormatHTML:
-		return renderChangelogHTML(content, cl, style)
+		return renderChangelogHTML(content, cl, style, rn)
 	case FormatPDF:
 		return "", fmt.Errorf("PDF format has been removed. Use --format html instead.")
 	case FormatTerminal:
@@ -50,11 +52,43 @@ func Render(content string, cl changelog.Changelog, style styles.Style, format F
 
 // RenderWithTheme renders with an optional theme override for HTML output.
 // If override is nil, uses the style's own theme (same as Render).
-func RenderWithTheme(content string, cl changelog.Changelog, style styles.Style, format Format, override *HTMLTheme) (string, error) {
+func RenderWithTheme(content string, cl changelog.Changelog, style styles.Style, format Format, override *HTMLTheme, repoName ...string) (string, error) {
 	if override != nil {
 		style = applyHTMLThemeOverride(style, override)
 	}
-	return Render(content, cl, style, format)
+	return Render(content, cl, style, format, repoName...)
+}
+
+func extractRepoName(names []string) string {
+	if len(names) > 0 && names[0] != "" {
+		return names[0]
+	}
+	return "Repository"
+}
+
+// RepoNameFromPath extracts a display name from a repo path or GitHub URL.
+// "C:\Users\alcil\MyProjects\commitlore" → "commitlore"
+// "owner/repo" → "repo"
+// "." → "Repository"
+func RepoNameFromPath(repoPath string) string {
+	if repoPath == "" || repoPath == "." {
+		return "Repository"
+	}
+	// GitHub format: owner/repo
+	if strings.Contains(repoPath, "/") && !strings.Contains(repoPath, "\\") && !strings.HasPrefix(repoPath, "/") {
+		parts := strings.Split(repoPath, "/")
+		if len(parts) >= 2 {
+			return parts[len(parts)-1]
+		}
+	}
+	// Local path: extract last segment
+	clean := strings.TrimRight(repoPath, "/\\")
+	for i := len(clean) - 1; i >= 0; i-- {
+		if clean[i] == '/' || clean[i] == '\\' {
+			return clean[i+1:]
+		}
+	}
+	return clean
 }
 
 func applyHTMLThemeOverride(style styles.Style, o *HTMLTheme) styles.Style {

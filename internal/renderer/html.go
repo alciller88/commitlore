@@ -15,9 +15,9 @@ import (
 	"github.com/alciller88/commitlore/internal/styles"
 )
 
-func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
+func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style, repoName string) (string, error) {
 	if style.HTMLTemplateChangelog != "" {
-		return renderCustomChangelogHTML(content, cl, style)
+		return renderCustomChangelogHTML(content, cl, style, repoName)
 	}
 	return renderDefaultChangelogHTML(content, cl, style)
 }
@@ -76,9 +76,9 @@ func writeCommitHTML(buf *bytes.Buffer, c changelog.ParsedCommit) {
 	)
 }
 
-func renderStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
+func renderStoryHTML(content string, ch git.Chronology, style styles.Style, repoName string) (string, error) {
 	if style.HTMLTemplateStory != "" {
-		return renderCustomStoryHTML(content, ch, style)
+		return renderCustomStoryHTML(content, ch, style, repoName)
 	}
 	return renderDefaultStoryHTML(content, ch, style)
 }
