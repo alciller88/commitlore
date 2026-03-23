@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { OpenFolderPicker, History } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
+  import { OpenFolderPicker, History, SetGitHubToken } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
   import { GetRecentRepos, AddRecentRepo } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
   import { Events } from '@wailsio/runtime'
   import { activeRepo, repoSummary } from '../lib/store'
@@ -9,10 +9,15 @@
   let currentRepo: ActiveRepo | null = null
   let currentSummary: RepoSummary | null = null
   let recentRepos: Array<{path: string, type: string, lastUsed: string}> = []
-  let githubInput = ''
   let error = ''
   let loading = false
   let unsubFileDrop: (() => void) | null = null
+
+  let showGHModal = false
+  let ghRepo = ''
+  let ghToken = ''
+  let ghError = ''
+  let ghLoading = false
 
   const unsubRepo = activeRepo.subscribe(v => { currentRepo = v })
   const unsubSummary = repoSummary.subscribe(v => { currentSummary = v })
@@ -32,11 +37,32 @@
     try { const p = await OpenFolderPicker(); if (p) await selectRepo(p, 'local') }
     catch (e: any) { error = e?.message || 'Failed to open folder' } finally { loading = false }
   }
-  async function connectGitHub() {
-    if (!githubInput.trim()) return; loading = true; error = ''
-    try { await selectRepo(githubInput.trim(), 'github') }
-    catch (e: any) { error = e?.message || 'Failed to connect' } finally { loading = false }
+
+  function openGHModal() {
+    ghRepo = ''; ghToken = ''; ghError = ''; ghLoading = false; showGHModal = true
   }
+  function closeGHModal() { showGHModal = false }
+
+  async function connectGitHub() {
+    const repo = ghRepo.trim()
+    if (!repo) { ghError = 'Enter a repository (owner/repo)'; return }
+    if (!/^[a-zA-Z0-9._-]+\/[a-zA-Z0-9._-]+$/.test(repo)) { ghError = 'Invalid format. Use owner/repo'; return }
+    ghError = ''; ghLoading = true
+    try {
+      const token = ghToken.trim()
+      if (token) await SetGitHubToken(token)
+      await selectRepo(repo, 'github')
+      showGHModal = false
+    } catch (e: any) {
+      ghError = e?.message || 'Failed to connect'
+    } finally { ghLoading = false }
+  }
+
+  function handleGHKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter') connectGitHub()
+    if (e.key === 'Escape') closeGHModal()
+  }
+
   function extractName(path: string, type: string): string {
     if (type === 'github') return path
     const parts = path.replace(/\\/g, '/').split('/'); return parts[parts.length - 1] || path
@@ -81,25 +107,11 @@
         <span class="ecard-sub">Drag from Explorer</span>
       </div>
 
-      <div class="ecard gh-card">
-        <div class="card-icon">
-          <svg viewBox="0 0 16 16" fill="currentColor" width="24" height="24"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-        </div>
-        <div class="gh-input-row">
-          <input
-            type="text"
-            bind:value={githubInput}
-            placeholder="owner/repo"
-            on:keydown={(e) => e.key === 'Enter' && connectGitHub()}
-            style="flex:1; height:32px; padding:0 8px; background:var(--cl-background); border:1px solid var(--cl-border); border-radius:var(--radius-sm) 0 0 var(--radius-sm); color:var(--cl-text); font-size:var(--text-sm); outline:none; min-width:0;"
-          />
-          <button
-            on:click={connectGitHub}
-            disabled={loading || !githubInput.trim()}
-            style="height:32px; padding:0 12px; background:var(--cl-accent); color:var(--cl-background); border:none; border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:var(--text-sm); font-weight:500; cursor:pointer; white-space:nowrap; flex-shrink:0;"
-          >{#if loading}...{:else}Connect{/if}</button>
-        </div>
-      </div>
+      <button class="ecard" on:click={openGHModal}>
+        <svg viewBox="0 0 16 16" fill="currentColor" width="24" height="24"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span class="ecard-title">Connect to GitHub</span>
+        <span class="ecard-sub">Public and private repos</span>
+      </button>
     </div>
 
     {#if recentRepos.length > 0}
@@ -158,6 +170,34 @@
   </div>
 {/if}
 
+{#if showGHModal}
+  <div class="modal-overlay" on:click|self={closeGHModal} on:keydown={handleGHKeydown}>
+    <div class="modal" on:keydown={handleGHKeydown}>
+      <h2 class="modal-title">Connect to GitHub</h2>
+
+      {#if ghError}<div class="modal-error">{ghError}</div>{/if}
+
+      <div class="modal-field">
+        <label>Repository</label>
+        <input type="text" bind:value={ghRepo} placeholder="owner/repo" autofocus />
+      </div>
+
+      <div class="modal-field">
+        <label>GitHub Token <span class="optional">(optional)</span></label>
+        <input type="password" bind:value={ghToken} placeholder="ghp_..." />
+        <span class="field-hint">Only needed for private repos</span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-outline" on:click={closeGHModal}>Cancel</button>
+        <button class="btn-filled" on:click={connectGitHub} disabled={ghLoading}>
+          {#if ghLoading}Connecting...{:else}Connect{/if}
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 <style>
   .banner-err { background: #da363422; border: 1px solid #da3634; color: #f85149; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: var(--text-base); margin-bottom: var(--space-3); }
   .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: var(--space-5); }
@@ -170,7 +210,7 @@
     padding: var(--space-5) var(--space-4);
     background: var(--cl-surface); border: 1px solid var(--cl-border); border-radius: var(--radius-lg);
     color: var(--cl-text); font-family: inherit; font-size: var(--text-base);
-    transition: border-color var(--transition-fast);
+    cursor: pointer; transition: border-color var(--transition-fast);
   }
   .ecard:hover { border-color: var(--cl-accent); }
   .ecard:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -178,13 +218,6 @@
   .ecard-sub { font-size: var(--text-xs); color: var(--cl-secondary); }
   .ecard.drop { border-style: dashed; cursor: default; }
   .ecard svg { color: var(--cl-accent); }
-
-  .gh-card { gap: 0; }
-  .card-icon { color: var(--cl-accent); }
-  .gh-input-row { display: flex; align-items: center; width: 100%; margin-top: var(--space-3); }
-  .gh-input-row input:focus { border-color: var(--cl-accent); }
-  .gh-input-row button:hover { opacity: 0.9; }
-  .gh-input-row button:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .section-label { display: block; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--cl-secondary); opacity: 0.6; margin-bottom: var(--space-2); }
   .recent { width: 100%; max-width: 560px; }
@@ -212,4 +245,39 @@
   .stat-lbl { font-size: var(--text-xs); color: var(--cl-secondary); text-transform: uppercase; }
   .last-commit-card { flex: 1; min-width: 200px; }
   .stat-msg { font-size: var(--text-base); color: var(--cl-text); font-family: 'JetBrains Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal {
+    width: 400px; max-width: 90vw;
+    background: var(--cl-surface); border: 1px solid var(--cl-border);
+    border-radius: var(--radius-lg); padding: 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .modal-title { font-size: 16px; font-weight: 500; color: var(--cl-text); margin: 0; }
+  .modal-error { background: #da363422; border: 1px solid #da3634; color: #f85149; padding: 6px 10px; border-radius: 4px; font-size: 12px; }
+  .modal-field { display: flex; flex-direction: column; gap: 4px; }
+  .modal-field label { font-size: 11px; text-transform: uppercase; color: var(--cl-secondary); letter-spacing: 0.03em; }
+  .modal-field input {
+    height: 36px; padding: 0 10px; background: var(--cl-background); border: 1px solid var(--cl-border);
+    border-radius: var(--radius-sm); color: var(--cl-text); font-size: 13px; font-family: inherit;
+  }
+  .modal-field input:focus { outline: none; border-color: var(--cl-accent); }
+  .optional { text-transform: none; font-weight: 400; opacity: 0.6; }
+  .field-hint { font-size: 11px; color: var(--cl-secondary); opacity: 0.7; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .btn-outline {
+    padding: 8px 16px; background: transparent; border: 1px solid var(--cl-border);
+    border-radius: var(--radius-sm); color: var(--cl-text); font-size: 13px; font-family: inherit; cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--cl-secondary); }
+  .btn-filled {
+    padding: 8px 16px; background: var(--cl-accent); border: none;
+    border-radius: var(--radius-sm); color: var(--cl-background); font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer;
+  }
+  .btn-filled:hover { opacity: 0.9; }
+  .btn-filled:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>
