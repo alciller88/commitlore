@@ -74,6 +74,8 @@ ui_labels:
   contributors: "The Fellowship"
   styles: "The Wardrobe"
   settings: "The Forge"
+  generate_button: "Inscribe the Chronicle"
+  story_button: "Begin the Saga"
 
 templates:
   header: |

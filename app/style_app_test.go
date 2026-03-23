@@ -35,6 +35,8 @@ func TestGetStyleTheme_uiLabels_patchnotes(t *testing.T) {
 	assert.Equal(t, "Hub", theme.UILabels.Dashboard)
 	assert.Equal(t, "Patch Notes", theme.UILabels.Generate)
 	assert.Equal(t, "Dev Diary", theme.UILabels.Story)
+	assert.Equal(t, "Deploy Patch", theme.UILabels.GenerateButton)
+	assert.Equal(t, "Write the Dev Diary", theme.UILabels.StoryButton)
 }
 
 func TestGetStyleTheme_uiLabels_fallback(t *testing.T) {
@@ -48,6 +50,8 @@ func TestGetStyleTheme_uiLabels_fallback(t *testing.T) {
 	assert.Equal(t, "Contributors", theme.UILabels.Contributors)
 	assert.Equal(t, "Styles", theme.UILabels.Styles)
 	assert.Equal(t, "Settings", theme.UILabels.Settings)
+	assert.Equal(t, "Generate", theme.UILabels.GenerateButton)
+	assert.Equal(t, "Tell the story", theme.UILabels.StoryButton)
 }
 
 func TestGetStyleTheme_missingFields(t *testing.T) {
