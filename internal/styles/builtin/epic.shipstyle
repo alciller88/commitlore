@@ -717,3 +717,713 @@ html_template_changelog: |
     </main>
   </body>
   </html>
+
+html_template_story: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Saga of {{upper .RepoName}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: {{.Theme.Typography.FontSizeBase}}; }
+
+      body {
+        font-family: {{.Theme.Typography.FontFamily}};
+        background-color: {{.Theme.Colors.Background}};
+        background-image:
+          repeating-linear-gradient(
+            0deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 4%, transparent) 0px,
+            transparent 1px,
+            transparent 48px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 2%, transparent) 0px,
+            transparent 1px,
+            transparent 72px
+          ),
+          repeating-linear-gradient(
+            135deg,
+            color-mix(in srgb, {{.Theme.Colors.Primary}} 3%, transparent) 0px,
+            transparent 2px,
+            transparent 80px
+          ),
+          repeating-linear-gradient(
+            45deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 3%, transparent) 0px,
+            transparent 2px,
+            transparent 100px
+          );
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.2;
+        min-height: 100vh;
+      }
+
+      {{if .Theme.Animations}}
+      @keyframes sg-fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes sg-glow {
+        0%, 100% { text-shadow: 0 0 8px color-mix(in srgb, {{.Theme.Colors.Primary}} 40%, transparent); }
+        50%       { text-shadow: 0 0 24px color-mix(in srgb, {{.Theme.Colors.Primary}} 80%, transparent); }
+      }
+      .sg-animated {
+        animation: sg-fade-in 0.8s ease both;
+      }
+      .sg-animated:nth-child(2)  { animation-delay: 0.10s; }
+      .sg-animated:nth-child(3)  { animation-delay: 0.20s; }
+      .sg-animated:nth-child(4)  { animation-delay: 0.30s; }
+      .sg-animated:nth-child(5)  { animation-delay: 0.40s; }
+      .sg-animated:nth-child(6)  { animation-delay: 0.50s; }
+      .sg-animated:nth-child(7)  { animation-delay: 0.60s; }
+      .sg-animated:nth-child(8)  { animation-delay: 0.70s; }
+      .sg-title-glow {
+        animation: sg-glow 3s ease-in-out infinite;
+      }
+      {{end}}
+
+      a { color: {{.Theme.Colors.Primary}}; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ── Page wrapper ── */
+      .sg-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 56px 40px 96px;
+      }
+
+      /* ── Ornamental separator ── */
+      .sg-sep {
+        text-align: center;
+        color: {{.Theme.Colors.Primary}};
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        margin: 36px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      /* ── Grand header ── */
+      .sg-header {
+        text-align: center;
+        padding: 16px 0 8px;
+      }
+      .sg-header-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+      .sg-header-title {
+        font-family: 'Cinzel', serif;
+        font-size: 40px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1.15;
+        margin-bottom: 18px;
+      }
+      .sg-header-date {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.16em;
+        font-style: italic;
+        margin-bottom: 20px;
+      }
+      .sg-header-ornament {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin: 20px 0 0;
+      }
+      .sg-header-ornament-line {
+        flex: 1;
+        max-width: 180px;
+        height: 1px;
+        background: linear-gradient(
+          to var(--dir, right),
+          transparent,
+          {{.Theme.Colors.Primary}},
+          transparent
+        );
+      }
+      .sg-header-ornament-icon {
+        color: {{.Theme.Colors.Primary}};
+        font-size: 20px;
+      }
+
+      /* ── Prologue box ── */
+      .sg-prologue {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-top: 3px solid {{.Theme.Colors.Primary}};
+        padding: 28px 32px;
+        margin: 0 auto;
+        max-width: 760px;
+        position: relative;
+      }
+      .sg-prologue::before {
+        content: '✦';
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: {{.Theme.Colors.Surface}};
+        color: {{.Theme.Colors.Primary}};
+        font-size: 18px;
+        padding: 0 10px;
+      }
+      .sg-prologue-label {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .sg-prologue-text {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.0;
+        font-style: italic;
+      }
+
+      /* ── Stats triumvirate ── */
+      .sg-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      .sg-stat-card {
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 6%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 35%, transparent);
+        border-top: 2px solid {{.Theme.Colors.Primary}};
+        padding: 24px 20px;
+        text-align: center;
+      }
+      .sg-stat-value {
+        font-family: 'Cinzel', serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+      .sg-stat-label {
+        font-family: 'Cinzel', serif;
+        font-size: 9px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      /* ── Narrative ── */
+      .sg-narrative {
+        max-width: 760px;
+        margin: 0 auto;
+        font-family: 'Cinzel', serif;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.2;
+        font-size: 14px;
+      }
+      .sg-narrative p:first-of-type::first-letter {
+        font-size: 4em;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        float: left;
+        line-height: 0.72;
+        margin: 10px 12px 0 0;
+        font-family: 'Cinzel', serif;
+      }
+      .sg-narrative p {
+        margin-bottom: 20px;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.2;
+      }
+      .sg-narrative h1, .sg-narrative h2, .sg-narrative h3 {
+        font-family: 'Cinzel', serif;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.10em;
+        margin: 32px 0 14px;
+        text-transform: uppercase;
+      }
+      .sg-narrative h1 { font-size: 22px; }
+      .sg-narrative h2 { font-size: 17px; }
+      .sg-narrative h3 { font-size: 14px; }
+      .sg-narrative strong { color: {{.Theme.Colors.Primary}}; font-weight: 700; }
+      .sg-narrative em    { color: {{.Theme.Colors.Secondary}}; font-style: italic; }
+      .sg-narrative ul, .sg-narrative ol {
+        padding-left: 28px;
+        margin-bottom: 20px;
+      }
+      .sg-narrative li { margin-bottom: 8px; line-height: 2.2; }
+      .sg-narrative code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: {{.Theme.Typography.FontSizeCode}};
+        color: {{.Theme.Colors.Primary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, transparent);
+        padding: 1px 6px;
+        border-radius: 3px;
+      }
+      .sg-narrative blockquote {
+        border-left: 3px solid {{.Theme.Colors.Primary}};
+        padding: 8px 0 8px 18px;
+        color: {{.Theme.Colors.Secondary}};
+        margin: 0 0 16px;
+        font-style: italic;
+      }
+      .sg-narrative hr {
+        border: none;
+        border-top: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        margin: 28px 0;
+      }
+
+      /* ── Section title ── */
+      .sg-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.20em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+      }
+      .sg-section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 1px;
+        background: {{.Theme.Colors.Primary}};
+        margin: 10px auto 0;
+      }
+
+      /* ── Chapters (peaks) ── */
+      .sg-chapters {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .sg-chapter {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 0 24px;
+        padding: 20px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Border}} 60%, transparent);
+        align-items: start;
+      }
+      .sg-chapter:last-child { border-bottom: none; }
+      .sg-chapter-numeral {
+        font-family: 'Cinzel', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: color-mix(in srgb, {{.Theme.Colors.Primary}} 40%, transparent);
+        line-height: 1;
+        text-align: right;
+        padding-top: 4px;
+        letter-spacing: -0.02em;
+        user-select: none;
+      }
+      .sg-chapter-body {}
+      .sg-chapter-title {
+        font-family: 'Cinzel', serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.10em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .sg-chapter-deeds {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.06em;
+        font-style: italic;
+      }
+      .sg-chapter-bar-wrap {
+        margin-top: 10px;
+        height: 4px;
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, transparent);
+        border-radius: 2px;
+        overflow: hidden;
+        max-width: 320px;
+      }
+      .sg-chapter-bar {
+        height: 100%;
+        background: {{.Theme.Colors.Primary}};
+        border-radius: 2px;
+      }
+
+      /* ── Activity chart ── */
+      .sg-chart-card {
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 4%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        border-top: 2px solid {{.Theme.Colors.Primary}};
+        padding: 32px 28px;
+      }
+      .sg-chart-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .sg-chart-wrap {
+        position: relative;
+        height: 240px;
+      }
+
+      /* ── Tags / Milestones ── */
+      .sg-milestones {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .sg-milestone-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 18%, transparent);
+        font-size: 13px;
+      }
+      .sg-milestone-row:last-child { border-bottom: none; }
+      .sg-milestone-icon {
+        color: {{.Theme.Colors.Primary}};
+        font-size: 15px;
+        flex-shrink: 0;
+        width: 22px;
+        text-align: center;
+      }
+      .sg-milestone-name {
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.06em;
+        min-width: 120px;
+      }
+      .sg-milestone-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 8%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 22%, transparent);
+        padding: 1px 7px;
+        letter-spacing: 0.04em;
+      }
+      .sg-milestone-date {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-left: auto;
+        letter-spacing: 0.06em;
+      }
+
+      /* ── Fellowship / contributors ── */
+      .sg-fellowship {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 28px;
+        justify-content: center;
+      }
+      .sg-fellow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        min-width: 110px;
+        max-width: 130px;
+      }
+      .sg-fellow-crest {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid {{.Theme.Colors.Primary}};
+        box-shadow:
+          0 0 0 4px color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, transparent),
+          0 0 16px color-mix(in srgb, {{.Theme.Colors.Primary}} 20%, transparent);
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, {{.Theme.Colors.Surface}});
+        color: {{.Theme.Colors.Primary}};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+        font-size: 22px;
+        font-weight: 700;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .sg-fellow-name {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        letter-spacing: 0.08em;
+        text-align: center;
+        word-break: break-word;
+      }
+      .sg-fellow-deeds {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.10em;
+        text-align: center;
+        font-style: italic;
+      }
+
+      /* ── Footer ── */
+      .sg-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.10em;
+        padding-top: 28px;
+      }
+      .sg-footer-sep {
+        display: block;
+        color: {{.Theme.Colors.Primary}};
+        margin-bottom: 12px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .sg-footer-text {
+        font-style: italic;
+        letter-spacing: 0.14em;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sg-page">
+
+      {{/* ════ TOP ORNAMENTAL SEPARATOR ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+
+      {{/* ════ GRAND HEADER ════ */}}
+      <header class="sg-header sg-animated">
+        <div class="sg-header-eyebrow">A Chronicle of the Realm</div>
+        <div class="sg-header-title sg-title-glow">The Saga of {{upper .RepoName}}</div>
+        <div class="sg-header-date">
+          {{if .Generated}}In the age of {{.Generated}}{{else if .FirstDate}}In the age of {{.FirstDate}}{{end}}
+        </div>
+        <div class="sg-header-ornament">
+          <div class="sg-header-ornament-line" style="--dir: right;"></div>
+          <span class="sg-header-ornament-icon">{{.Icons.Bullet}}</span>
+          <div class="sg-header-ornament-line" style="--dir: left;"></div>
+        </div>
+      </header>
+
+      {{/* ════ SEPARATOR ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+
+      {{/* ════ PROLOGUE ════ */}}
+      <section class="sg-animated">
+        <div class="sg-prologue">
+          <div class="sg-prologue-label">Prologue</div>
+          <div class="sg-prologue-text">
+            In the age of {{.FirstDate}}, {{.FirstAuthor}} began the great work.
+            {{len .Contributors}} champions answered the call.
+            {{.TotalCommits}} deeds were inscribed upon the eternal scrolls.
+          </div>
+        </div>
+      </section>
+
+      {{/* ════ SEPARATOR ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+
+      {{/* ════ STATS ════ */}}
+      <section class="sg-animated">
+        <div class="sg-stats">
+          <div class="sg-stat-card">
+            <div class="sg-stat-value">{{.TotalCommits}}</div>
+            <div class="sg-stat-label">Heroic Deeds</div>
+          </div>
+          <div class="sg-stat-card">
+            <div class="sg-stat-value">{{len .Contributors}}</div>
+            <div class="sg-stat-label">The Fellowship</div>
+          </div>
+          <div class="sg-stat-card">
+            <div class="sg-stat-value">{{len .Tags}}</div>
+            <div class="sg-stat-label">Milestones</div>
+          </div>
+        </div>
+      </section>
+
+      {{/* ════ NARRATIVE CONTENT ════ */}}
+      {{if .Content}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-narrative">{{.Content}}</div>
+      </section>
+      {{end}}
+
+      {{/* ════ CHAPTERS OF THE SAGA (PEAKS) ════ */}}
+      {{if .Peaks}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">The Chapters of the Saga</div>
+        <div class="sg-chapters" id="sg-chapters-list">
+          {{range $i, $p := .Peaks}}
+          <div class="sg-chapter">
+            <div class="sg-chapter-numeral">{{$i}}</div>
+            <div class="sg-chapter-body">
+              <div class="sg-chapter-title">{{$p.Month}}</div>
+              <div class="sg-chapter-deeds">{{$p.Count}} deeds inscribed</div>
+              <div class="sg-chapter-bar-wrap">
+                <div class="sg-chapter-bar" style="width: 0%" data-count="{{$p.Count}}"></div>
+              </div>
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{/* ════ CHRONICLES OF ACTIVITY (CHART) ════ */}}
+      {{if .Peaks}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-chart-card">
+          <div class="sg-chart-title">Chronicles of Activity</div>
+          <div class="sg-chart-wrap">
+            <canvas id="sg-activity-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <script>
+      (function() {
+        /* Chapter bar widths */
+        try {
+          var bars = document.querySelectorAll('.sg-chapter-bar');
+          if (bars.length > 0) {
+            var maxCount = 0;
+            bars.forEach(function(b) {
+              var c = parseInt(b.getAttribute('data-count'), 10) || 0;
+              if (c > maxCount) maxCount = c;
+            });
+            if (maxCount > 0) {
+              bars.forEach(function(b) {
+                var c = parseInt(b.getAttribute('data-count'), 10) || 0;
+                b.style.width = Math.round((c / maxCount) * 100) + '%';
+              });
+            }
+          }
+        } catch(e) {}
+
+        /* Activity chart */
+        if (typeof Chart === 'undefined') return;
+        var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+        var data   = [{{range .Peaks}}{{.Count}},{{end}}];
+        var ctx = document.getElementById('sg-activity-chart');
+        if (!ctx) return;
+        try {
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Deeds',
+                data: data,
+                backgroundColor: '{{.Theme.Colors.Primary}}',
+                borderRadius: 4,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  grid: { color: 'color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)' },
+                  ticks: {
+                    color: '{{.Theme.Colors.Secondary}}',
+                    font: { family: "'Cinzel', serif", size: 10 }
+                  }
+                },
+                y: {
+                  grid: { color: 'color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)' },
+                  ticks: {
+                    color: '{{.Theme.Colors.Secondary}}',
+                    font: { family: "'Cinzel', serif", size: 10 }
+                  }
+                }
+              }
+            }
+          });
+        } catch(e) { console.error('Chart error:', e); }
+      })();
+      </script>
+      {{end}}
+
+      {{/* ════ MILESTONES ════ */}}
+      {{if .Tags}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">Milestones of the Realm</div>
+        <div class="sg-milestones">
+          {{range .Tags}}
+          <div class="sg-milestone-row">
+            <span class="sg-milestone-icon">{{$.Icons.Bullet}}</span>
+            <span class="sg-milestone-name">{{.Name}}</span>
+            <span class="sg-milestone-hash">{{.Hash}}</span>
+            <span class="sg-milestone-date">{{.Date}}</span>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{/* ════ THE FELLOWSHIP ════ */}}
+      {{if .Contributors}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">The Fellowship</div>
+        <div class="sg-fellowship">
+          {{range .Contributors}}
+          <div class="sg-fellow">
+            <div class="sg-fellow-crest">{{initials .Name}}</div>
+            <div class="sg-fellow-name">{{.Name}}</div>
+            <div class="sg-fellow-deeds">{{.Count}} heroic deeds</div>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{/* ════ FOOTER ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <footer class="sg-footer sg-animated">
+        <span class="sg-footer-sep">{{.Icons.Separator}}</span>
+        <span class="sg-footer-text">Thus the saga is sealed — CommitLore</span>
+        <span class="sg-footer-sep" style="margin-top: 10px;">{{.Icons.Separator}}</span>
+      </footer>
+
+    </main>
+  </body>
+  </html>

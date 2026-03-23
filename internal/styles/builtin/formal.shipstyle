@@ -749,3 +749,647 @@ html_template_changelog: |
     </main>
   </body>
   </html>
+
+html_template_story: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repository Report — {{.RepoName}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: {{.Theme.Typography.FontSizeBase}}; }
+      body {
+        font-family: {{.Theme.Typography.FontFamily}};
+        background: {{.Theme.Colors.Background}};
+        color: {{.Theme.Colors.Text}};
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* ── Report header ── */
+      .rp-banner {
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+        padding: 36px 48px 28px;
+      }
+      .rp-banner-eyebrow {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 10px;
+      }
+      .rp-banner-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Text}};
+        letter-spacing: -0.03em;
+        line-height: 1.15;
+        margin-bottom: 6px;
+      }
+      .rp-banner-repo {
+        color: {{.Theme.Colors.Primary}};
+      }
+      .rp-banner-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-top: 14px;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+      }
+      .rp-banner-meta-sep {
+        color: {{.Theme.Colors.Border}};
+      }
+      .rp-version-badge {
+        display: inline-block;
+        padding: 2px 9px;
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, {{.Theme.Colors.Surface}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        letter-spacing: 0.02em;
+      }
+
+      /* ── Page layout ── */
+      .rp-page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 48px 80px;
+      }
+
+      /* ── Section label ── */
+      .rp-section-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+      }
+
+      /* ── Executive summary — 4 stat cards ── */
+      .rp-exec-summary {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-radius: 10px;
+        padding: 28px 32px;
+        margin-bottom: 44px;
+      }
+      .rp-exec-summary-heading {
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 24px;
+        letter-spacing: -0.01em;
+      }
+      .rp-stat-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+      }
+      .rp-stat-cell {
+        padding: 4px 20px 4px 0;
+        border-right: 1px solid {{.Theme.Colors.Border}};
+        margin-right: 20px;
+      }
+      .rp-stat-cell:last-child {
+        border-right: none;
+        margin-right: 0;
+        padding-right: 0;
+      }
+      .rp-stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Text}};
+        letter-spacing: -0.04em;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .rp-stat-value.primary { color: {{.Theme.Colors.Primary}}; }
+      .rp-stat-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: {{.Theme.Colors.Secondary}};
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* ── Narrative prose ── */
+      .rp-narrative-wrap {
+        max-width: 720px;
+        margin: 0 auto 48px;
+      }
+      .rp-narrative-wrap h1, .rp-narrative-wrap h2, .rp-narrative-wrap h3 {
+        color: {{.Theme.Colors.Text}};
+        font-weight: 600;
+        margin-bottom: 12px;
+        margin-top: 28px;
+        letter-spacing: -0.02em;
+      }
+      .rp-narrative-wrap h1 { font-size: 22px; margin-top: 0; }
+      .rp-narrative-wrap h2 { font-size: 17px; }
+      .rp-narrative-wrap h3 { font-size: 15px; }
+      .rp-narrative-wrap p {
+        line-height: 1.8;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 14px;
+      }
+      .rp-narrative-wrap ul, .rp-narrative-wrap ol {
+        padding-left: 20px;
+        margin-bottom: 14px;
+      }
+      .rp-narrative-wrap li { line-height: 1.8; margin-bottom: 4px; }
+      .rp-narrative-wrap strong { font-weight: 600; }
+      .rp-narrative-wrap em { color: {{.Theme.Colors.Secondary}}; }
+      .rp-narrative-wrap code {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: {{.Theme.Typography.FontSizeCode}};
+        color: {{.Theme.Colors.Primary}};
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+      .rp-narrative-wrap pre {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-radius: 6px;
+        padding: 16px;
+        overflow-x: auto;
+        margin-bottom: 16px;
+      }
+      .rp-narrative-wrap pre code { background: none; border: none; padding: 0; color: {{.Theme.Colors.Text}}; }
+      .rp-narrative-wrap hr { border: none; border-top: 1px solid {{.Theme.Colors.Border}}; margin: 24px 0; }
+      .rp-narrative-wrap blockquote {
+        border-left: 3px solid {{.Theme.Colors.Primary}};
+        padding-left: 16px;
+        color: {{.Theme.Colors.Secondary}};
+        margin: 0 0 14px;
+      }
+
+      /* ── Charts row ── */
+      .rp-charts-row {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 24px;
+        margin-bottom: 48px;
+      }
+      .rp-chart-card {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-radius: 8px;
+        padding: 24px;
+      }
+      .rp-chart-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 20px;
+        letter-spacing: -0.01em;
+      }
+      .rp-chart-subtitle {
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        font-weight: 400;
+        margin-left: 6px;
+      }
+      .rp-chart-wrap {
+        position: relative;
+        height: 220px;
+      }
+
+      /* ── Vertical timeline ── */
+      .rp-timeline {
+        position: relative;
+        margin-bottom: 48px;
+        padding-left: 28px;
+      }
+      .rp-timeline::before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        top: 6px;
+        bottom: 6px;
+        width: 2px;
+        background: {{.Theme.Colors.Border}};
+      }
+      .rp-timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+        padding-bottom: 4px;
+      }
+      .rp-timeline-item:last-child { margin-bottom: 0; }
+      .rp-timeline-dot {
+        position: absolute;
+        left: -24px;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: {{.Theme.Colors.Primary}};
+        border: 2px solid {{.Theme.Colors.Background}};
+        box-shadow: 0 0 0 2px {{.Theme.Colors.Primary}};
+      }
+      .rp-timeline-month {
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 2px;
+        letter-spacing: -0.01em;
+      }
+      .rp-timeline-note {
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+      }
+      .rp-timeline-count {
+        display: inline-block;
+        padding: 1px 7px;
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, {{.Theme.Colors.Surface}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 25%, transparent);
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      /* ── Tags / Milestones ── */
+      .rp-tags {
+        margin-bottom: 48px;
+      }
+      .rp-tag-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+        font-size: 13px;
+      }
+      .rp-tag-row:last-child { border-bottom: none; }
+      .rp-tag-indicator {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: {{.Theme.Colors.Primary}};
+        flex-shrink: 0;
+      }
+      .rp-tag-name {
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        min-width: 100px;
+      }
+      .rp-tag-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
+      .rp-tag-date {
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-left: auto;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      /* ── Contributors list ── */
+      .rp-contributors {
+        margin-bottom: 48px;
+      }
+      .rp-contrib-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+      }
+      .rp-contrib-row:last-child { border-bottom: none; }
+      .rp-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: {{.Theme.Colors.Accent}};
+        color: {{.Theme.Colors.Background}};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+        letter-spacing: 0.02em;
+      }
+      .rp-contrib-info { flex: 1; min-width: 0; }
+      .rp-contrib-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .rp-contrib-email {
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .rp-contrib-meta {
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .rp-contrib-count {
+        font-size: 15px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Text}};
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .rp-contrib-count-label {
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .rp-contrib-date {
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        margin-top: 2px;
+      }
+
+      /* ── Footer ── */
+      .rp-footer {
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        padding-top: 24px;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+      }
+      .rp-footer-sep {
+        color: {{.Theme.Colors.Border}};
+        font-size: 10px;
+        letter-spacing: -0.1em;
+        overflow: hidden;
+        max-width: 80px;
+        white-space: nowrap;
+        text-overflow: clip;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Report banner -->
+    <div class="rp-banner">
+      <div class="rp-banner-eyebrow">Repository Report</div>
+      <div class="rp-banner-title">
+        <span class="rp-banner-repo">{{.RepoName}}</span>
+      </div>
+      <div class="rp-banner-meta">
+        {{if .FirstDate}}<span>{{.FirstDate}} &rarr; {{.Generated}}</span><span class="rp-banner-meta-sep">&middot;</span>{{end}}
+        <span>{{.Generated}}</span>
+        {{if .Version}}<span class="rp-banner-meta-sep">&middot;</span><span class="rp-version-badge">{{.Version}}</span>{{end}}
+      </div>
+    </div>
+
+    <main class="rp-page">
+
+      <!-- Executive summary: 4 stat cards -->
+      <div class="rp-exec-summary">
+        <div class="rp-exec-summary-heading">Executive Summary</div>
+        <div class="rp-stat-row">
+          <div class="rp-stat-cell">
+            <div class="rp-stat-value primary">{{.TotalCommits}}</div>
+            <div class="rp-stat-label">Total Commits</div>
+          </div>
+          <div class="rp-stat-cell">
+            <div class="rp-stat-value">{{len .Contributors}}</div>
+            <div class="rp-stat-label">Contributors</div>
+          </div>
+          <div class="rp-stat-cell">
+            {{if .FirstDate}}
+            <div class="rp-stat-value" style="font-size:14px;letter-spacing:-0.01em;padding-top:9px;">{{.FirstDate}}</div>
+            {{else}}
+            <div class="rp-stat-value">—</div>
+            {{end}}
+            <div class="rp-stat-label">First Commit</div>
+          </div>
+          <div class="rp-stat-cell">
+            {{if .Peaks}}
+            <div class="rp-stat-value" style="font-size:16px;letter-spacing:-0.01em;padding-top:8px;">{{(index .Peaks 0).Month}}</div>
+            {{else}}
+            <div class="rp-stat-value">—</div>
+            {{end}}
+            <div class="rp-stat-label">Most Active Month</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Narrative prose -->
+      {{if .Content}}
+      <div class="rp-narrative-wrap">
+        {{.Content}}
+      </div>
+      {{end}}
+
+      <!-- Activity line chart + contributor bar chart side by side -->
+      {{if .Peaks}}
+      <div class="rp-section-label">Activity Overview</div>
+      <div class="rp-charts-row">
+        <div class="rp-chart-card">
+          <div class="rp-chart-title">
+            Commit Arc
+            <span class="rp-chart-subtitle">commits per month</span>
+          </div>
+          <div class="rp-chart-wrap">
+            <canvas id="arcChart"></canvas>
+          </div>
+        </div>
+        {{if .Contributors}}
+        <div class="rp-chart-card">
+          <div class="rp-chart-title">
+            Contributor Ranking
+            <span class="rp-chart-subtitle">by commit count</span>
+          </div>
+          <div class="rp-chart-wrap">
+            <canvas id="contribChart"></canvas>
+          </div>
+        </div>
+        {{end}}
+      </div>
+
+      <script>
+      (function() {
+        if (typeof Chart === "undefined") { console.error("Chart.js not loaded"); return; }
+
+        // --- Line chart: commit arc ---
+        var arcLabels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+        var arcData   = [{{range .Peaks}}{{.Count}},{{end}}];
+        var ctxArc = document.getElementById("arcChart");
+        if (ctxArc) {
+          try {
+            new Chart(ctxArc, {
+              type: "line",
+              data: {
+                labels: arcLabels,
+                datasets: [{
+                  label: "Commits",
+                  data: arcData,
+                  borderColor: "{{.Theme.Colors.Primary}}",
+                  backgroundColor: "color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, transparent)",
+                  borderWidth: 2,
+                  pointBackgroundColor: "{{.Theme.Colors.Primary}}",
+                  pointRadius: 4,
+                  pointHoverRadius: 6,
+                  tension: 0.35,
+                  fill: true
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: {
+                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }, maxRotation: 45 }
+                  },
+                  y: {
+                    beginAtZero: true,
+                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 } }
+                  }
+                }
+              }
+            });
+          } catch(e) { console.error("arcChart error:", e); }
+        }
+
+        // --- Horizontal bar chart: contributor ranking ---
+        var contribNames  = [{{range .Contributors}}"{{.Name}}",{{end}}];
+        var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
+        var ctxContrib = document.getElementById("contribChart");
+        if (ctxContrib && contribNames.length > 0) {
+          try {
+            new Chart(ctxContrib, {
+              type: "bar",
+              data: {
+                labels: contribNames,
+                datasets: [{
+                  label: "Commits",
+                  data: contribCounts,
+                  backgroundColor: "{{.Theme.Colors.Accent}}",
+                  borderRadius: 3,
+                  borderSkipped: false
+                }]
+              },
+              options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: {
+                    beginAtZero: true,
+                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 } }
+                  },
+                  y: {
+                    grid: { display: false },
+                    ticks: { color: "{{.Theme.Colors.Text}}", font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 } }
+                  }
+                }
+              }
+            });
+          } catch(e) { console.error("contribChart error:", e); }
+        }
+      })();
+      </script>
+
+      <!-- Vertical dot timeline for peak months -->
+      <div class="rp-section-label">Monthly Timeline</div>
+      <div class="rp-timeline">
+        {{range .Peaks}}
+        <div class="rp-timeline-item">
+          <div class="rp-timeline-dot"></div>
+          <div class="rp-timeline-month">
+            {{.Month}}
+            <span class="rp-timeline-count">{{.Count}} commits</span>
+          </div>
+          <div class="rp-timeline-note">{{.Count}} commit{{if gt .Count 1}}s{{end}} recorded this month</div>
+        </div>
+        {{end}}
+      </div>
+
+      {{end}}{{/* end .Peaks */}}
+
+      <!-- Tags / Milestones -->
+      {{if .Tags}}
+      <div class="rp-section-label">Release Milestones</div>
+      <div class="rp-tags">
+        {{range .Tags}}
+        <div class="rp-tag-row">
+          <div class="rp-tag-indicator"></div>
+          <span class="rp-tag-name">{{.Name}}</span>
+          <span class="rp-tag-hash">{{.Hash}}</span>
+          <span class="rp-tag-date">{{.Date}}</span>
+        </div>
+        {{end}}
+      </div>
+      {{end}}
+
+      <!-- Contributors list with initials circles -->
+      {{if .Contributors}}
+      <div class="rp-section-label">Contributors</div>
+      <div class="rp-contributors">
+        {{range .Contributors}}
+        <div class="rp-contrib-row">
+          <div class="rp-avatar">{{initials .Name}}</div>
+          <div class="rp-contrib-info">
+            <div class="rp-contrib-name">{{.Name}}</div>
+            {{if .Email}}<div class="rp-contrib-email">{{.Email}}</div>{{end}}
+            {{if .Date}}<div class="rp-contrib-date">since {{.Date}}</div>{{end}}
+          </div>
+          {{if .Count}}
+          <div class="rp-contrib-meta">
+            <div class="rp-contrib-count">{{.Count}}</div>
+            <div class="rp-contrib-count-label">commits</div>
+          </div>
+          {{end}}
+        </div>
+        {{end}}
+      </div>
+      {{end}}
+
+      {{if .Items}}
+      {{/* guard: .Items is not populated for story, but kept for safety */}}
+      {{end}}
+
+      <footer class="rp-footer">
+        <span class="rp-footer-sep">{{.Icons.Separator}}</span>
+        <span>Generated by CommitLore</span>
+      </footer>
+
+    </main>
+  </body>
+  </html>
+
