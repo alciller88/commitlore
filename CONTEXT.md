@@ -230,6 +230,7 @@ fix/charts-and-cacheChart color-mix fix, story peaks 3→12, commit cache for Gi
 fix/charts-iframeChart.js setTimeout wrap, Clippy sticky, ironic icons/title, formal stat sizes2026-03-23fix/charts-iframe
 fix/content-parityContent parity: contributor ranking charts, epic stats, ironic stats/milestones/chart, formal as reference2026-03-23fix/content-parity
 fix/visual-polishDonut palette distinct colors, chart centering, ironic h1 hide/icons, epic separators2026-03-23fix/visual-polish
+fix/polish-8Executive summary flex layout, ironic narrative alignment/list overrides2026-03-23fix/polish-8
 
 Add a row here when completing each phase.
 
