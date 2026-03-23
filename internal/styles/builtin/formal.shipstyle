@@ -971,8 +971,8 @@ html_template_story: |
 
       /* ── Charts row ── */
       .rp-charts-row {
-        display: grid;
-        grid-template-columns: 3fr 2fr;
+        display: flex;
+        flex-direction: column;
         gap: 24px;
         margin-bottom: 48px;
         width: 100%;
@@ -1001,7 +1001,7 @@ html_template_story: |
       }
       .rp-chart-wrap {
         position: relative;
-        height: 220px;
+        height: 260px;
       }
 
       /* ── Vertical timeline ── */
