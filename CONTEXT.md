@@ -215,6 +215,7 @@ feat/p3-style-ironicIronic v2.0: deadpan minimalist aesthetic, Minus logo, ui_la
 fix/patchnotes-llm-promptAnti-hallucination instruction added to formal and patchnotes llm_prompts2026-03-23fix/patchnotes-llm-prompt
 fix/ironic-style-redesignIronic v2.1: coral/teal palette, Comic Sans, SmileyMeh logo, personality over nihilism2026-03-23fix/ironic-style-redesign
 fix/dashboard-github-inputGitHub card: input+button joined row, proper alignment2026-03-23fix/dashboard-github-input
+feat/style-ui-buttonsButton labels in UILabels (generate_button, story_button), Styles editor UI Labels section, patchnotes llm fix2026-03-23feat/style-ui-buttons
 
 Add a row here when completing each phase.
 

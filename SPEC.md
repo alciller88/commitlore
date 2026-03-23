@@ -119,10 +119,12 @@ Complete structure of a .shipstyle file:
       separator, bullet, indent
     density: "normal"         # compact | normal | verbose
 
-  ui_labels:                  # navigation label overrides (optional)
+  ui_labels:                  # navigation and button label overrides (optional)
     dashboard: "Dashboard"
     generate: "Generate"
+    generate_button: "Generate"
     story: "Story"
+    story_button: "Tell the story"
     history: "History"
     contributors: "Contributors"
     styles: "Styles"
