@@ -64,6 +64,17 @@ ui_labels:
   generate_button: "Generate"
   story_button: "Tell the story"
 
+icons:
+  feature: "+"
+  fix: "✓"
+  breaking: "!"
+  chore: "·"
+  docs: "·"
+  test: "·"
+  story_peak: "▲"
+  bullet: "•"
+  separator: "────────────────────────────────────────"
+
 templates:
   header: |
     # Changelog — {{.Version}}

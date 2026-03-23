@@ -77,6 +77,17 @@ ui_labels:
   generate_button: "Inscribe the Chronicle"
   story_button: "Begin the Saga"
 
+icons:
+  feature: "⚜"
+  fix: "⚔"
+  breaking: "☠"
+  chore: "⚙"
+  docs: "📜"
+  test: "⚗"
+  story_peak: "🔥"
+  bullet: "⚜"
+  separator: "⚔═══════════════════════════════════════⚔"
+
 templates:
   header: |
     # The Chronicle — {{.Version}}
