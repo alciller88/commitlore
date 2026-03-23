@@ -210,6 +210,8 @@ fix/p3-ui-bugs-2History inline scroll fix, window controls wired to Wails runtim
 feat/p3-style-formalImproved formal built-in style v2.0: colors, typography, templates, LLM prompt2026-03-22feat/p3-style-formal
 feat/p3-style-patchnotesPatchnotes v2.0 + UILabels schema: per-style nav labels, GameController logo, purple/gold aesthetic2026-03-22feat/p3-style-patchnotes
 feat/p3-style-epicEpic v2.0: medieval fantasy aesthetic, Sword logo, ui_labels, anti-hallucination LLM prompt2026-03-22feat/p3-style-epic
+fix/epic-sword-iconCorrected Phosphor Sword SVG from upstream source2026-03-22fix/epic-sword-icon
+feat/p3-style-ironicIronic v2.0: deadpan minimalist aesthetic, Minus logo, ui_labels, anti-hallucination LLM prompt2026-03-23feat/p3-style-ironic
 
 Add a row here when completing each phase.
 
