@@ -460,37 +460,39 @@ html_template: |
           var data = labels.map(function(k) { return counts[k]; });
           var ctx = document.getElementById("activityChart");
           if (ctx && typeof Chart !== "undefined") {
-            new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: "commits",
-                  data: data,
-                  backgroundColor: "{{.Theme.Colors.Primary}}",
-                  borderWidth: 0,
-                  borderRadius: 2
-                }]
-              },
-              options: {
-                indexAxis: "y",
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false }
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "commits",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderWidth: 0,
+                    borderRadius: 2
+                  }]
                 },
-                scales: {
-                  x: {
-                    grid: { color: "{{.Theme.Colors.Border}}" },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                options: {
+                  indexAxis: "y",
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false }
                   },
-                  y: {
-                    grid: { display: false },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  scales: {
+                    x: {
+                      grid: { color: "{{.Theme.Colors.Border}}" },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    },
+                    y: {
+                      grid: { display: false },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    }
                   }
                 }
-              }
-            });
+              });
+            } catch(e) { console.error("Chart error:", e); }
           }
         })();
         </script>
@@ -513,37 +515,39 @@ html_template: |
           var data = [{{range .Peaks}}{{.Count}},{{end}}];
           var ctx = document.getElementById("peaksChart");
           if (ctx && typeof Chart !== "undefined") {
-            new Chart(ctx, {
-              type: "bar",
-              data: {
-                labels: labels,
-                datasets: [{
-                  label: "commits",
-                  data: data,
-                  backgroundColor: "{{.Theme.Colors.Primary}}",
-                  borderWidth: 0,
-                  borderRadius: 2
-                }]
-              },
-              options: {
-                indexAxis: "y",
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false }
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "commits",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderWidth: 0,
+                    borderRadius: 2
+                  }]
                 },
-                scales: {
-                  x: {
-                    grid: { color: "{{.Theme.Colors.Border}}" },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                options: {
+                  indexAxis: "y",
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { display: false }
                   },
-                  y: {
-                    grid: { display: false },
-                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                  scales: {
+                    x: {
+                      grid: { color: "{{.Theme.Colors.Border}}" },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    },
+                    y: {
+                      grid: { display: false },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                    }
                   }
                 }
-              }
-            });
+              });
+            } catch(e) { console.error("Chart error:", e); }
           }
         })();
         </script>
@@ -562,7 +566,7 @@ html_template: |
             {{range .Contributors}}
             <tr>
               <td>{{.Name}}</td>
-              <td>{{.Commits}}</td>
+              <td>{{.Count}}</td>
               <td>{{.Name}} · since {{.Date}}</td>
             </tr>
             {{end}}
