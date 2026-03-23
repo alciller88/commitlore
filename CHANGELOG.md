@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Cyberpunk style v1.0.0**: Night City aesthetic with glitch effects, neon colors (yellow/cyan/pink), Orbitron + Share Tech Mono typography, HUD-style cards with cut corners, scanlines overlay, and full changelog + story HTML templates with Chart.js visualizations. Includes cyberpunk vocabulary, themed UI labels (NIGHT CITY, COMPILE, NEURAL LINK, RIPPERDOC, etc.), and anti-hallucination LLM prompt.
 - **Marketplace end-to-end flow verified**: Catalog fetch, style install, theme activation, and UI label propagation all functional.
 
+### Fixed
+
+- **Cyberpunk style**: Completed all missing fields — `preview_url`, `homepage`, `custom_css` (Google Fonts import), full LLM prompt with `{{.Data}}` delimiters, vocabulary entries for `error`/`warning`, contributors section ("Known Operatives") in changelog template, 5th stat card (Last Scan) in story template, contributor ranking chart canvas id
+
 ### Removed
 
 - **`commitlore style create`, `import`, `export` subcommands**: Styles are now managed exclusively via the marketplace. Only `list`, `show`, and `delete` remain.
