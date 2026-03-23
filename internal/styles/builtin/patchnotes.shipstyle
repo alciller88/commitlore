@@ -1294,7 +1294,7 @@ html_template_changelog: |
       {{/* Donut chart — commit type distribution */}}
       <div class="pn-section-label fade-in" style="animation-delay:0.3s">Commit Distribution</div>
       <div class="pn-charts fade-in" style="animation-delay:0.35s; grid-template-columns: 1fr;">
-        <div class="pn-chart-card" style="max-width: 440px;">
+        <div class="pn-chart-card" style="max-width: 440px; margin: 0 auto;">
           <div class="pn-chart-title">Commit Types</div>
           <div class="pn-chart-wrap">
             <canvas id="pnTypeChart"></canvas>
@@ -1322,12 +1322,15 @@ html_template_changelog: |
 
         var labels = Object.keys(counts);
         var data   = labels.map(function(k) { return counts[k]; });
-        var primary   = "{{.Theme.Colors.Primary}}";
-        var secondary = "{{.Theme.Colors.Secondary}}";
-        var accent    = "{{.Theme.Colors.Accent}}";
-        var surface   = "{{.Theme.Colors.Surface}}";
-        var border    = "{{.Theme.Colors.Border}}";
-        var palette   = [primary, accent, secondary, border, surface];
+        var palette = [
+          "{{.Theme.Colors.Primary}}",
+          "{{.Theme.Colors.Accent}}",
+          "{{.Theme.Colors.Secondary}}",
+          "#E24B4A",
+          "#1D9E75",
+          "#EF9F27",
+          "#7F77DD"
+        ];
         while (palette.length < labels.length) { palette.push(palette[palette.length - 1]); }
 
         var ctx = document.getElementById("pnTypeChart");

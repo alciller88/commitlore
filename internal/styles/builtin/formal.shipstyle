@@ -576,7 +576,7 @@ html_template_changelog: |
 
       {{/* Donut chart for commit types */}}
       <div class="cl-charts" style="grid-template-columns: 1fr;">
-        <div class="cl-chart-card" style="max-width: 400px;">
+        <div class="cl-chart-card" style="max-width: 400px; margin: 0 auto;">
           <div class="cl-chart-title">Commit Type Distribution</div>
           <div class="cl-chart-wrap">
             <canvas id="typeChart"></canvas>
@@ -604,12 +604,15 @@ html_template_changelog: |
 
         var labels = Object.keys(counts);
         var data = labels.map(function(k) { return counts[k]; });
-        var primary = "{{.Theme.Colors.Primary}}";
-        var accent = "{{.Theme.Colors.Accent}}";
-        var secondary = "{{.Theme.Colors.Secondary}}";
-        var border = "{{.Theme.Colors.Border}}";
-        var bg = "{{.Theme.Colors.Surface}}";
-        var palette = [primary, accent, secondary, border, bg];
+        var palette = [
+          "{{.Theme.Colors.Primary}}",
+          "{{.Theme.Colors.Accent}}",
+          "{{.Theme.Colors.Secondary}}",
+          "#E24B4A",
+          "#1D9E75",
+          "#EF9F27",
+          "#7F77DD"
+        ];
         while (palette.length < labels.length) {
           palette.push(palette[palette.length - 1]);
         }

@@ -803,6 +803,66 @@ func TestAllStyles_storyHasContributorRankingChart(t *testing.T) {
 	}
 }
 
+// Phase 7 — Visual polish tests
+
+func TestDonutStyles_paletteHasDistinctColors(t *testing.T) {
+	for _, name := range []string{"formal", "patchnotes"} {
+		t.Run(name, func(t *testing.T) {
+			s, err := styles.Load(name)
+			require.NoError(t, err)
+			assert.Contains(t, s.HTMLTemplateChangelog, "#E24B4A",
+				"%s changelog: palette must include hardcoded distinct color", name)
+		})
+	}
+}
+
+func TestFormal_donutChartCentered(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "margin: 0 auto",
+		"formal changelog: donut chart card must be centered")
+}
+
+func TestIronic_narrativeH1Hidden(t *testing.T) {
+	s := loadTestStyle(t, "ironic")
+	assert.Contains(t, s.HTMLTemplateChangelog,
+		".doc-narrative > h1:first-child",
+		"ironic changelog: must hide first h1 in narrative")
+	assert.Contains(t, s.HTMLTemplateStory,
+		".doc-narrative > h1:first-child",
+		"ironic story: must hide first h1 in narrative")
+}
+
+func TestEpic_noDoubleSeparatorsAtEnd(t *testing.T) {
+	s := loadTestStyle(t, "epic")
+	out, err := Render("", sampleChangelog(), s, FormatHTML)
+	require.NoError(t, err)
+	sep := "\u2694\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2694"
+	idx := strings.Index(out, sep)
+	if idx >= 0 {
+		rest := out[idx+len(sep):]
+		trimmed := strings.TrimSpace(rest)
+		assert.False(t, strings.HasPrefix(trimmed, sep),
+			"epic changelog: two consecutive separators found")
+	}
+}
+
+func TestIronic_featIconIsPlus(t *testing.T) {
+	s := loadTestStyle(t, "ironic")
+	assert.Equal(t, "+", s.Icons.Feature)
+}
+
+func TestIronic_fixIconIsTilde(t *testing.T) {
+	s := loadTestStyle(t, "ironic")
+	assert.Equal(t, "~", s.Icons.Fix)
+}
+
+func TestIronic_breakingIconIsExclamation(t *testing.T) {
+	s := loadTestStyle(t, "ironic")
+	assert.Equal(t, "!", s.Icons.Breaking)
+}
+
 func TestRepoNameFromPath(t *testing.T) {
 	assert.Equal(t, "commitlore", RepoNameFromPath("C:\\Users\\alcil\\MyProjects\\commitlore"))
 	assert.Equal(t, "commitlore", RepoNameFromPath("/home/user/commitlore"))

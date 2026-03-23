@@ -80,13 +80,13 @@ ui_labels:
   story_button: "Sure, a story"
 
 icons:
-  feature: "→"
-  fix: "→"
+  feature: "+"
+  fix: "~"
   breaking: "!"
-  chore: "→"
-  docs: "→"
-  test: "→"
-  story_peak: "📈"
+  chore: "·"
+  docs: "·"
+  test: "·"
+  story_peak: "↑"
   bullet: "→"
   separator: "- - - - - - - - - - - - - - - - - - - -"
 
@@ -247,6 +247,7 @@ html_template_changelog: |
         text-indent: 0;
       }
       .doc-narrative h1 { font-size: 20px; }
+      .doc-narrative > h1:first-child { display: none; }
       .doc-narrative h2 { font-size: 16px; }
       .doc-narrative h3 { font-size: 14px; }
       .doc-narrative ul, .doc-narrative ol {
@@ -786,6 +787,7 @@ html_template_story: |
         text-indent: 0;
       }
       .doc-narrative h1 { font-size: 20px; }
+      .doc-narrative > h1:first-child { display: none; }
       .doc-narrative h2 { font-size: 16px; }
       .doc-narrative h3 { font-size: 14px; }
       .doc-narrative ul, .doc-narrative ol {
