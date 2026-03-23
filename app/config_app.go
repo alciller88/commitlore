@@ -8,6 +8,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/alciller88/commitlore/internal/styles"
 	"github.com/zalando/go-keyring"
 	"gopkg.in/yaml.v3"
 )
@@ -35,6 +36,7 @@ type appConfig struct {
 	RecentRepos []RecentRepo `yaml:"recent_repos"`
 	LLM         llmDiskConf  `yaml:"llm"`
 	ActiveStyle string       `yaml:"active_style,omitempty"`
+	Language    string       `yaml:"language,omitempty"`
 }
 
 type llmDiskConf struct {
@@ -147,6 +149,44 @@ func (c *ConfigApp) SetActiveStyle(name string) error {
 		return err
 	}
 	cfg.ActiveStyle = name
+	return saveConfig(cfg)
+}
+
+// GetLanguage returns the active language, default "en".
+func (c *ConfigApp) GetLanguage() (string, error) {
+	cfg, err := loadConfig()
+	if err != nil {
+		return "en", err
+	}
+	if cfg.Language == "" {
+		return "en", nil
+	}
+	return cfg.Language, nil
+}
+
+// SetLanguage validates and saves the language to config.yml.
+// It checks that the currently active style has a variant for
+// the requested language before saving.
+func (c *ConfigApp) SetLanguage(lang string) error {
+	if lang != "en" && lang != "es" {
+		return fmt.Errorf("invalid language %q: supported values are en, es", lang)
+	}
+
+	cfg, err := loadConfig()
+	if err != nil {
+		return err
+	}
+
+	activeStyle := cfg.ActiveStyle
+	if activeStyle == "" {
+		activeStyle = "formal"
+	}
+
+	if _, err := styles.ResolveStyleForLanguage(activeStyle, lang); err != nil {
+		return err
+	}
+
+	cfg.Language = lang
 	return saveConfig(cfg)
 }
 

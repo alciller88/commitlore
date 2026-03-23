@@ -180,6 +180,58 @@ func TestSetActiveStyle_persists(t *testing.T) {
 	assert.Contains(t, string(data), "patchnotes")
 }
 
+func TestGetLanguage_default(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	lang, err := c.GetLanguage()
+	require.NoError(t, err)
+	assert.Equal(t, "en", lang)
+}
+
+func TestSetLanguage_valid(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	// formal has an .es variant (built-in)
+	require.NoError(t, c.SetActiveStyle("formal"))
+	require.NoError(t, c.SetLanguage("es"))
+
+	lang, err := c.GetLanguage()
+	require.NoError(t, err)
+	assert.Equal(t, "es", lang)
+}
+
+func TestSetLanguage_invalidCode(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	err := c.SetLanguage("fr")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "invalid language")
+}
+
+func TestSetLanguage_styleNotAvailable(t *testing.T) {
+	_, cleanup := setupTestConfig(t)
+	defer cleanup()
+
+	c := NewConfigApp()
+	// Set a style that has no Spanish variant
+	require.NoError(t, c.SetActiveStyle("nonexistent-style"))
+
+	err := c.SetLanguage("es")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "not available in Spanish")
+
+	// Language should not have been saved
+	lang, err := c.GetLanguage()
+	require.NoError(t, err)
+	assert.Equal(t, "en", lang)
+}
+
 func TestConfigPersistence_surviveReload(t *testing.T) {
 	_, cleanup := setupTestConfig(t)
 	defer cleanup()

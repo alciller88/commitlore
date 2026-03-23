@@ -96,12 +96,35 @@ type UILabelsDetail struct {
 }
 
 // GetStyleTheme returns only the theme fields for a style, with fallback defaults.
+// Uses the current language from config to resolve the correct variant.
 func (s *StyleApp) GetStyleTheme(name string) (StyleTheme, error) {
-	st, err := styles.Load(name)
+	st, err := loadStyleWithLanguage(name)
 	if err != nil {
 		return StyleTheme{}, cleanError(err)
 	}
 	return buildStyleTheme(st), nil
+}
+
+// GetAvailableLanguagesForStyle returns which languages are available for a style.
+func (s *StyleApp) GetAvailableLanguagesForStyle(name string) []string {
+	return styles.GetAvailableLanguagesForStyle(name)
+}
+
+// loadStyleWithLanguage resolves a style using the current language from config.
+func loadStyleWithLanguage(name string) (styles.Style, error) {
+	lang := currentLanguage()
+	return styles.ResolveStyleForLanguage(name, lang)
+}
+
+func currentLanguage() string {
+	cfg, err := loadConfig()
+	if err != nil {
+		return "en"
+	}
+	if cfg.Language == "" {
+		return "en"
+	}
+	return cfg.Language
 }
 
 func buildStyleTheme(st styles.Style) StyleTheme {
@@ -164,7 +187,7 @@ func withDefault(value, fallback string) string {
 
 // ShowStyle returns the full style definition as JSON.
 func (s *StyleApp) ShowStyle(name string) (string, error) {
-	st, err := styles.Load(name)
+	st, err := loadStyleWithLanguage(name)
 	if err != nil {
 		return "", cleanError(err)
 	}
@@ -275,7 +298,7 @@ type DecorDetail struct {
 
 // GetStyleDetail returns all fields of a .shipstyle for the editor UI.
 func (s *StyleApp) GetStyleDetail(name string) (StyleDetail, error) {
-	st, err := styles.Load(name)
+	st, err := loadStyleWithLanguage(name)
 	if err != nil {
 		return StyleDetail{}, cleanError(err)
 	}

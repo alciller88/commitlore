@@ -11,7 +11,6 @@ import (
 	"github.com/alciller88/commitlore/internal/llm"
 	"github.com/alciller88/commitlore/internal/narrative"
 	"github.com/alciller88/commitlore/internal/renderer"
-	"github.com/alciller88/commitlore/internal/styles"
 	"github.com/zalando/go-keyring"
 )
 
@@ -59,7 +58,7 @@ func (c *ChangelogApp) Generate(repo, since, until, styleName string) (string, e
 }
 
 func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel, repoName, version string) (string, error) {
-	style, err := styles.Load(styleName)
+	style, err := loadStyleWithLanguage(styleName)
 	if err != nil {
 		return "", cleanError(err)
 	}
@@ -81,7 +80,7 @@ func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel, r
 }
 
 func buildHTMLThemeOverride(styleName string) *renderer.HTMLTheme {
-	st, err := styles.Load(styleName)
+	st, err := loadStyleWithLanguage(styleName)
 	if err != nil {
 		return nil
 	}

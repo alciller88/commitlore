@@ -7,7 +7,6 @@ import (
 	ghpkg "github.com/alciller88/commitlore/internal/github"
 	"github.com/alciller88/commitlore/internal/narrative"
 	"github.com/alciller88/commitlore/internal/renderer"
-	"github.com/alciller88/commitlore/internal/styles"
 )
 
 const storyTopPeaks = 12
@@ -75,7 +74,7 @@ func buildChronology(repoRef string, commits []git.Commit) (git.Chronology, erro
 }
 
 func renderStoryHTML(ch git.Chronology, styleName, llmProvider, llmModel, repoName string) (string, error) {
-	style, err := styles.Load(styleName)
+	style, err := loadStyleWithLanguage(styleName)
 	if err != nil {
 		return "", cleanError(err)
 	}

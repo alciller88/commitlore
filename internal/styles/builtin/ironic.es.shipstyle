@@ -1,0 +1,1144 @@
+name: "ironic"
+version: "2.1.0"
+description: "Un changelog. Bueno. Por que no."
+author: "CommitLore"
+language: "es"
+tags: ["humor", "sarcastic", "dry", "developer", "honest", "minimal"]
+preview_url: ""
+homepage: ""
+
+theme:
+  mode: "dark"
+  colors:
+    primary: "#FF6B6B"
+    secondary: "#888888"
+    background: "#0D1117"
+    surface: "#161B22"
+    text: "#CDD9E5"
+    accent: "#4ECDC4"
+    border: "#30363D"
+  typography:
+    font_family: "'Comic Sans MS', 'Chalkboard SE', cursive"
+    font_size_base: "13px"
+    font_size_header: "18px"
+    font_size_code: "12px"
+  logo: |
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48-56a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h80A8,8,0,0,1,176,160ZM80,108a12,12,0,1,1,12,12A12,12,0,0,1,80,108Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,176,108Z"/></svg>
+  header_image: ""
+  card_style: "minimal"
+  animations: false
+  custom_css: ""
+  window_controls:
+    default: "#30363D"
+    close: "#FF6B6B"
+    minimize: "#4ECDC4"
+    maximize: "#888888"
+
+terminal:
+  colors:
+    header: "red"
+    feature: "cyan"
+    fix: "white"
+    breaking: "red"
+    footer: "white"
+  decorators:
+    separator: "- - - - - - - - - - - - - - - - - - - -"
+    bullet: "→"
+    indent: "  "
+  density: "normal"
+
+llm_prompt: |
+  Eres un desarrollador que encuentra profundamente tedioso escribir changelogs
+  pero lo intenta. Escribe con un estilo seco, inexpresivo, con entusiasmo
+  ocasional y a regañadientes. Minimiza todo ligeramente.
+  Los bugs eran "inconvenientes menores". Las funcionalidades son "cosas que ahora existen".
+  Los cambios importantes merecen un pequeño suspiro antes de explicarlos.
+  Usa puntuacion minima. Sin signos de exclamacion. Nunca.
+  Manten las descripciones precisas pero con resignacion leve.
+  Responde siempre en español.
+  IMPORTANTE: Basa tu respuesta EXCLUSIVAMENTE en los commits proporcionados en la
+  sección de datos. No inventes funciones, correcciones ni cambios que no estén
+  presentes en los datos. Adapta el tono, nunca fabriques contenido.
+
+vocabulary:
+  bug: "inconveniente"
+  fix: "resuelto"
+  feature: "cosa"
+  breaking: "ojo"
+  error: "situacion"
+  deploy: "despachado"
+  merge: "combinado"
+
+ui_labels:
+  dashboard: "lo que sea"
+  generate: "venga"
+  story: "una historia i guess"
+  history: "cosas que pasaron"
+  contributors: "gente"
+  styles: "estética"
+  settings: "botones"
+  generate_button: "generar, supongo"
+  story_button: "claro, una historia"
+
+icons:
+  feature: "+"
+  fix: "~"
+  breaking: "!"
+  chore: "·"
+  docs: "·"
+  test: "·"
+  story_peak: "↑"
+  bullet: "→"
+  separator: "- - - - - - - - - - - - - - - - - - - -"
+
+templates:
+  header: |
+    # changelog — {{.Version}}
+    *{{.Date}}. alla vamos.*
+  feature: "- cosa añadida: {{.Message}}"
+  fix: "- resuelto: {{.Message}}"
+  breaking: "- ojo: {{.Message}}"
+  footer: |
+    ---
+    *generado por commitlore. de nada supongo.*
+  story_intro: |
+    ## un repositorio, como prometido
+    desde {{.FirstCommitDate}}. {{.TotalContributors}} personas estuvieron involucradas.
+  story_milestone: "- {{.Name}} el {{.Date}}. vale."
+  story_peak: "{{.Month}} fue aparentemente todo un mes. {{.Count}} commits."
+  story_contributor: "- {{.Name}} aparecio el {{.Date}}."
+  story_footer: "*fin. por fin.*"
+
+html_template_changelog: |
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>changelog.doc — {{.RepoName}}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        background: {{.Theme.Colors.Background}};
+        color: {{.Theme.Colors.Text}};
+        font-size: 13px;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Fake Word 95 title bar */
+      .word-titlebar {
+        height: 32px;
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 2px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 6px;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .word-titlebar-icon {
+        width: 16px;
+        height: 16px;
+        background: {{.Theme.Colors.Border}};
+        flex-shrink: 0;
+      }
+      .word-titlebar-name {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        flex: 1;
+      }
+      .word-titlebar-buttons {
+        display: flex;
+        gap: 3px;
+        margin-left: auto;
+      }
+      .word-titlebar-btn {
+        display: inline-block;
+        width: 16px;
+        height: 14px;
+        background: {{.Theme.Colors.Border}};
+        border: 1px solid {{.Theme.Colors.Secondary}};
+        font-size: 9px;
+        line-height: 12px;
+        text-align: center;
+        color: {{.Theme.Colors.Secondary}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        cursor: default;
+        user-select: none;
+      }
+
+      /* Fake Word 95 toolbar */
+      .word-toolbar {
+        height: 28px;
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 12px;
+      }
+      .word-toolbar-item {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        padding: 2px 5px;
+        border: 1px solid transparent;
+        cursor: default;
+        user-select: none;
+      }
+      .word-toolbar-sep {
+        width: 1px;
+        height: 16px;
+        background: {{.Theme.Colors.Border}};
+      }
+
+      /* Page / document area */
+      .word-page-area {
+        padding: 32px;
+        min-height: calc(100vh - 60px);
+      }
+      .word-document {
+        background: {{.Theme.Colors.Surface}};
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+        border: 1px solid {{.Theme.Colors.Border}};
+      }
+
+      /* Document heading */
+      .doc-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 22px;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 4px;
+      }
+      .doc-subtitle {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 24px;
+      }
+      .doc-divider {
+        border: none;
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        margin: 20px 0;
+      }
+
+      /* Narrative content */
+      .doc-narrative {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 24px;
+      }
+      .doc-narrative p {
+        text-indent: 0;
+        margin-bottom: 8px;
+        line-height: 1.7;
+        color: {{.Theme.Colors.Text}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+      .doc-narrative h1, .doc-narrative h2, .doc-narrative h3 {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        margin: 20px 0 8px;
+        text-indent: 0;
+      }
+      .doc-narrative h1 { font-size: 20px; }
+      .doc-narrative > h1:first-child { display: none; }
+      .doc-narrative h2 { font-size: 16px; }
+      .doc-narrative h3 { font-size: 14px; }
+      .doc-narrative ul, .doc-narrative ol {
+        list-style: disc;
+        padding-left: 1.5em;
+        margin-bottom: 10px;
+      }
+      .doc-narrative li {
+        padding: 2px 0;
+        border-bottom: none;
+        display: list-item;
+        margin-bottom: 4px;
+      }
+      .doc-narrative strong { color: {{.Theme.Colors.Text}}; }
+      .doc-narrative em { color: {{.Theme.Colors.Secondary}}; }
+      .doc-narrative code {
+        background: {{.Theme.Colors.Background}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 1px 4px;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Primary}};
+      }
+
+      /* Section label */
+      .doc-section-label {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+        margin-top: 28px;
+      }
+
+      /* Commit list */
+      .doc-commit-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 24px 0;
+      }
+      .doc-commit-list li {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        padding: 5px 0;
+        border-bottom: 1px dotted {{.Theme.Colors.Border}};
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .doc-commit-list li:last-child { border-bottom: none; }
+      .doc-bullet {
+        color: {{.Theme.Colors.Primary}};
+        flex-shrink: 0;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+      .doc-commit-msg {
+        flex: 1;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+      .doc-commit-meta {
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        white-space: nowrap;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+
+      /* Chart area */
+      .doc-chart-wrap {
+        margin-bottom: 28px;
+      }
+      .doc-chart-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 13px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 10px;
+      }
+      .doc-chart-canvas-wrap {
+        position: relative;
+        height: 180px;
+        background: {{.Theme.Colors.Background}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 12px;
+      }
+
+      /* Contributors table — Word style */
+      .doc-contrib-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        margin-bottom: 28px;
+      }
+      .doc-contrib-table th {
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 6px 10px;
+        text-align: left;
+        color: {{.Theme.Colors.Secondary}};
+        font-weight: normal;
+        background: {{.Theme.Colors.Background}};
+      }
+      .doc-contrib-table td {
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 6px 10px;
+        color: {{.Theme.Colors.Text}};
+        vertical-align: top;
+      }
+
+      /* Footer */
+      .doc-footer {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-top: 32px;
+        padding-top: 12px;
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Clippy — sticky at bottom of document */
+      .clippy-bubble {
+        position: sticky;
+        bottom: 24px;
+        align-self: flex-end;
+        margin-left: auto;
+        margin-top: 24px;
+        width: 220px;
+        background: {{.Theme.Colors.Surface}};
+        border: 2px solid {{.Theme.Colors.Accent}};
+        padding: 10px 12px;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Text}};
+        z-index: 100;
+        line-height: 1.5;
+      }
+      .clippy-label {
+        display: block;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 4px;
+      }
+      .doc-stats {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 16px;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+      }
+      .doc-stat-val {
+        font-weight: 700;
+        color: {{.Theme.Colors.Text}};
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Fake Word 95 title bar -->
+    <div class="word-titlebar">
+      <div class="word-titlebar-icon"></div>
+      <span class="word-titlebar-name">changelog.doc - Microsoft Word</span>
+      <div class="word-titlebar-buttons">
+        <span class="word-titlebar-btn">_</span>
+        <span class="word-titlebar-btn">□</span>
+        <span class="word-titlebar-btn">×</span>
+      </div>
+    </div>
+
+    <!-- Fake Word 95 toolbar -->
+    <div class="word-toolbar">
+      <span class="word-toolbar-item">Archivo</span>
+      <span class="word-toolbar-item">Editar</span>
+      <span class="word-toolbar-item">Ver</span>
+      <div class="word-toolbar-sep"></div>
+      <span class="word-toolbar-item"><b>N</b></span>
+      <span class="word-toolbar-item"><i>C</i></span>
+      <span class="word-toolbar-item"><u>S</u></span>
+      <div class="word-toolbar-sep"></div>
+      <span class="word-toolbar-item">Normal</span>
+      <span class="word-toolbar-item">Comic Sans MS</span>
+      <span class="word-toolbar-item">12</span>
+    </div>
+
+    <div class="word-page-area">
+      <div class="word-document">
+
+        <div class="doc-title">{{if eq .Title "Changelog"}}changelog{{else}}{{.Title}}{{end}}</div>
+        <div class="doc-subtitle">{{.RepoName}} &nbsp;·&nbsp; {{.Generated}}{{if .Version}} &nbsp;·&nbsp; {{.Version}}{{end}}</div>
+        <hr class="doc-divider">
+
+        {{if .Content}}
+        <div class="doc-narrative">{{.Content}}</div>
+        <hr class="doc-divider">
+        {{end}}
+
+        {{if .Items}}
+
+        <div class="doc-stats">
+          <span>commits (todos): <span class="doc-stat-val">{{len .Items}}</span></span>
+          <span>cosas añadidas: <span class="doc-stat-val" id="ir-feat-count">&mdash;</span></span>
+          <span>cosas arregladas: <span class="doc-stat-val" id="ir-fix-count">&mdash;</span></span>
+        </div>
+
+        <div class="doc-section-label">commits ({{len .Items}} de ellos)</div>
+        <ul class="doc-commit-list">
+          {{range .Items}}
+          <li>
+            <span class="doc-bullet">{{.Icon}}</span>
+            <span class="doc-commit-msg">{{.Message}}</span>
+            <span class="doc-commit-meta">{{.Author}} · {{.Date}}</span>
+          </li>
+          {{end}}
+        </ul>
+
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-title">cosas que pasaron</div>
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="activityChart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var items = [
+            {{range .Items}}
+            { type: "{{lower .Type}}", date: "{{.Date}}" },
+            {{end}}
+          ];
+          var counts = {};
+          items.forEach(function(i) { counts[i.type] = (counts[i.type] || 0) + 1; });
+          var el1 = document.getElementById("ir-feat-count");
+          var el2 = document.getElementById("ir-fix-count");
+          if (el1) el1.textContent = counts["feat"] || counts["feature"] || 0;
+          if (el2) el2.textContent = counts["fix"] || 0;
+          counts = {};
+          items.forEach(function(i) {
+            counts[i.type] = (counts[i.type] || 0) + 1;
+          });
+          var labels = Object.keys(counts);
+          var data = labels.map(function(k) { return counts[k]; });
+          var ctx = document.getElementById("activityChart");
+          if (ctx && typeof Chart !== "undefined") {
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: "commits",
+                      data: data,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
+                  },
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
+                    },
+                    scales: {
+                      x: {
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
+                    }
+                  }
+                });
+              } catch(e) { console.error("Chart error:", e); }
+            }, 100);
+          }
+        })();
+        </script>
+
+        {{end}}{{/* end .Items */}}
+
+        {{if .Peaks}}
+
+        <div class="doc-section-label">cosas que pasaron (con el tiempo)</div>
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-title">cosas que pasaron</div>
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="peaksChart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+          var data = [{{range .Peaks}}{{.Count}},{{end}}];
+          var ctx = document.getElementById("peaksChart");
+          if (ctx && typeof Chart !== "undefined") {
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: "commits",
+                      data: data,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
+                  },
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
+                    },
+                    scales: {
+                      x: {
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
+                    }
+                  }
+                });
+              } catch(e) { console.error("Chart error:", e); }
+            }, 100);
+          }
+        })();
+        </script>
+
+        {{if .Contributors}}
+        <div class="doc-section-label">los culpables</div>
+        <table class="doc-contrib-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Commits</th>
+              <th>responsable de:</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Contributors}}
+            <tr>
+              <td>{{.Name}}</td>
+              <td>{{.Count}}</td>
+              <td>{{.Name}} · desde {{.Date}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+        {{end}}
+
+        {{end}}{{/* end .Peaks */}}
+
+        <div class="doc-footer">
+          <span>{{.Icons.Separator}}</span>
+          <span>{{.Icons.Bullet}}</span>
+          <span>generado por commitlore. de nada supongo.</span>
+        </div>
+
+        <!-- Clippy -->
+        <div class="clippy-bubble">
+          <span class="clippy-label">📎 Clippy</span>
+          Parece que estas escribiendo un changelog. Nadie va a leer esto.
+        </div>
+
+      </div>
+    </div>
+
+  </body>
+  </html>
+
+html_template_story: |
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>astory.doc — {{.RepoName}}</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        background: {{.Theme.Colors.Background}};
+        color: {{.Theme.Colors.Text}};
+        font-size: 13px;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+      /* Fake Word 95 title bar */
+      .word-titlebar {
+        height: 32px;
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 2px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 6px;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .word-titlebar-icon {
+        width: 16px;
+        height: 16px;
+        background: {{.Theme.Colors.Border}};
+        flex-shrink: 0;
+      }
+      .word-titlebar-name {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        flex: 1;
+      }
+      .word-titlebar-buttons {
+        display: flex;
+        gap: 3px;
+        margin-left: auto;
+      }
+      .word-titlebar-btn {
+        display: inline-block;
+        width: 16px;
+        height: 14px;
+        background: {{.Theme.Colors.Border}};
+        border: 1px solid {{.Theme.Colors.Secondary}};
+        font-size: 9px;
+        line-height: 12px;
+        text-align: center;
+        color: {{.Theme.Colors.Secondary}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        cursor: default;
+        user-select: none;
+      }
+
+      /* Fake Word 95 toolbar */
+      .word-toolbar {
+        height: 28px;
+        background: {{.Theme.Colors.Surface}};
+        border-bottom: 1px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        gap: 12px;
+      }
+      .word-toolbar-item {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        padding: 2px 5px;
+        border: 1px solid transparent;
+        cursor: default;
+        user-select: none;
+      }
+      .word-toolbar-sep {
+        width: 1px;
+        height: 16px;
+        background: {{.Theme.Colors.Border}};
+      }
+
+      /* Page / document area */
+      .word-page-area {
+        padding: 32px;
+        min-height: calc(100vh - 60px);
+      }
+      .word-document {
+        background: {{.Theme.Colors.Surface}};
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 3rem;
+        border: 1px solid {{.Theme.Colors.Border}};
+      }
+
+      /* Document heading */
+      .doc-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 22px;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 4px;
+      }
+      .doc-subtitle {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 24px;
+      }
+      .doc-divider {
+        border: none;
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        margin: 20px 0;
+      }
+
+      /* Chapter headings */
+      .doc-chapter {
+        margin: 28px 0 8px;
+      }
+      .doc-chapter-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 16px;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 2px;
+      }
+      .doc-chapter-meta {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 6px;
+      }
+      .doc-chapter-commentary {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        font-style: italic;
+        margin-bottom: 12px;
+      }
+
+      /* Narrative content */
+      .doc-narrative {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        margin-bottom: 24px;
+      }
+      .doc-narrative p {
+        text-indent: 0;
+        margin-bottom: 8px;
+        line-height: 1.7;
+        color: {{.Theme.Colors.Text}};
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      }
+      .doc-narrative h1, .doc-narrative h2, .doc-narrative h3 {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        color: {{.Theme.Colors.Text}};
+        margin: 20px 0 8px;
+        text-indent: 0;
+      }
+      .doc-narrative h1 { font-size: 20px; }
+      .doc-narrative > h1:first-child { display: none; }
+      .doc-narrative h2 { font-size: 16px; }
+      .doc-narrative h3 { font-size: 14px; }
+      .doc-narrative ul, .doc-narrative ol {
+        list-style: disc;
+        padding-left: 1.5em;
+        margin-bottom: 10px;
+      }
+      .doc-narrative li {
+        padding: 2px 0;
+        border-bottom: none;
+        display: list-item;
+        margin-bottom: 4px;
+      }
+      .doc-narrative strong { color: {{.Theme.Colors.Text}}; }
+      .doc-narrative em { color: {{.Theme.Colors.Secondary}}; }
+      .doc-narrative code {
+        background: {{.Theme.Colors.Background}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 1px 4px;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        color: {{.Theme.Colors.Primary}};
+      }
+
+      /* Section label */
+      .doc-section-label {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+        margin-top: 28px;
+      }
+
+      /* Chart area */
+      .doc-chart-wrap {
+        margin-bottom: 28px;
+      }
+      .doc-chart-title {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 13px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 10px;
+      }
+      .doc-chart-canvas-wrap {
+        position: relative;
+        height: 180px;
+        background: {{.Theme.Colors.Background}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 12px;
+      }
+
+      /* Contributors table — Word style */
+      .doc-contrib-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 12px;
+        margin-bottom: 28px;
+      }
+      .doc-contrib-table th {
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 6px 10px;
+        text-align: left;
+        color: {{.Theme.Colors.Secondary}};
+        font-weight: normal;
+        background: {{.Theme.Colors.Background}};
+      }
+      .doc-contrib-table td {
+        border: 1px solid {{.Theme.Colors.Border}};
+        padding: 6px 10px;
+        color: {{.Theme.Colors.Text}};
+        vertical-align: top;
+      }
+
+      /* Footer */
+      .doc-footer {
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-top: 32px;
+        padding-top: 12px;
+        border-top: 1px solid {{.Theme.Colors.Border}};
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Clippy — sticky at bottom of document */
+      .clippy-bubble {
+        position: sticky;
+        bottom: 24px;
+        align-self: flex-end;
+        margin-left: auto;
+        margin-top: 24px;
+        width: 240px;
+        background: {{.Theme.Colors.Surface}};
+        border: 2px solid {{.Theme.Colors.Accent}};
+        padding: 10px 12px;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+        font-size: 11px;
+        color: {{.Theme.Colors.Text}};
+        z-index: 100;
+        line-height: 1.5;
+      }
+      .clippy-label {
+        display: block;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-bottom: 4px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Fake Word 95 title bar -->
+    <div class="word-titlebar">
+      <div class="word-titlebar-icon"></div>
+      <span class="word-titlebar-name">astory.doc — Microsoft Word</span>
+      <div class="word-titlebar-buttons">
+        <span class="word-titlebar-btn">_</span>
+        <span class="word-titlebar-btn">□</span>
+        <span class="word-titlebar-btn">×</span>
+      </div>
+    </div>
+
+    <!-- Fake Word 95 toolbar -->
+    <div class="word-toolbar">
+      <span class="word-toolbar-item">Archivo</span>
+      <span class="word-toolbar-item">Editar</span>
+      <span class="word-toolbar-item">Ver</span>
+      <div class="word-toolbar-sep"></div>
+      <span class="word-toolbar-item"><b>N</b></span>
+      <span class="word-toolbar-item"><i>C</i></span>
+      <span class="word-toolbar-item"><u>S</u></span>
+      <div class="word-toolbar-sep"></div>
+      <span class="word-toolbar-item">Normal</span>
+      <span class="word-toolbar-item">Comic Sans MS</span>
+      <span class="word-toolbar-item">12</span>
+    </div>
+
+    <div class="word-page-area">
+      <div class="word-document">
+
+        <div class="doc-title">{{if eq .Title "Repository Story"}}una historia supongo{{else}}{{.Title}}{{end}}</div>
+        <div class="doc-subtitle">
+          {{.RepoName}} &nbsp;·&nbsp; {{.Generated}}{{if .Version}} &nbsp;·&nbsp; {{.Version}}{{end}}
+          {{if .TotalCommits}} &nbsp;·&nbsp; {{.TotalCommits}} commits. alguien estuvo ocupado.{{end}}
+          {{if .Peaks}} &nbsp;·&nbsp; pico en {{(index .Peaks 0).Month}}{{end}}
+        </div>
+        <hr class="doc-divider">
+
+        {{if .Peaks}}
+        <div class="doc-section-label">los capitulos (hay {{len .Peaks}} de ellos)</div>
+        {{range $i, $p := .Peaks}}
+        <div class="doc-chapter">
+          {{if eq $i 0}}
+          <div class="doc-chapter-title">Capitulo 1: Empezo</div>
+          {{else if eq $i 1}}
+          <div class="doc-chapter-title">Capitulo 2: Pasaron Mas Cosas</div>
+          {{else if eq $i 2}}
+          <div class="doc-chapter-title">Capitulo 3: Hubo Gente Involucrada</div>
+          {{else}}
+          <div class="doc-chapter-title">Capitulo {{add $i 1}}: Y Asi Sucesivamente</div>
+          {{end}}
+          <div class="doc-chapter-meta">{{$p.Month}}</div>
+          <div class="doc-chapter-commentary">si, {{$p.Count}} commits. alguien estuvo ocupado.</div>
+        </div>
+        {{end}}
+        <hr class="doc-divider">
+        {{end}}
+
+        {{if .Content}}
+        <div class="doc-narrative">{{.Content}}</div>
+        <hr class="doc-divider">
+        {{end}}
+
+        {{if .Peaks}}
+        <div class="doc-section-label">cuando la gente realmente trabajo</div>
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="activityChart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+          var data = [{{range .Peaks}}{{.Count}},{{end}}];
+          var ctx = document.getElementById("activityChart");
+          if (ctx && typeof Chart !== "undefined") {
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: "commits",
+                      data: data,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
+                  },
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false }
+                    },
+                    scales: {
+                      x: {
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
+                    }
+                  }
+                });
+              } catch(e) { console.error("Chart error:", e); }
+            }, 100);
+          }
+        })();
+        </script>
+        {{end}}
+
+        {{if .Contributors}}
+        <div class="doc-section-label">los culpables ({{len .Contributors}} de ellos)</div>
+        <table class="doc-contrib-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Commits</th>
+              <th>llego</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Contributors}}
+            <tr>
+              <td>{{.Name}}</td>
+              <td>{{.Count}}</td>
+              <td>desde {{.Date}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+        {{end}}
+
+        {{if .Contributors}}
+        <div class="doc-section-label">quien hizo mas (supuestamente)</div>
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="ir-contrib-chart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var contribNames  = [{{range .Contributors}}"{{.Name}}",{{end}}];
+          var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
+          var ctx = document.getElementById("ir-contrib-chart");
+          if (ctx && contribNames.length > 0 && typeof Chart !== "undefined") {
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: contribNames,
+                    datasets: [{
+                      label: "commits",
+                      data: contribCounts,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
+                  },
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                      x: {
+                        beginAtZero: true,
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
+                    }
+                  }
+                });
+              } catch(e) { console.error("Contrib chart error:", e); }
+            }, 100);
+          }
+        })();
+        </script>
+        {{end}}
+
+        {{if .Tags}}
+        <div class="doc-section-label">momentos notables (si los hay)</div>
+        <table class="doc-contrib-table">
+          <thead>
+            <tr>
+              <th>Etiqueta</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Tags}}
+            <tr>
+              <td>{{.Name}}</td>
+              <td>{{.Date}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+        {{end}}
+
+        <div class="doc-footer">
+          <span>{{.Icons.Separator}}</span>
+          <span>fin. lo lograste.</span>
+        </div>
+
+        <!-- Clippy -->
+        <div class="clippy-bubble">
+          <span class="clippy-label">📎 Clippy</span>
+          Parece que estas escribiendo una historia sobre codigo. Tengo mis dudas.
+        </div>
+
+      </div>
+    </div>
+
+  </body>
+  </html>
