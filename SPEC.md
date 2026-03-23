@@ -130,8 +130,19 @@ Complete structure of a .shipstyle file:
     styles: "Styles"
     settings: "Settings"
 
-All vocabulary, theme, terminal, and ui_labels fields are optional with
-sensible zero-value defaults (English labels for ui_labels).
+  icons:                      # per-style icon/emoji characters (optional)
+    feature: "✦"
+    fix: "✔"
+    breaking: "⚠"
+    chore: "⚙"
+    docs: "📄"
+    test: "🧪"
+    story_peak: "🔥"
+    bullet: "•"
+    separator: "────────────────────────────────────────"
+
+All vocabulary, theme, terminal, ui_labels, and icons fields are optional
+with sensible zero-value defaults.
 
 Built-in Styles (v1)
 
