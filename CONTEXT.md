@@ -217,6 +217,7 @@ fix/ironic-style-redesignIronic v2.1: coral/teal palette, Comic Sans, SmileyMeh 
 fix/dashboard-github-inputGitHub card: input+button joined row, proper alignment2026-03-23fix/dashboard-github-input
 feat/style-ui-buttonsButton labels in UILabels (generate_button, story_button), Styles editor UI Labels section, patchnotes llm fix2026-03-23feat/style-ui-buttons
 feat/style-icons-systemIcons struct in .shipstyle schema, all 4 styles with icons, Styles editor Icons tab2026-03-23feat/style-icons-system
+fix/github-connect-modalGitHub card → modal with repo input + optional token, SetGitHubToken binding2026-03-23fix/github-connect-modal
 
 Add a row here when completing each phase.
 

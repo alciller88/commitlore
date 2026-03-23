@@ -5,6 +5,10 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed (GitHub Connect modal)
+- Dashboard: GitHub entry card replaced with clean button that opens a centered modal (400px) with owner/repo input, optional token (password field, session-only), format validation, keyboard support (Enter/Escape)
+- app/git_app.go: SetGitHubToken() binding — sets GITHUB_TOKEN env var for session without persisting to disk
+
 ### Added (Icons system)
 - internal/styles: Icons struct (feature, fix, breaking, chore, docs, test, story_peak, bullet, separator) added to Style
 - app/style_app.go: IconsDetail in StyleTheme and StyleDetail, buildIcons() with fallback defaults
