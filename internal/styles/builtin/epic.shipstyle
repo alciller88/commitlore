@@ -517,8 +517,6 @@ html_template_changelog: |
         </div>
       </section>
 
-      <div class="cl-sep">{{.Icons.Separator}}</div>
-
       {{/* Decree scroll */}}
       <section class="cl-animated">
         <div class="cl-section-title">The Decrees of this Chronicle</div>
@@ -532,8 +530,6 @@ html_template_changelog: |
           {{end}}
         </div>
       </section>
-
-      <div class="cl-sep">{{.Icons.Separator}}</div>
 
       {{/* Activity chart */}}
       <section class="cl-animated">
@@ -629,8 +625,6 @@ html_template_changelog: |
           </div>
         </div>
       </section>
-
-      <div class="cl-sep">{{.Icons.Separator}}</div>
 
       {{/* Activity chart */}}
       <section class="cl-animated">
