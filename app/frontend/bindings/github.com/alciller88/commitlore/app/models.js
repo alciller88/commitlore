@@ -314,6 +314,13 @@ export class MarketplaceEntry {
              */
             this["download"] = "";
         }
+        if (!("downloads" in $$source)) {
+            /**
+             * @member
+             * @type {{ [_ in string]?: string }}
+             */
+            this["downloads"] = {};
+        }
 
         Object.assign(this, $$source);
     }
@@ -325,9 +332,13 @@ export class MarketplaceEntry {
      */
     static createFrom($$source = {}) {
         const $$createField4_0 = $$createType0;
+        const $$createField7_0 = $$createType1;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("tags" in $$parsedSource) {
             $$parsedSource["tags"] = $$createField4_0($$parsedSource["tags"]);
+        }
+        if ("downloads" in $$parsedSource) {
+            $$parsedSource["downloads"] = $$createField7_0($$parsedSource["downloads"]);
         }
         return new MarketplaceEntry(/** @type {Partial<MarketplaceEntry>} */($$parsedSource));
     }
@@ -510,8 +521,8 @@ export class StyleDetail {
      */
     static createFrom($$source = {}) {
         const $$createField5_0 = $$createType0;
-        const $$createField8_0 = $$createType1;
-        const $$createField9_0 = $$createType2;
+        const $$createField8_0 = $$createType2;
+        const $$createField9_0 = $$createType1;
         const $$createField10_0 = $$createType3;
         const $$createField11_0 = $$createType4;
         const $$createField12_0 = $$createType5;
@@ -1198,8 +1209,8 @@ export class WinControlDetail {
 
 // Private type creation functions
 const $$createType0 = $Create.Array($Create.Any);
-const $$createType1 = TemplatesDetail.createFrom;
-const $$createType2 = $Create.Map($Create.Any, $Create.Any);
+const $$createType1 = $Create.Map($Create.Any, $Create.Any);
+const $$createType2 = TemplatesDetail.createFrom;
 const $$createType3 = ThemeDetail.createFrom;
 const $$createType4 = TerminalDetail.createFrom;
 const $$createType5 = UILabelsDetail.createFrom;

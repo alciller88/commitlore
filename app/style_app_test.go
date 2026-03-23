@@ -9,6 +9,7 @@ import (
 )
 
 func TestGetStyleTheme_formal(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
@@ -20,6 +21,7 @@ func TestGetStyleTheme_formal(t *testing.T) {
 }
 
 func TestGetStyleTheme_patchnotes(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("patchnotes")
 	require.NoError(t, err)
@@ -29,6 +31,7 @@ func TestGetStyleTheme_patchnotes(t *testing.T) {
 }
 
 func TestGetStyleTheme_uiLabels_patchnotes(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("patchnotes")
 	require.NoError(t, err)
@@ -40,6 +43,7 @@ func TestGetStyleTheme_uiLabels_patchnotes(t *testing.T) {
 }
 
 func TestGetStyleTheme_uiLabels_fallback(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
@@ -55,6 +59,7 @@ func TestGetStyleTheme_uiLabels_fallback(t *testing.T) {
 }
 
 func TestGetStyleTheme_missingFields(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
@@ -67,12 +72,14 @@ func TestGetStyleTheme_missingFields(t *testing.T) {
 }
 
 func TestGetStyleTheme_unknownStyle(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	_, err := s.GetStyleTheme("nonexistent")
 	assert.Error(t, err)
 }
 
 func TestGetStyleDetail_formal(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	d, err := s.GetStyleDetail("formal")
 	require.NoError(t, err)
@@ -128,6 +135,7 @@ func TestSaveStyleDetail_user(t *testing.T) {
 }
 
 func TestGetStyleTheme_windowControls(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
@@ -138,6 +146,7 @@ func TestGetStyleTheme_windowControls(t *testing.T) {
 }
 
 func TestGetStyleTheme_windowControls_defaults(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
@@ -148,6 +157,7 @@ func TestGetStyleTheme_windowControls_defaults(t *testing.T) {
 }
 
 func TestIcons_defaults(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("formal")
 	require.NoError(t, err)
@@ -158,6 +168,7 @@ func TestIcons_defaults(t *testing.T) {
 }
 
 func TestIcons_epic(t *testing.T) {
+	setTestEnv(t)
 	s := NewStyleApp()
 	theme, err := s.GetStyleTheme("epic")
 	require.NoError(t, err)

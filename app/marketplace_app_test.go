@@ -121,6 +121,45 @@ templates:
 	assert.Contains(t, err.Error(), "invalid style")
 }
 
+const validShipstyleES = `name: "test-community"
+language: "es"
+version: "1.0.0"
+description: "Un estilo comunitario"
+author: "tester"
+templates:
+  header: "# Prueba"
+  feature: "- {{.Message}}"
+`
+
+func TestInstallStyleWithVariants_savesBaseAndVariant(t *testing.T) {
+	setTestEnv(t)
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/base.shipstyle", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(validShipstyle))
+	})
+	mux.HandleFunc("/es.shipstyle", func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(validShipstyleES))
+	})
+	srv := httptest.NewServer(mux)
+	defer srv.Close()
+
+	m := newTestMarketplace(srv.Client())
+	variants := map[string]string{"es": srv.URL + "/es.shipstyle"}
+	err := m.InstallStyleWithVariants(srv.URL+"/base.shipstyle", "test-community", variants)
+	require.NoError(t, err)
+
+	assert.True(t, m.IsInstalled("test-community"))
+
+	dir := os.Getenv("APPDATA")
+	if dir == "" {
+		dir = os.Getenv("XDG_CONFIG_HOME")
+	}
+	esPath := filepath.Join(dir, "commitlore", "styles", "test-community.es.shipstyle")
+	_, err = os.Stat(esPath)
+	assert.NoError(t, err, "Spanish variant should exist")
+}
+
 func TestIsInstalled_true(t *testing.T) {
 	setTestEnv(t)
 
