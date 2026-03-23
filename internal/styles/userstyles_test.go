@@ -152,6 +152,30 @@ func TestLoad_prefersBuiltinOverUser(t *testing.T) {
 	assert.NotEqual(t, "custom formal", loaded.Description)
 }
 
+func TestListUser_excludesLanguageVariants(t *testing.T) {
+	setTestConfigDir(t)
+
+	require.NoError(t, Save(sampleStyle()))
+
+	// Write a language variant file directly
+	dir, err := UserStylesDir()
+	require.NoError(t, err)
+	variantContent := `name: teststyle
+language: "es"
+version: "1.0.0"
+templates:
+  header: "# Prueba"
+  feature: "- {{.Message}}"
+`
+	variantPath := filepath.Join(dir, "teststyle.es.shipstyle")
+	require.NoError(t, os.WriteFile(variantPath, []byte(variantContent), 0644))
+
+	names, err := ListUser()
+	require.NoError(t, err)
+	assert.Contains(t, names, "teststyle")
+	assert.NotContains(t, names, "teststyle.es", "language variant should not appear as separate style")
+}
+
 func TestValidateName_valid(t *testing.T) {
 	assert.NoError(t, ValidateName("my-style"))
 	assert.NoError(t, ValidateName("style_v2"))

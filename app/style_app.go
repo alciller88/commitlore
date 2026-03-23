@@ -185,9 +185,9 @@ func withDefault(value, fallback string) string {
 	return value
 }
 
-// ShowStyle returns the full style definition as JSON.
+// ShowStyle returns the full style definition as JSON (base style, no language resolution).
 func (s *StyleApp) ShowStyle(name string) (string, error) {
-	st, err := loadStyleWithLanguage(name)
+	st, err := styles.Load(name)
 	if err != nil {
 		return "", cleanError(err)
 	}
@@ -296,9 +296,9 @@ type DecorDetail struct {
 	Indent    string `json:"indent"`
 }
 
-// GetStyleDetail returns all fields of a .shipstyle for the editor UI.
+// GetStyleDetail returns all fields of a .shipstyle for the editor UI (base style, no language resolution).
 func (s *StyleApp) GetStyleDetail(name string) (StyleDetail, error) {
-	st, err := loadStyleWithLanguage(name)
+	st, err := styles.Load(name)
 	if err != nil {
 		return StyleDetail{}, cleanError(err)
 	}
