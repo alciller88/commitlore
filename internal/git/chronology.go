@@ -18,11 +18,12 @@ type ActivityPeak struct {
 	Count int
 }
 
-// ContributorEntry represents the first appearance of a contributor.
+// ContributorEntry represents a contributor with their first appearance and commit count.
 type ContributorEntry struct {
 	Name  string
 	Email string
 	Date  time.Time
+	Count int
 }
 
 // Chronology holds the timeline data for a repository story.
@@ -90,8 +91,9 @@ func mapToPeaks(counts map[string]int) []ActivityPeak {
 	return peaks
 }
 
-// uniqueContributors returns contributors ordered by first appearance.
+// uniqueContributors returns contributors ordered by first appearance with commit counts.
 func uniqueContributors(commits []Commit) []ContributorEntry {
+	counts := countByEmail(commits)
 	seen := make(map[string]bool)
 	var contributors []ContributorEntry
 
@@ -104,7 +106,16 @@ func uniqueContributors(commits []Commit) []ContributorEntry {
 			Name:  c.Author,
 			Email: c.Email,
 			Date:  c.Date,
+			Count: counts[c.Email],
 		})
 	}
 	return contributors
+}
+
+func countByEmail(commits []Commit) map[string]int {
+	counts := make(map[string]int)
+	for _, c := range commits {
+		counts[c.Email]++
+	}
+	return counts
 }

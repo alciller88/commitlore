@@ -602,31 +602,33 @@ html_template: |
         }
         var ctx = document.getElementById("typeChart");
         if (ctx) {
-          new Chart(ctx, {
-            type: "doughnut",
-            data: {
-              labels: labels,
-              datasets: [{
-                data: data,
-                backgroundColor: palette.slice(0, labels.length),
-                borderWidth: 0
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: "right",
-                  labels: {
-                    color: "{{.Theme.Colors.Text}}",
-                    font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 },
-                    padding: 12
+          try {
+            new Chart(ctx, {
+              type: "doughnut",
+              data: {
+                labels: labels,
+                datasets: [{
+                  data: data,
+                  backgroundColor: palette.slice(0, labels.length),
+                  borderWidth: 0
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: "right",
+                    labels: {
+                      color: "{{.Theme.Colors.Text}}",
+                      font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 },
+                      padding: 12
+                    }
                   }
                 }
               }
-            }
-          });
+            });
+          } catch(e) { console.error("Chart error:", e); }
         }
       })();
       </script>
@@ -669,42 +671,44 @@ html_template: |
         var data = [{{range .Peaks}}{{.Count}},{{end}}];
         var ctx = document.getElementById("activityChart");
         if (ctx) {
-          new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: labels,
-              datasets: [{
-                label: "Commits",
-                data: data,
-                backgroundColor: "{{.Theme.Colors.Primary}}",
-                borderRadius: 4,
-                borderSkipped: false
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: { display: false }
+          try {
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: "Commits",
+                  data: data,
+                  backgroundColor: "{{.Theme.Colors.Primary}}",
+                  borderRadius: 4,
+                  borderSkipped: false
+                }]
               },
-              scales: {
-                x: {
-                  grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
-                  ticks: {
-                    color: "{{.Theme.Colors.Secondary}}",
-                    font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
-                  }
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { display: false }
                 },
-                y: {
-                  grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
-                  ticks: {
-                    color: "{{.Theme.Colors.Secondary}}",
-                    font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                scales: {
+                  x: {
+                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                    ticks: {
+                      color: "{{.Theme.Colors.Secondary}}",
+                      font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                    }
+                  },
+                  y: {
+                    grid: { color: "{{.Theme.Colors.Border}}", lineWidth: 1 },
+                    ticks: {
+                      color: "{{.Theme.Colors.Secondary}}",
+                      font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 }
+                    }
                   }
                 }
               }
-            }
-          });
+            });
+          } catch(e) { console.error("Chart error:", e); }
         }
       })();
       </script>

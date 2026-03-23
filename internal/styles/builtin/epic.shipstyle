@@ -563,34 +563,36 @@ html_template: |
         var data = labels.map(function(k) { return counts[k]; });
         var ctx = document.getElementById("activityChart");
         if (ctx) {
-          new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: labels,
-              datasets: [{
-                label: "Decrees",
-                data: data,
-                backgroundColor: "{{.Theme.Colors.Primary}}",
-                borderRadius: 3,
-                borderSkipped: false
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                x: {
-                  grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                  ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
-                },
-                y: {
-                  grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                  ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+          try {
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: "Decrees",
+                  data: data,
+                  backgroundColor: "{{.Theme.Colors.Primary}}",
+                  borderRadius: 3,
+                  borderSkipped: false
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: {
+                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                  },
+                  y: {
+                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                  }
                 }
               }
-            }
-          });
+            });
+          } catch(e) { console.error("Chart error:", e); }
         }
       })();
       </script>
@@ -636,34 +638,36 @@ html_template: |
         var data   = [{{range .Peaks}}{{.Count}},{{end}}];
         var ctx = document.getElementById("activityChart");
         if (ctx) {
-          new Chart(ctx, {
-            type: "bar",
-            data: {
-              labels: labels,
-              datasets: [{
-                label: "Deeds",
-                data: data,
-                backgroundColor: "{{.Theme.Colors.Primary}}",
-                borderRadius: 3,
-                borderSkipped: false
-              }]
-            },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: { legend: { display: false } },
-              scales: {
-                x: {
-                  grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                  ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
-                },
-                y: {
-                  grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
-                  ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+          try {
+            new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: "Deeds",
+                  data: data,
+                  backgroundColor: "{{.Theme.Colors.Primary}}",
+                  borderRadius: 3,
+                  borderSkipped: false
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: {
+                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                  },
+                  y: {
+                    grid: { color: "color-mix(in srgb, {{.Theme.Colors.Primary}} 15%, transparent)" },
+                    ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                  }
                 }
               }
-            }
-          });
+            });
+          } catch(e) { console.error("Chart error:", e); }
         }
       })();
       </script>

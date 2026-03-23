@@ -105,7 +105,7 @@ func buildStoryContext(content string, ch git.Chronology, style styles.Style) HT
 	}
 	contribs := make([]StoryContributor, 0, len(ch.Contributors))
 	for _, c := range ch.Contributors {
-		contribs = append(contribs, StoryContributor{Name: c.Name, Email: c.Email, Date: c.Date.Format("2006-01-02")})
+		contribs = append(contribs, StoryContributor{Name: c.Name, Email: c.Email, Date: c.Date.Format("2006-01-02"), Count: c.Count})
 	}
 	firstAuthor := ""
 	firstDate := ""
