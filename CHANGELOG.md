@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Style availability validation**: Switching to a language blocks if the active style has no variant for that language, with user-facing error message
 - **`ResolveStyleForLanguage`**: Loads correct language variant (`<name>.<lang>.shipstyle`) with user-facing error when unavailable
 - **`GetAvailableLanguagesForStyle` binding**: Returns available languages for the Settings UI language selector
+- **`InstallStyleWithVariants` binding**: Marketplace install downloads base style and all language variants in one operation; variants saved as `<name>.<lang>.shipstyle`
+- **`downloads` field in marketplace `index.json`**: Language variant URLs keyed by language code (e.g. `{"es": "url"}`), one catalog entry per style regardless of available languages
 - **Marketplace screen**: Browse and install community styles from the official `commitlore-styles` repository. Displays style cards with preview image, name, author, description, tags, and version. Install button with loading/installed states. Full-screen error state with retry button for offline scenarios.
 - **MarketplaceApp binding**: `FetchCatalog`, `InstallStyle`, `IsInstalled` — fetches catalog from the official repository, downloads and validates `.shipstyle` files with strict schema checking (rejects unknown fields), saves to user styles directory.
 - **`marketplace` ui_label field**: Styles can now customize the Marketplace navigation label via `ui_labels.marketplace` in `.shipstyle` schema.

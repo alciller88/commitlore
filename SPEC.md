@@ -389,16 +389,23 @@ commitlore-styles/
     "version": "1.0.0",
     "tags": ["dark", "colorful"],
     "preview": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/preview.png",
-    "download": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/style.shipstyle"
+    "download": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/style.shipstyle",
+    "downloads": {
+      "es": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/<name>.es.shipstyle"
+    }
   }
 ]
 ```
 
+The `downloads` field is a map of language code to download URL for language variants.
+One catalog entry per style — language variants are not listed as separate entries.
+
 **App behavior:**
 - On opening the Marketplace screen, the app fetches `index.json` and displays
   the catalog with name, description, author, tags, and preview image.
-- Installing a style fetches the `.shipstyle` file from `download` URL and saves
-  it to `~/.config/commitlore/styles/`.
+- Installing a style fetches the base `.shipstyle` from `download` URL and all
+  language variants from the `downloads` map, validates each, and saves them to
+  `~/.config/commitlore/styles/`. Variants are saved as `<name>.<lang>.shipstyle`.
 - If the fetch fails (no connection, rate limit), the screen shows an error with
   a retry option. Already-installed styles remain available offline.
 - The four built-in styles are always embedded in the binary and are never
