@@ -109,7 +109,7 @@ html_template_changelog: |
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html { font-size: {{.Theme.Typography.FontSizeBase}}; }
       body {
-        font-family: {{.Theme.Typography.FontFamily}};
+        font-family: {{safeCSS .Theme.Typography.FontFamily}};
         background: {{.Theme.Colors.Background}};
         color: {{.Theme.Colors.Text}};
         line-height: 1.6;
@@ -765,7 +765,7 @@ html_template_story: |
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html { font-size: {{.Theme.Typography.FontSizeBase}}; }
       body {
-        font-family: {{.Theme.Typography.FontFamily}};
+        font-family: {{safeCSS .Theme.Typography.FontFamily}};
         background: {{.Theme.Colors.Background}};
         color: {{.Theme.Colors.Text}};
         line-height: 1.6;

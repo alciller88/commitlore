@@ -734,7 +734,7 @@ html_template_story: |
       html { font-size: {{.Theme.Typography.FontSizeBase}}; }
 
       body {
-        font-family: {{.Theme.Typography.FontFamily}};
+        font-family: {{safeCSS .Theme.Typography.FontFamily}};
         background-color: {{.Theme.Colors.Background}};
         background-image:
           repeating-linear-gradient(

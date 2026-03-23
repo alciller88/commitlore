@@ -173,6 +173,9 @@ func executeHTMLTemplate(tmplStr string, data interface{}) (string, error) {
 		"lower":    strings.ToLower,
 		"initials": templateInitials,
 		"add":      func(a, b int) int { return a + b },
+		"safeCSS":  func(s string) template.CSS { return template.CSS(s) },
+		"safeHTML": func(s string) template.HTML { return template.HTML(s) },
+		"safeAttr": func(s string) template.HTMLAttr { return template.HTMLAttr(s) },
 	}
 	tmpl, err := template.New("html").Funcs(funcMap).Parse(tmplStr)
 	if err != nil {
