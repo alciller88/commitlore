@@ -37,6 +37,18 @@ export function InstallStyle(downloadURL, name) {
 }
 
 /**
+ * InstallStyleWithVariants downloads the base style and all language
+ * variants, validates each, and saves them to the user styles directory.
+ * @param {string} downloadURL
+ * @param {string} name
+ * @param {{ [_ in string]?: string }} variants
+ * @returns {$CancellablePromise<void>}
+ */
+export function InstallStyleWithVariants(downloadURL, name, variants) {
+    return $Call.ByID(3875310792, downloadURL, name, variants);
+}
+
+/**
  * IsInstalled returns true if a style with the given name exists
  * in the user styles directory.
  * @param {string} name

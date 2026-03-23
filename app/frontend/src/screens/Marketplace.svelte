@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { FetchCatalog, InstallStyle, IsInstalled } from '../../bindings/github.com/alciller88/commitlore/app/marketplaceapp.js'
+  import { FetchCatalog, InstallStyleWithVariants, IsInstalled } from '../../bindings/github.com/alciller88/commitlore/app/marketplaceapp.js'
 
   type CatalogEntry = {
     name: string
@@ -10,6 +10,7 @@
     tags: string[]
     preview: string
     download: string
+    downloads?: Record<string, string>
   }
 
   let entries: CatalogEntry[] = []
@@ -50,7 +51,7 @@
     installingMap = { ...installingMap, [entry.name]: true }
     installErrors = { ...installErrors, [entry.name]: '' }
     try {
-      await InstallStyle(entry.download, entry.name)
+      await InstallStyleWithVariants(entry.download, entry.name, entry.downloads || {})
       installedMap = { ...installedMap, [entry.name]: true }
     } catch (e: any) {
       installErrors = { ...installErrors, [entry.name]: e?.message || 'Install failed' }

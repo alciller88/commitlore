@@ -18,13 +18,14 @@ const maxCatalogSize = 5 * 1024 * 1024 // 5MB
 
 // MarketplaceEntry represents a single style in the catalog.
 type MarketplaceEntry struct {
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	Author      string   `json:"author"`
-	Version     string   `json:"version"`
-	Tags        []string `json:"tags"`
-	Preview     string   `json:"preview"`
-	Download    string   `json:"download"`
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Author      string            `json:"author"`
+	Version     string            `json:"version"`
+	Tags        []string          `json:"tags"`
+	Preview     string            `json:"preview"`
+	Download    string            `json:"download"`
+	Downloads   map[string]string `json:"downloads"`
 }
 
 // MarketplaceApp exposes marketplace operations to the frontend.
@@ -103,6 +104,47 @@ func (m *MarketplaceApp) InstallStyle(downloadURL, name string) error {
 	}
 
 	return saveStyleData(name, data)
+}
+
+// InstallStyleWithVariants downloads the base style and all language
+// variants, validates each, and saves them to the user styles directory.
+func (m *MarketplaceApp) InstallStyleWithVariants(downloadURL, name string, variants map[string]string) error {
+	if err := m.InstallStyle(downloadURL, name); err != nil {
+		return err
+	}
+
+	for lang, url := range variants {
+		if err := m.installLanguageVariant(name, lang, url); err != nil {
+			return fmt.Errorf("installing %s variant: %w", lang, err)
+		}
+	}
+	return nil
+}
+
+func (m *MarketplaceApp) installLanguageVariant(name, lang, url string) error {
+	data, err := m.downloadFile(url)
+	if err != nil {
+		return fmt.Errorf("downloading: %w", err)
+	}
+
+	if _, err := styles.ParseStyleStrict(data); err != nil {
+		return fmt.Errorf("invalid style: %w", err)
+	}
+
+	return saveLanguageVariantData(name, lang, data)
+}
+
+func saveLanguageVariantData(name, lang string, data []byte) error {
+	dir, err := styles.UserStylesDir()
+	if err != nil {
+		return err
+	}
+	filename := name + "." + lang + ".shipstyle"
+	path := filepath.Join(dir, filename)
+	if err := os.WriteFile(path, data, 0644); err != nil {
+		return fmt.Errorf("saving style variant: %w", err)
+	}
+	return nil
 }
 
 func (m *MarketplaceApp) downloadFile(url string) ([]byte, error) {
