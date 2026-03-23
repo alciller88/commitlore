@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Adeptus Mechanicus style**: Logo SVG constrained to 32x32 viewBox, no longer overflows sidebar header
 - **Cyberpunk style**: Logo replaced with approved wireframe triangle design, legible at 32x32px
 - **Adeptus Mechanicus style**: Logo replaced with approved cog design in #C41E2A red, legible at 32x32px
+- **Commit type distribution chart**: Legend and tooltip labels now use per-style vocabulary substitutions instead of raw type strings (feat, fix, chore, etc.) across all styles with donut/type charts — patchnotes, epic, cyberpunk, adeptus-mechanicus. Added `Vocabulary` field to `HTMLTemplateContext` in renderer.
 
 ### Removed
 
