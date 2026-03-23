@@ -72,6 +72,7 @@
       templates: { header: '# Changelog {{.Version}}\n', feature: '- {{.Message}}\n', fix: '- {{.Message}}\n', breaking: '- {{.Message}}\n', footer: '', storyIntro: '', storyMilestone: '', storyPeak: '', storyContributor: '', storyFooter: '' },
       vocabulary: {},
       uiLabels: { dashboard: '', generate: '', story: '', history: '', contributors: '', styles: '', settings: '', generateButton: '', storyButton: '' },
+      icons: { feature: '✦', fix: '✔', breaking: '⚠', chore: '⚙', docs: '📄', test: '🧪', storyPeak: '🔥', bullet: '•', separator: '────────────────────────────────────────' },
       theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '', windowControls: { default: '#666666', close: '#FF5F57', minimize: '#FEBC2E', maximize: '#28C840' } },
       terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' }
     }
@@ -163,6 +164,7 @@
   const tabs = [
     { id: 'colors', label: 'Colors' },
     { id: 'typography', label: 'Typography' },
+    { id: 'icons', label: 'Icons' },
     { id: 'images', label: 'Images' },
     { id: 'templates', label: 'Templates' },
     { id: 'advanced', label: 'Advanced' },
@@ -285,6 +287,51 @@
           <div class="field-group">
             <label>Code Font Size</label>
             <input type="text" bind:value={detail.theme.typography.fontSizeCode} disabled={isBuiltIn} placeholder="13px" />
+          </div>
+
+        {:else if activeTab === 'icons'}
+          <div class="field-group">
+            <label class="section-divider">Commit icons</label>
+          </div>
+          {#each [
+            ['feature', 'Feature'],
+            ['fix', 'Fix'],
+            ['breaking', 'Breaking'],
+            ['chore', 'Chore'],
+            ['docs', 'Docs'],
+            ['test', 'Test'],
+          ] as [key, label]}
+            <div class="icon-field">
+              <label>{label}</label>
+              <div class="icon-input-row">
+                <input type="text" value={detail.icons?.[key] || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} style="width:80px;" />
+                <span class="icon-preview">{detail.icons?.[key] || ''}</span>
+              </div>
+            </div>
+          {/each}
+          <div class="field-group" style="margin-top:8px;">
+            <label class="section-divider">Story icons</label>
+          </div>
+          <div class="icon-field">
+            <label>Story peak</label>
+            <div class="icon-input-row">
+              <input type="text" value={detail.icons?.storyPeak || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons.storyPeak = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} style="width:80px;" />
+              <span class="icon-preview">{detail.icons?.storyPeak || ''}</span>
+            </div>
+          </div>
+          <div class="field-group" style="margin-top:8px;">
+            <label class="section-divider">Decorators</label>
+          </div>
+          <div class="icon-field">
+            <label>Bullet</label>
+            <div class="icon-input-row">
+              <input type="text" value={detail.icons?.bullet || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons.bullet = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} style="width:80px;" />
+              <span class="icon-preview">{detail.icons?.bullet || ''}</span>
+            </div>
+          </div>
+          <div class="field-group">
+            <label>Separator</label>
+            <input type="text" value={detail.icons?.separator || ''} on:input={(e) => { if (!detail.icons) detail.icons = {}; detail.icons.separator = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} class="mono" />
           </div>
 
         {:else if activeTab === 'images'}
@@ -542,6 +589,10 @@
   .field-group > label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; display: flex; gap: 6px; align-items: center; }
 
   .section-divider { font-size: 11px; font-weight: 600; color: var(--cl-text, #e6edf3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--cl-border, #30363d); padding-bottom: 4px; }
+  .icon-field { display: flex; align-items: center; gap: 8px; }
+  .icon-field label { width: 80px; color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; flex-shrink: 0; }
+  .icon-input-row { display: flex; align-items: center; gap: 8px; }
+  .icon-preview { font-size: 18px; min-width: 24px; text-align: center; }
   .hint { font-size: 10px; color: var(--cl-secondary, #8b949e); opacity: 0.7; text-transform: none; }
   .hint-warn { font-size: 10px; color: #D97706; text-transform: none; }
 
