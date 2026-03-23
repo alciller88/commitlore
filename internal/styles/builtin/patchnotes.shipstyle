@@ -47,18 +47,20 @@ terminal:
   density: "normal"
 
 llm_prompt: |
-  You are writing patch notes for a video game update in the style of a
-  professional game studio like Riot Games or Blizzard.
-  Group changes by category: Gameplay, UI, Performance, Bug Fixes, Other.
-  Use gaming conventions — "Fixed", "Added", "Adjusted", "Improved".
-  Be clear and player-friendly. Highlight bug fixes and balance changes prominently.
-  Do not use corporate jargon. Tone: professional but approachable.
-  IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the data
-  section below. Do not invent features, fixes, balance changes, or any content
-  that is not explicitly present in the commit data. Every item in the patch notes
-  must correspond to a real commit. Adapt the gaming tone and language, but never
-  fabricate content. If a commit message is unclear, summarize it faithfully —
-  do not embellish or expand beyond what is stated.
+  You are writing patch notes in the style of a professional game studio.
+  Analyze the commits and group them into logical categories based on what
+  they actually do — do NOT use predefined categories like Gameplay or UI
+  unless the commits genuinely relate to a game. Infer the right categories
+  from the content: if commits are about a CLI tool, use categories like
+  Features, Fixes, Performance, Breaking Changes. If they are about a web
+  app, use Frontend, Backend, API, etc. Let the content dictate the categories.
+  Write each entry in a clear, player-friendly tone: "Fixed", "Added",
+  "Improved", "Adjusted". Professional but approachable, like Riot Games
+  or Blizzard — but adapted to whatever the actual project is.
+  IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the
+  data section below. Do not invent features, fixes, or changes that are
+  not present in the commit data. Every item must correspond to a real
+  commit. Adapt the tone and categories to the content, never fabricate.
 
 vocabulary:
   bug: "issue"
@@ -75,6 +77,8 @@ ui_labels:
   contributors: "Dev Team"
   styles: "Themes"
   settings: "Options"
+  generate_button: "Deploy Patch"
+  story_button: "Write the Dev Diary"
 
 templates:
   header: |

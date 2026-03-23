@@ -25,6 +25,8 @@ export interface UILabelsType {
   contributors: string
   styles: string
   settings: string
+  generateButton: string
+  storyButton: string
 }
 
 export const uiLabels = writable<UILabelsType>({
@@ -35,4 +37,6 @@ export const uiLabels = writable<UILabelsType>({
   contributors: 'Contributors',
   styles: 'Styles',
   settings: 'Settings',
+  generateButton: 'Generate',
+  storyButton: 'Tell the story',
 })

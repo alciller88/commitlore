@@ -84,13 +84,15 @@ type Typography struct {
 
 // UILabels holds optional navigation label overrides per style.
 type UILabels struct {
-	Dashboard    string `yaml:"dashboard"`
-	Generate     string `yaml:"generate"`
-	Story        string `yaml:"story"`
-	History      string `yaml:"history"`
-	Contributors string `yaml:"contributors"`
-	Styles       string `yaml:"styles"`
-	Settings     string `yaml:"settings"`
+	Dashboard      string `yaml:"dashboard"`
+	Generate       string `yaml:"generate"`
+	Story          string `yaml:"story"`
+	History        string `yaml:"history"`
+	Contributors   string `yaml:"contributors"`
+	Styles         string `yaml:"styles"`
+	Settings       string `yaml:"settings"`
+	GenerateButton string `yaml:"generate_button"`
+	StoryButton    string `yaml:"story_button"`
 }
 
 // Terminal defines the visual identity for terminal output.

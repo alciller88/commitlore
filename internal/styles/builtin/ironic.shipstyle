@@ -76,6 +76,8 @@ ui_labels:
   contributors: "The Guilty Parties"
   styles: "Looks"
   settings: "Options I Suppose"
+  generate_button: "Fine, generate"
+  story_button: "Sure, a story"
 
 templates:
   header: |

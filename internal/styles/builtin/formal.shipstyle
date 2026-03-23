@@ -60,6 +60,10 @@ llm_prompt: |
 
 vocabulary: {}
 
+ui_labels:
+  generate_button: "Generate"
+  story_button: "Tell the story"
+
 templates:
   header: |
     # Changelog — {{.Version}}

@@ -73,11 +73,14 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
         contributors: labels.contributors || 'Contributors',
         styles: labels.styles || 'Styles',
         settings: labels.settings || 'Settings',
+        generateButton: labels.generateButton || 'Generate',
+        storyButton: labels.storyButton || 'Tell the story',
       })
     } else {
       uiLabels.set({
         dashboard: 'Dashboard', generate: 'Generate', story: 'Story',
         history: 'History', contributors: 'Contributors', styles: 'Styles', settings: 'Settings',
+        generateButton: 'Generate', storyButton: 'Tell the story',
       })
     }
   } catch {
@@ -85,6 +88,7 @@ export async function applyTheme(styleName: string): Promise<ThemeVars> {
     uiLabels.set({
       dashboard: 'Dashboard', generate: 'Generate', story: 'Story',
       history: 'History', contributors: 'Contributors', styles: 'Styles', settings: 'Settings',
+      generateButton: 'Generate', storyButton: 'Tell the story',
     })
   }
   injectCSSVariables(currentTheme)

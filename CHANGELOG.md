@@ -5,6 +5,17 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (UI button labels + Styles editor)
+- internal/styles: GenerateButton, StoryButton fields added to UILabels struct
+- app/style_app.go: UILabelsDetail extended with generateButton/storyButton, defaults "Generate"/"Tell the story"
+- Generate.svelte: button text uses $uiLabels.generateButton reactively
+- Story.svelte: button text uses $uiLabels.storyButton reactively
+- Styles.svelte: Templates tab gains "UI Labels" section with 9 editable fields (dashboard, generate, generate button, story, story button, history, contributors, styles, settings)
+- All 4 built-in styles updated with button labels: formal (Generate/Tell the story), patchnotes (Deploy Patch/Write the Dev Diary), epic (Inscribe the Chronicle/Begin the Saga), ironic (Fine, generate/Sure, a story)
+
+### Fixed (patchnotes llm_prompt)
+- patchnotes.shipstyle: llm_prompt rewritten to infer categories from actual commit content instead of using predefined gaming categories
+
 ### Fixed (Dashboard GitHub card)
 - Dashboard: GitHub repo picker card restructured — input and Connect button now in a joined horizontal row (shared border, no gap), input takes full width, button never wraps, Enter key triggers connect, loading shows "..."
 

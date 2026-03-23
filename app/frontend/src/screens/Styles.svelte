@@ -71,6 +71,7 @@
       llmPrompt: '', tags: [], previewUrl: '', homepage: '',
       templates: { header: '# Changelog {{.Version}}\n', feature: '- {{.Message}}\n', fix: '- {{.Message}}\n', breaking: '- {{.Message}}\n', footer: '', storyIntro: '', storyMilestone: '', storyPeak: '', storyContributor: '', storyFooter: '' },
       vocabulary: {},
+      uiLabels: { dashboard: '', generate: '', story: '', history: '', contributors: '', styles: '', settings: '', generateButton: '', storyButton: '' },
       theme: { mode: 'dark', colors: { primary: '#58a6ff', secondary: '#8b949e', background: '#0d1117', surface: '#161b22', text: '#e6edf3', accent: '#58a6ff', border: '#30363d' }, typography: { fontFamily: 'system-ui, sans-serif', fontSizeBase: '14px', fontSizeHeader: '24px', fontSizeCode: '13px' }, headerImage: '', logo: '', cardStyle: 'minimal', animations: false, customCss: '', windowControls: { default: '#666666', close: '#FF5F57', minimize: '#FEBC2E', maximize: '#28C840' } },
       terminal: { colors: { header: '', feature: '', fix: '', breaking: '', footer: '' }, decorators: { separator: '', bullet: '', indent: '' }, density: 'normal' }
     }
@@ -338,6 +339,28 @@
           </div>
 
         {:else if activeTab === 'templates'}
+          <div class="field-group">
+            <label class="section-divider">UI Labels</label>
+          </div>
+          {#each [
+            ['dashboard', 'Dashboard label'],
+            ['generate', 'Generate label'],
+            ['generateButton', 'Generate button'],
+            ['story', 'Story label'],
+            ['storyButton', 'Story button'],
+            ['history', 'History label'],
+            ['contributors', 'Contributors label'],
+            ['styles', 'Styles label'],
+            ['settings', 'Settings label'],
+          ] as [key, label]}
+            <div class="field-group">
+              <label>{label}</label>
+              <input type="text" value={detail.uiLabels?.[key] || ''} on:input={(e) => { if (!detail.uiLabels) detail.uiLabels = {}; detail.uiLabels[key] = e.currentTarget.value; detail = detail }} disabled={isBuiltIn} placeholder={label} style="height:36px;" />
+            </div>
+          {/each}
+          <div class="field-group" style="margin-top:8px;">
+            <label class="section-divider">Templates</label>
+          </div>
           {#each templateFields as tf}
             <div class="field-group">
               <label>{tf.label} {#if tf.hint}<span class="hint">{tf.hint}</span>{/if}</label>
@@ -518,6 +541,7 @@
   .field-group { display: flex; flex-direction: column; gap: 4px; }
   .field-group > label { color: var(--cl-secondary, #8b949e); font-size: 11px; text-transform: uppercase; display: flex; gap: 6px; align-items: center; }
 
+  .section-divider { font-size: 11px; font-weight: 600; color: var(--cl-text, #e6edf3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--cl-border, #30363d); padding-bottom: 4px; }
   .hint { font-size: 10px; color: var(--cl-secondary, #8b949e); opacity: 0.7; text-transform: none; }
   .hint-warn { font-size: 10px; color: #D97706; text-transform: none; }
 
