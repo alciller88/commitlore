@@ -3,7 +3,7 @@
   import { ListStyles, GetStyleDetail, DeleteStyle, ImportStyle, ExportStyle, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
   import { SetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
   import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
-  import { OpenURL } from '@wailsio/runtime'
+  import { Browser } from '@wailsio/runtime'
   import { activeStyle } from '../lib/store'
 
   type StyleListItem = { name: string; builtIn: boolean; primary: string; accent: string; background: string }
@@ -113,7 +113,7 @@
   }
 
   function openMarketplace() {
-    OpenURL('https://commitlore.dev/styles')
+    Browser.OpenURL('https://commitlore.dev/styles')
   }
 
   const colorFields = ['primary', 'secondary', 'background', 'surface', 'text', 'accent', 'border'] as const
