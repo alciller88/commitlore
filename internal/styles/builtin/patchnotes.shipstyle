@@ -703,7 +703,68 @@ html_template_story: |
       </div>
       {{end}}
 
-      <footer class="dd-footer fade-in" style="animation-delay:0.6s">
+      {{if .Contributors}}
+      <div class="dd-section-label fade-in" style="animation-delay:0.58s">Contributor Ranking</div>
+      <div class="dd-chart-card fade-in" style="animation-delay:0.6s">
+        <div style="position: relative; height: 220px;">
+          <canvas id="pn-contrib-chart"></canvas>
+        </div>
+      </div>
+
+      <script>
+      (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+        var contribNames  = [{{range .Contributors}}"{{.Name}}",{{end}}];
+        var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
+        var ctx = document.getElementById("pn-contrib-chart");
+        if (ctx && contribNames.length > 0 && typeof Chart !== "undefined") {
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: contribNames,
+                  datasets: [{
+                    label: "Commits",
+                    data: contribCounts,
+                    backgroundColor: "{{.Theme.Colors.Accent}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  indexAxis: "y",
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      beginAtZero: true,
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.12) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "{{.Theme.Typography.FontFamily}}", size: 10 } }
+                    },
+                    y: {
+                      grid: { display: false },
+                      ticks: { color: "{{.Theme.Colors.Text}}", font: { family: "{{.Theme.Typography.FontFamily}}", size: 11 } }
+                    }
+                  }
+                }
+              });
+            } catch(e) { console.error("Contrib chart error:", e); }
+          }, 100);
+        }
+      })();
+      </script>
+      {{end}}
+
+      <footer class="dd-footer fade-in" style="animation-delay:0.65s">
         {{if .Theme.Logo}}
         <div class="dd-footer-logo">{{safeHTML .Theme.Logo}}</div>
         {{end}}

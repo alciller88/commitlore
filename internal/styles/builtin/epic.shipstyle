@@ -927,7 +927,7 @@ html_template_story: |
       /* ── Stats triumvirate ── */
       .sg-stats {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 20px;
       }
       .sg-stat-card {
@@ -1290,6 +1290,22 @@ html_template_story: |
             <div class="sg-stat-value">{{len .Tags}}</div>
             <div class="sg-stat-label">Milestones</div>
           </div>
+          <div class="sg-stat-card">
+            {{if .FirstDate}}
+            <div class="sg-stat-value" style="font-size:15px;padding-top:6px;line-height:1.2;">{{.FirstDate}}</div>
+            {{else}}
+            <div class="sg-stat-value">&mdash;</div>
+            {{end}}
+            <div class="sg-stat-label">The First Stone</div>
+          </div>
+          <div class="sg-stat-card">
+            {{if .Peaks}}
+            <div class="sg-stat-value" style="font-size:15px;padding-top:6px;line-height:1.2;">{{(index .Peaks 0).Month}}</div>
+            {{else}}
+            <div class="sg-stat-value">&mdash;</div>
+            {{end}}
+            <div class="sg-stat-label">The Forge Burns Brightest</div>
+          </div>
         </div>
       </section>
 
@@ -1444,6 +1460,70 @@ html_template_story: |
           {{end}}
         </div>
       </section>
+      {{end}}
+
+      {{if .Contributors}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">Fellowship Ranking</div>
+        <div class="sg-chart-card">
+          <div style="position: relative; height: 220px;">
+            <canvas id="epic-contrib-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <script>
+      (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+        var contribNames  = [{{range .Contributors}}"{{.Name}}",{{end}}];
+        var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
+        var ctx = document.getElementById("epic-contrib-chart");
+        if (ctx && contribNames.length > 0 && typeof Chart !== "undefined") {
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: contribNames,
+                  datasets: [{
+                    label: "Heroic Deeds",
+                    data: contribCounts,
+                    backgroundColor: "{{.Theme.Colors.Accent}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  indexAxis: "y",
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      beginAtZero: true,
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    },
+                    y: {
+                      grid: { display: false },
+                      ticks: { color: "{{.Theme.Colors.Text}}", font: { family: "'Cinzel', serif", size: 11 } }
+                    }
+                  }
+                }
+              });
+            } catch(e) { console.error("Contrib chart error:", e); }
+          }, 100);
+        }
+      })();
+      </script>
       {{end}}
 
       {{/* ════ FOOTER ════ */}}

@@ -5,6 +5,16 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (Content parity across all styles)
+- styles/builtin/patchnotes.shipstyle: story contributor ranking horizontal bar chart (canvas id="pn-contrib-chart") after Dev Team section
+- styles/builtin/epic.shipstyle: story stats expanded from 3 to 5 cards — added "The First Stone" (FirstDate) and "The Forge Burns Brightest" (Most Active Month), grid changed to auto-fit
+- styles/builtin/epic.shipstyle: story Fellowship Ranking horizontal bar chart (canvas id="epic-contrib-chart") after contributors section
+- styles/builtin/ironic.shipstyle: changelog stats row — "commits (all of them)", "things added" (feat count), "things fixed" (fix count) with JS population
+- styles/builtin/ironic.shipstyle: story Most Active Month added to subtitle ("peaked in YYYY-MM")
+- styles/builtin/ironic.shipstyle: story milestones/tags table ("notable moments (if any)") with Tag and Date columns
+- styles/builtin/ironic.shipstyle: story contributor ranking horizontal bar chart (canvas id="ir-contrib-chart") labeled "who did the most (allegedly)"
+- Tests: 7 content parity test suites (commit list, type chart, total commits, first date, most active month, milestones, contributor ranking) across all 4 styles
+
 ### Fixed (Chart iframe timing and visual bugs)
 - styles/builtin: all 14 `new Chart()` calls across 4 styles wrapped in `setTimeout(..., 100)` — fixes blank charts in Wails WebView iframe where canvas reports width:0 before layout completes
 - styles/builtin/ironic.shipstyle: Clippy bubble changed from `position: fixed` to `position: sticky` and moved inside `.word-document` div — no longer covers content in iframe
