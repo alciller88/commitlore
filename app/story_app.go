@@ -43,7 +43,8 @@ func (s *StoryApp) GenerateStory(repo, from, styleName string) (string, error) {
 	}
 
 	provider, model := loadLLMSettings()
-	return renderStoryHTML(ch, styleName, provider, model)
+	repoName := renderer.RepoNameFromPath(repo)
+	return renderStoryHTML(ch, styleName, provider, model, repoName)
 }
 
 func buildChronology(repoRef string, commits []git.Commit) (git.Chronology, error) {
@@ -64,7 +65,7 @@ func buildChronology(repoRef string, commits []git.Commit) (git.Chronology, erro
 	return git.BuildChronology(commits, tags, storyTopPeaks), nil
 }
 
-func renderStoryHTML(ch git.Chronology, styleName, llmProvider, llmModel string) (string, error) {
+func renderStoryHTML(ch git.Chronology, styleName, llmProvider, llmModel, repoName string) (string, error) {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return "", cleanError(err)
@@ -78,7 +79,7 @@ func renderStoryHTML(ch git.Chronology, styleName, llmProvider, llmModel string)
 	text = tryEnrich(llmProvider, llmModel, style.LLMPrompt, text)
 
 	override := buildHTMLThemeOverride(styleName)
-	rendered, err := renderer.RenderStoryWithTheme(text, ch, style, renderer.Format("html"), override)
+	rendered, err := renderer.RenderStoryWithTheme(text, ch, style, renderer.Format("html"), override, repoName)
 	if err != nil {
 		return "", cleanError(err)
 	}

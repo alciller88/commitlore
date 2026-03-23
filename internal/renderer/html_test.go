@@ -269,7 +269,7 @@ func TestRenderStory_fallsBackToDefault(t *testing.T) {
 func TestHTMLTemplateContext_allFieldsPopulated(t *testing.T) {
 	s := loadTestStyle(t, "formal")
 	cl := sampleChangelog()
-	ctx := buildChangelogContext("some narrative", cl, s)
+	ctx := buildChangelogContext("some narrative", cl, s, "TestRepo")
 	assert.Equal(t, "Changelog", ctx.Title)
 	assert.NotEmpty(t, ctx.Content)
 	assert.NotEmpty(t, ctx.Items)
@@ -279,7 +279,7 @@ func TestHTMLTemplateContext_allFieldsPopulated(t *testing.T) {
 	assert.NotEmpty(t, ctx.Generated)
 
 	ch := sampleStoryChronology()
-	sCtx := buildStoryContext("story text", ch, s)
+	sCtx := buildStoryContext("story text", ch, s, "TestRepo")
 	assert.Equal(t, "Repository Story", sCtx.Title)
 	assert.NotEmpty(t, sCtx.Content)
 	assert.Equal(t, 62, sCtx.TotalCommits)
@@ -293,9 +293,9 @@ func TestHTMLTemplateContext_allFieldsPopulated(t *testing.T) {
 func TestHTMLTemplateContext_repoNamePopulated(t *testing.T) {
 	s := loadTestStyle(t, "formal")
 	ch := sampleStoryChronology()
-	ctx := buildStoryContext("narrative", ch, s)
+	ctx := buildStoryContext("narrative", ch, s, "TestRepo")
 	assert.NotEmpty(t, ctx.RepoName)
-	assert.Equal(t, "Repository", ctx.RepoName)
+	assert.Equal(t, "TestRepo", ctx.RepoName)
 }
 
 func TestHTMLTemplateContext_itemTypesInOutput(t *testing.T) {
@@ -310,7 +310,7 @@ func TestHTMLTemplateContext_itemTypesInOutput(t *testing.T) {
 func TestHTMLTemplateContext_changelogItemsPopulated(t *testing.T) {
 	s := loadTestStyle(t, "formal")
 	cl := sampleChangelog()
-	ctx := buildChangelogContext("", cl, s)
+	ctx := buildChangelogContext("", cl, s, "TestRepo")
 	assert.Len(t, ctx.Items, 3)
 	typeMap := make(map[string]int)
 	for _, item := range ctx.Items {
@@ -318,4 +318,33 @@ func TestHTMLTemplateContext_changelogItemsPopulated(t *testing.T) {
 	}
 	assert.Equal(t, 2, typeMap["feat"])
 	assert.Equal(t, 1, typeMap["fix"])
+}
+
+func TestRenderChangelog_repoNameInOutput(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	out, err := Render("", sampleChangelog(), s, FormatHTML, "commitlore")
+	require.NoError(t, err)
+	assert.Contains(t, out, "commitlore")
+}
+
+func TestHTMLTemplateContext_commitsByWeekPopulated(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	cl := sampleChangelog()
+	ctx := buildChangelogContext("", cl, s, "TestRepo")
+	assert.NotEmpty(t, ctx.CommitsByWeek)
+	total := 0
+	for _, w := range ctx.CommitsByWeek {
+		assert.NotEmpty(t, w.Label)
+		assert.Greater(t, w.Count, 0)
+		total += w.Count
+	}
+	assert.Equal(t, len(ctx.Items), total)
+}
+
+func TestRepoNameFromPath(t *testing.T) {
+	assert.Equal(t, "commitlore", RepoNameFromPath("C:\\Users\\alcil\\MyProjects\\commitlore"))
+	assert.Equal(t, "commitlore", RepoNameFromPath("/home/user/commitlore"))
+	assert.Equal(t, "repo", RepoNameFromPath("owner/repo"))
+	assert.Equal(t, "Repository", RepoNameFromPath("."))
+	assert.Equal(t, "Repository", RepoNameFromPath(""))
 }

@@ -76,7 +76,8 @@ func runGenerate(repoPath, since, until, styleName, format, output, llmProvider,
 		fmt.Fprintln(os.Stderr, "Warning: --include-prs requires --repo in owner/repo format. Ignoring flag.")
 	}
 
-	return generateOutput(cl, styleName, format, output, llmProvider, llmBaseURL, llmModel)
+	repoName := renderer.RepoNameFromPath(repoPath)
+	return generateOutput(cl, styleName, format, output, llmProvider, llmBaseURL, llmModel, repoName)
 }
 
 func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
@@ -90,7 +91,7 @@ func appendPRsToChangelog(cl *changelog.Changelog, prs []ghpkg.PullRequest) {
 	}
 }
 
-func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvider, llmBaseURL, llmModel string) error {
+func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvider, llmBaseURL, llmModel, repoName string) error {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return err
@@ -103,7 +104,7 @@ func generateOutput(cl changelog.Changelog, styleName, format, output, llmProvid
 
 	text = enrichWithLLM(llmProvider, llmBaseURL, llmModel, style.LLMPrompt, text)
 
-	rendered, err := renderer.Render(text, cl, style, renderer.Format(format))
+	rendered, err := renderer.Render(text, cl, style, renderer.Format(format), repoName)
 	if err != nil {
 		return err
 	}

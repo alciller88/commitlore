@@ -43,10 +43,11 @@ func (c *ChangelogApp) Generate(repo, since, until, styleName string) (string, e
 
 	cl := changelog.GroupCommits(commits)
 	provider, model := loadLLMSettings()
-	return renderChangelog(cl, styleName, provider, model)
+	repoName := renderer.RepoNameFromPath(repo)
+	return renderChangelog(cl, styleName, provider, model, repoName)
 }
 
-func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel string) (string, error) {
+func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel, repoName string) (string, error) {
 	style, err := styles.Load(styleName)
 	if err != nil {
 		return "", cleanError(err)
@@ -60,7 +61,7 @@ func renderChangelog(cl changelog.Changelog, styleName, llmProvider, llmModel st
 	text = tryEnrich(llmProvider, llmModel, style.LLMPrompt, text)
 
 	override := buildHTMLThemeOverride(styleName)
-	rendered, err := renderer.RenderWithTheme(text, cl, style, renderer.Format("html"), override)
+	rendered, err := renderer.RenderWithTheme(text, cl, style, renderer.Format("html"), override, repoName)
 	if err != nil {
 		return "", cleanError(err)
 	}
