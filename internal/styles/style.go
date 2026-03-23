@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,6 +18,7 @@ type Style struct {
 	Version               string            `yaml:"version"`
 	Description           string            `yaml:"description"`
 	Author                string            `yaml:"author"`
+	Language              string            `yaml:"language"`
 	LLMPrompt             string            `yaml:"llm_prompt"`
 	Templates             Templates         `yaml:"templates"`
 	Vocabulary            map[string]string `yaml:"vocabulary"`
@@ -191,6 +193,9 @@ func validate(s Style) error {
 	if s.Templates.Header == "" && s.Templates.Feature == "" {
 		return fmt.Errorf("style %q has no templates defined", s.Name)
 	}
+	if err := validateLanguage(s); err != nil {
+		return err
+	}
 	if err := validateCardStyle(s); err != nil {
 		return err
 	}
@@ -198,6 +203,18 @@ func validate(s Style) error {
 		return err
 	}
 	return validateMode(s)
+}
+
+func validateLanguage(s Style) error {
+	v := s.Language
+	if v == "" {
+		return nil
+	}
+	valid := map[string]bool{"en": true, "es": true}
+	if !valid[v] {
+		return fmt.Errorf("style %q: invalid language %q (use en or es)", s.Name, v)
+	}
+	return nil
 }
 
 func validateCardStyle(s Style) error {
@@ -234,6 +251,59 @@ func validateMode(s Style) error {
 		return fmt.Errorf("style %q: invalid mode %q (use dark or light)", s.Name, v)
 	}
 	return nil
+}
+
+// ResolveStyleForLanguage loads the correct language variant of a style.
+// For "en" or empty language, it loads the base file.
+// For other languages, it looks for <name>.<lang>.shipstyle and verifies
+// the language field matches.
+func ResolveStyleForLanguage(name, lang string) (Style, error) {
+	if lang == "" || lang == "en" {
+		return Load(name)
+	}
+	s, err := loadLanguageVariant(name, lang)
+	if err != nil {
+		return Style{}, fmt.Errorf(
+			"Style '%s' is not available in Spanish.\n"+
+				"Switch styles or install a Spanish version from the marketplace.",
+			name)
+	}
+	if s.Language != lang {
+		return Style{}, fmt.Errorf(
+			"Style '%s' is not available in Spanish.\n"+
+				"Switch styles or install a Spanish version from the marketplace.",
+			name)
+	}
+	return s, nil
+}
+
+func loadLanguageVariant(name, lang string) (Style, error) {
+	variantName := name + "." + lang
+	path := "builtin/" + variantName + ".shipstyle"
+	data, err := builtinFS.ReadFile(path)
+	if err == nil {
+		return parseStyle(data)
+	}
+	return loadUserLanguageVariant(name, lang)
+}
+
+func loadUserLanguageVariant(name, lang string) (Style, error) {
+	dir, err := UserStylesDir()
+	if err != nil {
+		return Style{}, err
+	}
+	path := filepath.Join(dir, name+"."+lang+".shipstyle")
+	return LoadFromFile(path)
+}
+
+// GetAvailableLanguagesForStyle returns which languages are available
+// for a given style name.
+func GetAvailableLanguagesForStyle(name string) []string {
+	langs := []string{"en"}
+	if _, err := loadLanguageVariant(name, "es"); err == nil {
+		langs = append(langs, "es")
+	}
+	return langs
 }
 
 // ListBuiltin returns the names of all built-in styles.

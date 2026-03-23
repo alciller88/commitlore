@@ -1,6 +1,8 @@
 package styles
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -173,4 +175,65 @@ func TestValidate_validValues(t *testing.T) {
 	}
 	err := validate(s)
 	assert.NoError(t, err)
+}
+
+func TestLanguageFieldValidation_valid(t *testing.T) {
+	for _, lang := range []string{"", "en", "es"} {
+		s := Style{Name: "test", Language: lang, Templates: Templates{Header: "h"}}
+		err := validate(s)
+		assert.NoError(t, err, "language %q should be valid", lang)
+	}
+}
+
+func TestLanguageFieldValidation_invalid(t *testing.T) {
+	s := Style{Name: "test", Language: "fr", Templates: Templates{Header: "h"}}
+	err := validate(s)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "language")
+}
+
+func TestResolveStyleForLanguage_en(t *testing.T) {
+	s, err := ResolveStyleForLanguage("formal", "en")
+	require.NoError(t, err)
+	assert.Equal(t, "formal", s.Name)
+}
+
+func TestResolveStyleForLanguage_emptyDefaultsToEn(t *testing.T) {
+	s, err := ResolveStyleForLanguage("formal", "")
+	require.NoError(t, err)
+	assert.Equal(t, "formal", s.Name)
+}
+
+func TestResolveStyleForLanguage_es_found(t *testing.T) {
+	s, err := ResolveStyleForLanguage("formal", "es")
+	require.NoError(t, err)
+	assert.Equal(t, "formal", s.Name)
+	assert.Equal(t, "es", s.Language)
+}
+
+func TestResolveStyleForLanguage_es_notfound(t *testing.T) {
+	_, err := ResolveStyleForLanguage("nonexistent-style-xyz", "es")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "not available in Spanish")
+}
+
+func TestResolveStyleForLanguage_fieldMismatch(t *testing.T) {
+	setTestConfigDir(t)
+
+	// Create a .es variant with wrong language field
+	dir, err := UserStylesDir()
+	require.NoError(t, err)
+	content := `name: mismatch
+language: "en"
+version: "1.0.0"
+templates:
+  header: "h"
+  feature: "f"
+`
+	path := filepath.Join(dir, "mismatch.es.shipstyle")
+	require.NoError(t, os.WriteFile(path, []byte(content), 0644))
+
+	_, err = ResolveStyleForLanguage("mismatch", "es")
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "not available in Spanish")
 }
