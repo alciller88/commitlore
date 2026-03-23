@@ -221,6 +221,8 @@ fix/github-connect-modalGitHub card → modal with repo input + optional token, 
 feat/p3-html-templatesHTML template system: HTMLTemplate field in .shipstyle, per-style templates (formal/patchnotes/epic/ironic), Chart.js, Styles editor HTML tab2026-03-23feat/p3-html-templates
 fix/story-template-fieldsFixed ironic {{.Commits}}→{{.Count}}, ContributorEntry.Count, Chart.js try/catch error handling2026-03-23fix/story-template-fields
 feat/styles-screen-simplifiedStyles screen rework: read-only detail panel, removed editor/create/save, import/export/delete/set-active, marketplace link2026-03-23feat/styles-screen-simplified
+fix/styles-screen-buildFixed Browser.OpenURL import from @wailsio/runtime namespace2026-03-23fix/styles-screen-build
+feat/p3-html-templates-storySplit html_template into html_template_changelog + html_template_story, unique story templates per style2026-03-23feat/p3-html-templates-story
 
 Add a row here when completing each phase.
 

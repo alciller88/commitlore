@@ -141,13 +141,18 @@ Complete structure of a .shipstyle file:
     bullet: "•"
     separator: "────────────────────────────────────────"
 
-  html_template: |            # custom HTML template (optional, Go html/template syntax)
+  html_template_changelog: |  # custom HTML template for changelogs (optional)
     <!DOCTYPE html>...        # complete self-contained HTML document
                               # receives HTMLTemplateContext with all style fields:
                               # {{.Theme.Colors.Primary}}, {{.Icons.Feature}}, etc.
                               # When empty, the default renderer is used.
 
-All vocabulary, theme, terminal, ui_labels, icons, and html_template fields
+  html_template_story: |      # custom HTML template for stories (optional)
+    <!DOCTYPE html>...        # same context struct as changelog, but story fields
+                              # (.Peaks, .Contributors, .Tags, .TotalCommits) populated
+                              # When empty, the default renderer is used.
+
+All vocabulary, theme, terminal, ui_labels, icons, and html_template_* fields
 are optional with sensible zero-value defaults.
 
 Built-in Styles (v1)

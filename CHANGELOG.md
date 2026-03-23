@@ -5,6 +5,17 @@ Versioning follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Added (Story HTML templates)
+- internal/styles: HTMLTemplate field split into HTMLTemplateChangelog + HTMLTemplateStory — separate templates for changelog and story output
+- html_template_changelog: renamed from html_template, keeps existing changelog templates
+- html_template_story: new field with unique story templates per style:
+  - formal: Executive Activity Report — line chart for commit arc, vertical dot timeline, contributor ranking bar chart, executive summary stats box
+  - patchnotes: Dev Diary — blog-post style monthly entries, season stats card, activity bar chart, dev team grid, fade-in animations
+  - epic: The Saga — 40px Cinzel title, prologue box, chapter-per-month with Roman numerals, heraldic fellowship circles, full ornamental treatment
+  - ironic: "A Story I Guess" — fake Word titlebar (astory.doc), ridiculously understated chapter titles, resigned commentary, Clippy with story-specific message
+- Template function added: `add` (integer addition for chapter numbering)
+- Tests: TestRenderStory_usesHTMLTemplateStory, TestRenderStory_fallsBackToDefault, existing tests updated
+
 ### Changed (Styles screen simplified)
 - Styles.svelte: complete rework — removed full editor (Colors/Typography/Icons/Images/Templates/HTML/Advanced tabs), create form, save functionality
 - New read-only detail panel: logo (48px), name/version badge, author, description, 7 color circles (20px) with hex tooltip, font preview, mode badge, UI labels (if custom), icons (if custom), collapsible LLM prompt

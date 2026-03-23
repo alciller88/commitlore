@@ -71,12 +71,12 @@ type StoryContributor struct {
 
 func renderCustomChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
 	ctx := buildChangelogContext(content, cl, style)
-	return executeHTMLTemplate(style.HTMLTemplate, ctx)
+	return executeHTMLTemplate(style.HTMLTemplateChangelog, ctx)
 }
 
 func renderCustomStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
 	ctx := buildStoryContext(content, ch, style)
-	return executeHTMLTemplate(style.HTMLTemplate, ctx)
+	return executeHTMLTemplate(style.HTMLTemplateStory, ctx)
 }
 
 func buildChangelogContext(content string, cl changelog.Changelog, style styles.Style) HTMLTemplateContext {
@@ -172,6 +172,7 @@ func executeHTMLTemplate(tmplStr string, data interface{}) (string, error) {
 		"upper":    strings.ToUpper,
 		"lower":    strings.ToLower,
 		"initials": templateInitials,
+		"add":      func(a, b int) int { return a + b },
 	}
 	tmpl, err := template.New("html").Funcs(funcMap).Parse(tmplStr)
 	if err != nil {

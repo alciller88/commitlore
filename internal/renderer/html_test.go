@@ -90,7 +90,7 @@ func TestRenderStory_html(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, out, "<!DOCTYPE html>")
 	assert.Contains(t, out, "<body>")
-	assert.Contains(t, out, "Repository Story")
+	assert.Contains(t, out, "Repository")
 }
 
 func TestRenderStory_htmlContainsSections(t *testing.T) {
@@ -98,11 +98,9 @@ func TestRenderStory_htmlContainsSections(t *testing.T) {
 	s := loadTestStyle(t, "formal")
 	out, err := RenderStory("", ch, s, FormatHTML)
 	require.NoError(t, err)
-	assert.Contains(t, out, "Milestones")
-	assert.Contains(t, out, "Activity Peaks")
-	assert.Contains(t, out, "Contributors")
 	assert.Contains(t, out, "v1.0.0")
 	assert.Contains(t, out, "Alice")
+	assert.Contains(t, out, "2025-01")
 }
 
 func TestRenderStory_htmlEmptyChronology(t *testing.T) {
@@ -224,9 +222,9 @@ func sampleStoryChronology() git.Chronology {
 	}
 }
 
-func TestRenderChangelog_usesHTMLTemplate(t *testing.T) {
+func TestRenderChangelog_usesHTMLTemplateChangelog(t *testing.T) {
 	s := loadTestStyle(t, "formal")
-	assert.NotEmpty(t, s.HTMLTemplate, "formal style must have html_template set")
+	assert.NotEmpty(t, s.HTMLTemplateChangelog, "formal style must have html_template_changelog set")
 	out, err := Render("Test narrative", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "<!DOCTYPE html>")
@@ -237,12 +235,34 @@ func TestRenderChangelog_usesHTMLTemplate(t *testing.T) {
 
 func TestRenderChangelog_fallsBackToDefault(t *testing.T) {
 	s := loadTestStyle(t, "formal")
-	s.HTMLTemplate = ""
+	s.HTMLTemplateChangelog = ""
 	out, err := Render("", sampleChangelog(), s, FormatHTML)
 	require.NoError(t, err)
 	assert.Contains(t, out, "<!DOCTYPE html>")
 	assert.Contains(t, out, "Changelog")
 	assert.Contains(t, out, "Features")
+	assert.NotContains(t, out, "Chart.js")
+}
+
+func TestRenderStory_usesHTMLTemplateStory(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	assert.NotEmpty(t, s.HTMLTemplateStory, "formal style must have html_template_story set")
+	ch := sampleStoryChronology()
+	out, err := RenderStory("Story narrative", ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<!DOCTYPE html>")
+	assert.Contains(t, out, "Chart.js")
+	assert.Contains(t, out, "Alice")
+}
+
+func TestRenderStory_fallsBackToDefault(t *testing.T) {
+	s := loadTestStyle(t, "formal")
+	s.HTMLTemplateStory = ""
+	ch := sampleStoryChronology()
+	out, err := RenderStory("", ch, s, FormatHTML)
+	require.NoError(t, err)
+	assert.Contains(t, out, "<!DOCTYPE html>")
+	assert.Contains(t, out, "Repository Story")
 	assert.NotContains(t, out, "Chart.js")
 }
 
