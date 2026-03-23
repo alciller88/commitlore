@@ -49,11 +49,16 @@ terminal:
 llm_prompt: |
   You are writing patch notes for a video game update in the style of a
   professional game studio like Riot Games or Blizzard.
-  Group changes by category: Gameplay, UI, Performance, Bug Fixes.
-  Be clear and player-friendly. Highlight balance changes and bug fixes prominently.
-  Use gaming conventions — "fixed", "added", "adjusted", "improved".
+  Group changes by category: Gameplay, UI, Performance, Bug Fixes, Other.
+  Use gaming conventions — "Fixed", "Added", "Adjusted", "Improved".
+  Be clear and player-friendly. Highlight bug fixes and balance changes prominently.
   Do not use corporate jargon. Tone: professional but approachable.
-  Output clean markdown.
+  IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the data
+  section below. Do not invent features, fixes, balance changes, or any content
+  that is not explicitly present in the commit data. Every item in the patch notes
+  must correspond to a real commit. Adapt the gaming tone and language, but never
+  fabricate content. If a commit message is unclear, summarize it faithfully —
+  do not embellish or expand beyond what is stated.
 
 vocabulary:
   bug: "issue"
