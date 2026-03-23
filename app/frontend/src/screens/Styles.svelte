@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte'
-  import { ListStyles, GetStyleDetail, DeleteStyle, ImportStyle, ExportStyle, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
+  import { ListStyles, GetStyleDetail, DeleteStyle, GetStyleTheme } from '../../bindings/github.com/alciller88/commitlore/app/styleapp.js'
   import { SetActiveStyle } from '../../bindings/github.com/alciller88/commitlore/app/configapp.js'
-  import { OpenFolderPicker } from '../../bindings/github.com/alciller88/commitlore/app/gitapp.js'
-  import { Browser } from '@wailsio/runtime'
   import { activeStyle } from '../lib/store'
+  import { createEventDispatcher } from 'svelte'
+
+  const dispatch = createEventDispatcher()
 
   type StyleListItem = { name: string; builtIn: boolean; primary: string; accent: string; background: string }
 
@@ -74,31 +75,6 @@
     }
   }
 
-  async function importStyle() {
-    error = ''
-    try {
-      const path = await OpenFolderPicker()
-      if (path) {
-        await ImportStyle(path)
-        await loadStyles()
-      }
-    } catch (e: any) {
-      error = e?.message || 'Import failed'
-    }
-  }
-
-  async function exportStyle() {
-    if (!selectedName) return
-    error = ''
-    try {
-      await ExportStyle(selectedName, selectedName + '.shipstyle')
-      success = 'Exported.'
-      setTimeout(() => success = '', 3000)
-    } catch (e: any) {
-      error = e?.message || 'Export failed'
-    }
-  }
-
   async function setActive() {
     if (!selectedName) return
     error = ''
@@ -113,7 +89,7 @@
   }
 
   function openMarketplace() {
-    Browser.OpenURL('https://commitlore.dev/styles')
+    dispatch('navigate', 'Marketplace')
   }
 
   const colorFields = ['primary', 'secondary', 'background', 'surface', 'text', 'accent', 'border'] as const
@@ -177,13 +153,9 @@
       {/each}
     </div>
     <div class="left-actions">
-      <button class="left-btn" on:click={importStyle}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Import style
-      </button>
       <button class="left-btn" on:click={openMarketplace}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        Get more styles
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M6 2L3 7v13a1 1 0 001 1h16a1 1 0 001-1V7l-3-5H6z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 01-8 0"/></svg>
+        Browse marketplace
       </button>
     </div>
   </div>
@@ -305,7 +277,6 @@
           <button class="action-btn primary" on:click={setActive} disabled={currentActiveStyle === selectedName}>
             {currentActiveStyle === selectedName ? 'Active' : 'Set as active'}
           </button>
-          <button class="action-btn outline" on:click={exportStyle}>Export</button>
           {#if !isBuiltIn}
             {#if !confirmDelete}
               <button class="action-btn danger" on:click={() => confirmDelete = true}>Delete</button>

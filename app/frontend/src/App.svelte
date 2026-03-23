@@ -6,6 +6,7 @@
   import History from './screens/History.svelte'
   import Contributors from './screens/Contributors.svelte'
   import Styles from './screens/Styles.svelte'
+  import Marketplace from './screens/Marketplace.svelte'
   import Settings from './screens/Settings.svelte'
   import { activeRepo, repoSummary, activeStyle, uiLabels } from './lib/store'
   import type { ActiveRepo } from './lib/store'
@@ -24,6 +25,7 @@
   ]
   const systemScreens = [
     { name: 'Styles', icon: 'styles' },
+    { name: 'Marketplace', icon: 'marketplace' },
     { name: 'Settings', icon: 'settings' },
   ]
 
@@ -79,7 +81,7 @@
   function winMaximize() { Window.ToggleMaximise() }
   function winClose() { Window.Close() }
 
-  const components: Record<string, any> = { Dashboard, Generate, Story, History, Contributors, Styles, Settings }
+  const components: Record<string, any> = { Dashboard, Generate, Story, History, Contributors, Styles, Marketplace, Settings }
 </script>
 
 <div class="layout">
@@ -125,10 +127,11 @@
         <button class="nav-item" class:active={activeScreen === screen.name} on:click={() => activeScreen = screen.name}>
           <span class="nav-icon">
             {#if screen.icon === 'styles'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            {:else if screen.icon === 'marketplace'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><path d="M6 2L3 7v13a1 1 0 001 1h16a1 1 0 001-1V7l-3-5H6z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 01-8 0"/></svg>
             {:else if screen.icon === 'settings'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
             {/if}
           </span>
-          <span class="nav-text">{screen.name === 'Styles' ? $uiLabels.styles : $uiLabels.settings}</span>
+          <span class="nav-text">{screen.name === 'Styles' ? $uiLabels.styles : screen.name === 'Marketplace' ? $uiLabels.marketplace : $uiLabels.settings}</span>
         </button>
       {/each}
     </div>
@@ -151,7 +154,7 @@
       {/if}
     </div>
     <main class="content">
-      <svelte:component this={components[activeScreen]} />
+      <svelte:component this={components[activeScreen]} on:navigate={(e) => activeScreen = e.detail} />
     </main>
   </div>
 </div>
