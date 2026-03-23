@@ -975,12 +975,16 @@ html_template_story: |
         grid-template-columns: 3fr 2fr;
         gap: 24px;
         margin-bottom: 48px;
+        width: 100%;
+        min-width: 0;
       }
       .rp-chart-card {
         background: {{.Theme.Colors.Surface}};
         border: 1px solid {{.Theme.Colors.Border}};
         border-radius: 8px;
         padding: 24px;
+        min-width: 0;
+        overflow: hidden;
       }
       .rp-chart-title {
         font-size: 13px;
