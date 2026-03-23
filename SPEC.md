@@ -140,6 +140,7 @@ name: "name"
 version: "1.0.0"
 description: "description"
 author: "author"
+language: ""                # language code: "en" (default), "es". Empty = "en".
 tags: []                    # marketplace metadata
 preview_url: ""             # preview URL
 homepage: ""                # project URL
@@ -319,7 +320,7 @@ The app shares all logic from `internal/`. It only adds a UI layer on top.
 | **Contributors** | Visual contribution map with avatar initials and activity bars. |
 | **Styles** | Read-only browser: preview styles, install from marketplace, delete, set active. No in-app editing. |
 | **Marketplace** | Browse and install community styles from the official commitlore-styles repository. Requires internet connection. Built-in styles are always available offline regardless of connectivity. |
-| **Settings** | LLM provider configuration, API key management via OS keychain, app style selection. |
+| **Settings** | LLM provider configuration, API key management via OS keychain, app style selection, language selector (English / Spanish). |
 
 ### Repo Picker
 
@@ -340,6 +341,17 @@ The app shares all logic from `internal/`. It only adds a UI layer on top.
 - Persisted in `~/.config/commitlore/config.yml` as `active_style` field.
 - Theme colors, typography, logo, and ui_labels injected as CSS variables across the entire UI.
 - Default style: `formal`.
+
+### Language Selector (Settings screen)
+
+- Two options: English / Español, rendered as radio buttons.
+- Persisted in `~/.config/commitlore/config.yml` as `language` field.
+- On change: validates that the active style has a variant for the selected language.
+  - If not available: shows inline error, does not change the selection.
+  - If available: saves language, reloads theme and ui_labels from the language variant.
+- Language variants are separate `.shipstyle` files with `<name>.<lang>.shipstyle` naming.
+- Default language: `"en"`.
+- All 4 built-in styles have Spanish variants. Marketplace styles may optionally provide them.
 
 ### Styles Screen
 
@@ -489,6 +501,7 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 12 | Release pipeline + cross-platform binaries | In Progress |
 | Phase 13 | Polish, docs, README, examples | In Progress |
 | Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Completed |
+| Phase 15 | Internationalisation (i18n) — English/Spanish language support | Completed |
 
 > **Phase 12 — In Progress, UNDOCUMENTED:** Release workflow exists (`.github/workflows/release.yml`) with CLI binary builds for 3 platforms on `v*` tag push. **Missing:** Wails desktop app builds per platform; automatic CHANGELOG.md update on release. Not yet documented in CHANGELOG.md.
 
@@ -521,11 +534,6 @@ No P0 items at this time.
   - _Acceptance:_ LICENSE file in repo root; license badge in README links to it.
 
 ### P2 — Planned but not scheduled
-
-**Internationalisation (i18n)**
-
-- Language selector in Settings: English / Spanish (extensible).
-  - _Acceptance:_ Language applies to all app text (UI labels, navigation, buttons, messages, errors) and all generated content (changelogs, stories, reports). Built-in style templates have both English and Spanish versions. LLM prompt instructs the model to respond in the selected language. Language persists in `config.yml`. Default: English. Architecture decision (single `.shipstyle` with language blocks vs. separate files per language) must be confirmed before implementation.
 
 **Per-style navigation icons**
 

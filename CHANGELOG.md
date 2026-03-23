@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Language selector in Settings**: English / Spanish, independent of active style, persisted in `config.yml`
+- **`language` field in `.shipstyle` schema**: Language identification and validation (`"en"` / `"es"`, optional, defaults to `"en"`)
+- **Spanish variants for all 4 built-in styles**: `formal.es`, `patchnotes.es`, `epic.es`, `ironic.es` — complete translations of templates, vocabulary, ui_labels, llm_prompt, and HTML template visible text
+- **Spanish variants for 2 marketplace styles**: `cyberpunk.es`, `adeptus-mechanicus.es` (in `commitlore-styles` repository)
+- **Style availability validation**: Switching to a language blocks if the active style has no variant for that language, with user-facing error message
+- **`ResolveStyleForLanguage`**: Loads correct language variant (`<name>.<lang>.shipstyle`) with user-facing error when unavailable
+- **`GetAvailableLanguagesForStyle` binding**: Returns available languages for the Settings UI language selector
 - **Marketplace screen**: Browse and install community styles from the official `commitlore-styles` repository. Displays style cards with preview image, name, author, description, tags, and version. Install button with loading/installed states. Full-screen error state with retry button for offline scenarios.
 - **MarketplaceApp binding**: `FetchCatalog`, `InstallStyle`, `IsInstalled` — fetches catalog from the official repository, downloads and validates `.shipstyle` files with strict schema checking (rejects unknown fields), saves to user styles directory.
 - **`marketplace` ui_label field**: Styles can now customize the Marketplace navigation label via `ui_labels.marketplace` in `.shipstyle` schema.
