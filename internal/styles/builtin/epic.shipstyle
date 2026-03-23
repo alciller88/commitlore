@@ -489,14 +489,13 @@ html_template_changelog: |
       <div class="cl-sep">{{.Icons.Separator}}</div>
 
       {{/* ── Narrative content ── */}}
-      {{if .Content}}
+      {{- if .Content}}
       <section class="cl-animated">
         <div class="cl-narrative">{{.Content}}</div>
       </section>
       <div class="cl-sep">{{.Icons.Separator}}</div>
-      {{end}}
-
-      {{if .Items}}
+      {{- end}}
+      {{- if .Items}}
       {{/* ════════ CHANGELOG MODE ════════ */}}
 
       {{/* Stats */}}
@@ -603,9 +602,8 @@ html_template_changelog: |
       })();
       </script>
 
-      {{end}}{{/* end .Items */}}
-
-      {{if .Peaks}}
+      {{- end}}{{/* end .Items */}}
+      {{- if .Peaks}}
       {{/* ════════ STORY MODE ════════ */}}
 
       {{/* Stats */}}
@@ -718,7 +716,7 @@ html_template_changelog: |
       </section>
       {{end}}
 
-      {{end}}{{/* end .Peaks */}}
+      {{- end}}{{/* end .Peaks */}}
 
       {{/* ── Footer ── */}}
       <div class="cl-sep">{{.Icons.Separator}}</div>
