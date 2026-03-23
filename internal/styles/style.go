@@ -24,8 +24,9 @@ type Style struct {
 	Tags        []string          `yaml:"tags"`
 	PreviewURL  string            `yaml:"preview_url"`
 	Homepage    string            `yaml:"homepage"`
-	UILabels    UILabels          `yaml:"ui_labels"`
-	Icons       Icons             `yaml:"icons"`
+	UILabels     UILabels          `yaml:"ui_labels"`
+	Icons        Icons             `yaml:"icons"`
+	HTMLTemplate string            `yaml:"html_template"`
 }
 
 // Icons holds per-style icon/emoji characters for commit types and decorators.

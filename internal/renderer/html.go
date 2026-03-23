@@ -16,6 +16,13 @@ import (
 )
 
 func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
+	if style.HTMLTemplate != "" {
+		return renderCustomChangelogHTML(content, cl, style)
+	}
+	return renderDefaultChangelogHTML(content, cl, style)
+}
+
+func renderDefaultChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
 	var buf bytes.Buffer
 
 	buf.WriteString("<div class=\"narrative\">\n")
@@ -70,6 +77,13 @@ func writeCommitHTML(buf *bytes.Buffer, c changelog.ParsedCommit) {
 }
 
 func renderStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
+	if style.HTMLTemplate != "" {
+		return renderCustomStoryHTML(content, ch, style)
+	}
+	return renderDefaultStoryHTML(content, ch, style)
+}
+
+func renderDefaultStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
 	var buf bytes.Buffer
 
 	buf.WriteString("<div class=\"narrative\">\n")
