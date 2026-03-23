@@ -711,6 +711,98 @@ func TestRenderStory_formalNoInlineFontSizeInStats(t *testing.T) {
 		"formal story: inline font-size overrides should be removed from stat cells")
 }
 
+// Phase 6 — Content parity tests
+
+func TestAllStyles_changelogHasCommitList(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			out, err := Render("", sampleChangelog(), s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, "add login", "%s changelog: commit message must appear", name)
+		})
+	}
+}
+
+func TestAllStyles_changelogHasTypeChart(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			out, err := Render("", sampleChangelog(), s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, "Chart", "%s changelog: must include a Chart.js chart", name)
+		})
+	}
+}
+
+func TestAllStyles_storyHasTotalCommits(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			ch := sampleStoryChronology()
+			out, err := RenderStory("", ch, s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, "62", "%s story: TotalCommits must be visible", name)
+		})
+	}
+}
+
+func TestAllStyles_storyHasFirstDate(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			ch := sampleStoryChronology()
+			out, err := RenderStory("", ch, s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, "2025-01-01", "%s story: FirstDate must be visible", name)
+		})
+	}
+}
+
+func TestAllStyles_storyHasMostActiveMonth(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			ch := sampleStoryChronology()
+			out, err := RenderStory("", ch, s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, "2025-01", "%s story: most active month must be visible", name)
+		})
+	}
+}
+
+func TestAllStyles_storyHasMilestones(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			ch := sampleStoryChronology()
+			out, err := RenderStory("", ch, s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, "v1.0.0", "%s story: tags/milestones must be visible", name)
+		})
+	}
+}
+
+func TestAllStyles_storyHasContributorRankingChart(t *testing.T) {
+	styleNames := []string{"formal", "patchnotes", "epic", "ironic"}
+	for _, name := range styleNames {
+		t.Run(name, func(t *testing.T) {
+			s := loadTestStyle(t, name)
+			ch := sampleStoryChronology()
+			out, err := RenderStory("", ch, s, FormatHTML)
+			require.NoError(t, err)
+			assert.Contains(t, out, `"Alice"`, "%s story: contributor name must appear in chart data", name)
+			assert.Contains(t, out, `"Bob"`, "%s story: contributor name must appear in chart data", name)
+		})
+	}
+}
+
 func TestRepoNameFromPath(t *testing.T) {
 	assert.Equal(t, "commitlore", RepoNameFromPath("C:\\Users\\alcil\\MyProjects\\commitlore"))
 	assert.Equal(t, "commitlore", RepoNameFromPath("/home/user/commitlore"))

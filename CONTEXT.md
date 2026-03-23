@@ -228,6 +228,7 @@ fix/renderer-dataRenderer data bugs: version from semver, contributor count, fir
 fix/renderer-visualVisual and style-specific bugs: formal banner date, patchnotes fade-in fallback, epic canvas IDs, ironic titles and contributor table2026-03-23fix/renderer-visual
 fix/charts-and-cacheChart color-mix fix, story peaks 3→12, commit cache for GitHub API, stats card ordering2026-03-23fix/charts-and-cache
 fix/charts-iframeChart.js setTimeout wrap, Clippy sticky, ironic icons/title, formal stat sizes2026-03-23fix/charts-iframe
+fix/content-parityContent parity: contributor ranking charts, epic stats, ironic stats/milestones/chart, formal as reference2026-03-23fix/content-parity
 
 Add a row here when completing each phase.
 

@@ -385,6 +385,17 @@ html_template_changelog: |
         color: {{.Theme.Colors.Secondary}};
         margin-bottom: 4px;
       }
+      .doc-stats {
+        display: flex;
+        gap: 24px;
+        margin-bottom: 16px;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+      }
+      .doc-stat-val {
+        font-weight: 700;
+        color: {{.Theme.Colors.Text}};
+      }
     </style>
   </head>
   <body>
@@ -429,6 +440,12 @@ html_template_changelog: |
 
         {{if .Items}}
 
+        <div class="doc-stats">
+          <span>commits (all of them): <span class="doc-stat-val">{{len .Items}}</span></span>
+          <span>things added: <span class="doc-stat-val" id="ir-feat-count">&mdash;</span></span>
+          <span>things fixed: <span class="doc-stat-val" id="ir-fix-count">&mdash;</span></span>
+        </div>
+
         <div class="doc-section-label">commits ({{len .Items}} of them)</div>
         <ul class="doc-commit-list">
           {{range .Items}}
@@ -455,6 +472,12 @@ html_template_changelog: |
             {{end}}
           ];
           var counts = {};
+          items.forEach(function(i) { counts[i.type] = (counts[i.type] || 0) + 1; });
+          var el1 = document.getElementById("ir-feat-count");
+          var el2 = document.getElementById("ir-fix-count");
+          if (el1) el1.textContent = counts["feat"] || counts["feature"] || 0;
+          if (el2) el2.textContent = counts["fix"] || 0;
+          counts = {};
           items.forEach(function(i) {
             counts[i.type] = (counts[i.type] || 0) + 1;
           });
@@ -906,6 +929,7 @@ html_template_story: |
         <div class="doc-subtitle">
           {{.RepoName}} &nbsp;·&nbsp; {{.Generated}}{{if .Version}} &nbsp;·&nbsp; {{.Version}}{{end}}
           {{if .TotalCommits}} &nbsp;·&nbsp; {{.TotalCommits}} commits. someone was busy.{{end}}
+          {{if .Peaks}} &nbsp;·&nbsp; peaked in {{(index .Peaks 0).Month}}{{end}}
         </div>
         <hr class="doc-divider">
 
@@ -1004,6 +1028,79 @@ html_template_story: |
               <td>{{.Name}}</td>
               <td>{{.Count}}</td>
               <td>since {{.Date}}</td>
+            </tr>
+            {{end}}
+          </tbody>
+        </table>
+        {{end}}
+
+        {{if .Contributors}}
+        <div class="doc-section-label">who did the most (allegedly)</div>
+        <div class="doc-chart-wrap">
+          <div class="doc-chart-canvas-wrap">
+            <canvas id="ir-contrib-chart"></canvas>
+          </div>
+        </div>
+
+        <script>
+        (function() {
+          var contribNames  = [{{range .Contributors}}"{{.Name}}",{{end}}];
+          var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
+          var ctx = document.getElementById("ir-contrib-chart");
+          if (ctx && contribNames.length > 0 && typeof Chart !== "undefined") {
+            setTimeout(function() {
+              try {
+                new Chart(ctx, {
+                  type: "bar",
+                  data: {
+                    labels: contribNames,
+                    datasets: [{
+                      label: "commits",
+                      data: contribCounts,
+                      backgroundColor: "{{.Theme.Colors.Primary}}",
+                      borderWidth: 0,
+                      borderRadius: 2
+                    }]
+                  },
+                  options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                      x: {
+                        beginAtZero: true,
+                        grid: { color: "{{.Theme.Colors.Border}}" },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      },
+                      y: {
+                        grid: { display: false },
+                        ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Comic Sans MS', cursive", size: 10 } }
+                      }
+                    }
+                  }
+                });
+              } catch(e) { console.error("Contrib chart error:", e); }
+            }, 100);
+          }
+        })();
+        </script>
+        {{end}}
+
+        {{if .Tags}}
+        <div class="doc-section-label">notable moments (if any)</div>
+        <table class="doc-contrib-table">
+          <thead>
+            <tr>
+              <th>Tag</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{range .Tags}}
+            <tr>
+              <td>{{.Name}}</td>
+              <td>{{.Date}}</td>
             </tr>
             {{end}}
           </tbody>
