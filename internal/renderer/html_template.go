@@ -12,6 +12,9 @@ import (
 )
 
 // HTMLTemplateContext provides all data to custom HTML templates.
+// It is used for both changelog and story renders; fields not relevant
+// to a given mode are left at their zero values so {{if .Items}} and
+// {{if .Peaks}} conditionals work correctly for both contexts.
 type HTMLTemplateContext struct {
 	Title     string
 	Content   template.HTML
@@ -22,7 +25,18 @@ type HTMLTemplateContext struct {
 	RepoName  string
 	Generated string
 	Version   string
+
+	// Story-only fields (zero when rendering a changelog)
+	TotalCommits int
+	FirstAuthor  string
+	FirstDate    string
+	Tags         []StoryTag
+	Peaks        []StoryPeak
+	Contributors []StoryContributor
 }
+
+// StoryHTMLContext is an alias for HTMLTemplateContext kept for compatibility.
+type StoryHTMLContext = HTMLTemplateContext
 
 // HTMLItem represents a single commit entry for the HTML template.
 type HTMLItem struct {
@@ -32,24 +46,6 @@ type HTMLItem struct {
 	Author  string
 	Date    string
 	Icon    string
-}
-
-// StoryHTMLContext provides all data for story HTML templates.
-type StoryHTMLContext struct {
-	Title        string
-	Content      template.HTML
-	Theme        styles.Theme
-	Icons        styles.Icons
-	UILabels     styles.UILabels
-	RepoName     string
-	Generated    string
-	Version      string
-	TotalCommits int
-	FirstAuthor  string
-	FirstDate    string
-	Tags         []StoryTag
-	Peaks        []StoryPeak
-	Contributors []StoryContributor
 }
 
 // StoryTag represents a tag entry for story templates.
@@ -98,7 +94,7 @@ func buildChangelogContext(content string, cl changelog.Changelog, style styles.
 	}
 }
 
-func buildStoryContext(content string, ch git.Chronology, style styles.Style) StoryHTMLContext {
+func buildStoryContext(content string, ch git.Chronology, style styles.Style) HTMLTemplateContext {
 	tags := make([]StoryTag, 0, len(ch.Tags))
 	for _, t := range ch.Tags {
 		tags = append(tags, StoryTag{Name: t.Name, Hash: shortHash(t.Hash), Date: t.Date.Format("2006-01-02")})
@@ -117,7 +113,7 @@ func buildStoryContext(content string, ch git.Chronology, style styles.Style) St
 		firstAuthor = ch.FirstCommit.Author
 		firstDate = ch.FirstCommit.Date.Format("2006-01-02")
 	}
-	return StoryHTMLContext{
+	return HTMLTemplateContext{
 		Title:        "Repository Story",
 		Content:      template.HTML(markdownToHTML(strings.TrimSpace(content))),
 		Theme:        withDefaults(style.Theme),

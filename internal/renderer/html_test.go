@@ -53,8 +53,11 @@ func TestRender_htmlEscapesContent(t *testing.T) {
 	s := loadTestStyle(t, "formal")
 	out, err := Render("", cl, s, FormatHTML)
 	require.NoError(t, err)
-	assert.NotContains(t, out, "<script>")
+	// The author "<script>" must be HTML-escaped; it must never appear unescaped
+	// as a raw HTML tag (bare "<script>" only from our own Chart.js blocks is acceptable).
 	assert.Contains(t, out, "&lt;script&gt;")
+	assert.NotContains(t, out, `class="cl-author"><script>`)
+	assert.NotContains(t, out, `class="cl-author"><script>`)
 }
 
 func TestRender_htmlUsesThemeColors(t *testing.T) {
