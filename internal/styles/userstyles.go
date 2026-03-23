@@ -112,6 +112,9 @@ func listStyleFiles(dir string) ([]string, error) {
 	return names, nil
 }
 
+// knownLanguages lists language codes used for variant files.
+var knownLanguages = map[string]bool{"es": true}
+
 func styleFileName(e os.DirEntry) (string, bool) {
 	if e.IsDir() {
 		return "", false
@@ -120,7 +123,21 @@ func styleFileName(e os.DirEntry) (string, bool) {
 	if !strings.HasSuffix(name, ".shipstyle") {
 		return "", false
 	}
-	return strings.TrimSuffix(name, ".shipstyle"), true
+	base := strings.TrimSuffix(name, ".shipstyle")
+	if isLanguageVariantName(base) {
+		return "", false
+	}
+	return base, true
+}
+
+// isLanguageVariantName returns true if the name ends with a known
+// language suffix (e.g. "cyberpunk.es").
+func isLanguageVariantName(name string) bool {
+	idx := strings.LastIndex(name, ".")
+	if idx < 1 {
+		return false
+	}
+	return knownLanguages[name[idx+1:]]
 }
 
 // ListAll returns both built-in and user-installed style names.
@@ -133,7 +150,8 @@ func ListAll() ([]string, error) {
 	return append(all, user...), nil
 }
 
-// Delete removes a user-installed style. Built-in styles cannot be deleted.
+// Delete removes a user-installed style and its language variants.
+// Built-in styles cannot be deleted.
 func Delete(name string) error {
 	if err := ValidateName(name); err != nil {
 		return err
@@ -149,7 +167,15 @@ func Delete(name string) error {
 	if err := os.Remove(path); err != nil {
 		return fmt.Errorf("deleting style %q: %w", name, err)
 	}
+	deleteLanguageVariants(dir, name)
 	return nil
+}
+
+func deleteLanguageVariants(dir, name string) {
+	for lang := range knownLanguages {
+		path := filepath.Join(dir, name+"."+lang+".shipstyle")
+		_ = os.Remove(path)
+	}
 }
 
 // ImportFromPath imports a .shipstyle file from a local path.
