@@ -28,6 +28,10 @@ type HTMLTemplateContext struct {
 	Generated string
 	Version   string
 
+	// Vocabulary maps raw commit type strings to style-specific labels.
+	// Every known type has an entry; unmapped types fall back to the raw string.
+	Vocabulary map[string]string
+
 	// Changelog temporal data
 	CommitsByWeek []WeekActivity
 
@@ -142,6 +146,7 @@ func buildChangelogContext(content string, cl changelog.Changelog, style styles.
 		RepoName:      repoName,
 		Generated:     time.Now().Format("2 Jan 2006"),
 		Version:       version,
+		Vocabulary:    buildTypeLabels(style.Vocabulary),
 		CommitsByWeek: groupItemsByWeek(items),
 	}
 }
@@ -180,6 +185,7 @@ func buildStoryContext(content string, ch git.Chronology, style styles.Style, re
 		RepoName:     repoName,
 		Generated:    time.Now().Format("2 Jan 2006"),
 		Version:      "",
+		Vocabulary:   buildTypeLabels(style.Vocabulary),
 		TotalCommits: ch.TotalCommits,
 		FirstAuthor:  firstAuthor,
 		FirstDate:    firstDate,
@@ -187,6 +193,36 @@ func buildStoryContext(content string, ch git.Chronology, style styles.Style, re
 		Peaks:        peaks,
 		Contributors: contribs,
 	}
+}
+
+// typeAliases maps raw commit type strings to vocabulary keys to check.
+// "feat" can be found as "feat" or "feature" in a style's vocabulary.
+var typeAliases = map[string][]string{
+	"feat":     {"feat", "feature"},
+	"fix":      {"fix"},
+	"breaking": {"breaking"},
+	"chore":    {"chore"},
+	"docs":     {"docs"},
+	"test":     {"test"},
+	"refactor": {"refactor"},
+	"other":    {"other"},
+}
+
+// buildTypeLabels creates a map from raw commit type strings to
+// vocabulary-substituted labels. Types not present in the vocabulary
+// fall back to the raw type string so labels are never empty.
+func buildTypeLabels(vocab map[string]string) map[string]string {
+	labels := make(map[string]string, len(typeAliases))
+	for rawType, aliases := range typeAliases {
+		labels[rawType] = rawType
+		for _, key := range aliases {
+			if sub, ok := vocab[key]; ok && sub != "" {
+				labels[rawType] = sub
+				break
+			}
+		}
+	}
+	return labels
 }
 
 func extractItems(cl changelog.Changelog, icons styles.Icons) []HTMLItem {

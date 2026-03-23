@@ -933,3 +933,51 @@ func TestRepoNameFromPath(t *testing.T) {
 	assert.Equal(t, "Repository", RepoNameFromPath("."))
 	assert.Equal(t, "Repository", RepoNameFromPath(""))
 }
+
+func TestBuildTypeLabels_mappedTypes(t *testing.T) {
+	vocab := map[string]string{
+		"feature":  "upgrade",
+		"fix":      "patch",
+		"breaking": "flatline",
+		"chore":    "maintenance",
+	}
+	labels := buildTypeLabels(vocab)
+	assert.Equal(t, "upgrade", labels["feat"])
+	assert.Equal(t, "patch", labels["fix"])
+	assert.Equal(t, "flatline", labels["breaking"])
+	assert.Equal(t, "maintenance", labels["chore"])
+}
+
+func TestBuildTypeLabels_unmappedFallback(t *testing.T) {
+	vocab := map[string]string{
+		"feature": "upgrade",
+	}
+	labels := buildTypeLabels(vocab)
+	assert.Equal(t, "upgrade", labels["feat"])
+	assert.Equal(t, "fix", labels["fix"])
+	assert.Equal(t, "docs", labels["docs"])
+	assert.Equal(t, "test", labels["test"])
+	assert.Equal(t, "refactor", labels["refactor"])
+	assert.Equal(t, "other", labels["other"])
+}
+
+func TestBuildTypeLabels_emptyVocab(t *testing.T) {
+	labels := buildTypeLabels(map[string]string{})
+	assert.Equal(t, "feat", labels["feat"])
+	assert.Equal(t, "fix", labels["fix"])
+	assert.Equal(t, "breaking", labels["breaking"])
+}
+
+func TestBuildTypeLabels_nilVocab(t *testing.T) {
+	labels := buildTypeLabels(nil)
+	assert.Equal(t, "feat", labels["feat"])
+	assert.Equal(t, "fix", labels["fix"])
+}
+
+func TestBuildTypeLabels_directFeatKey(t *testing.T) {
+	vocab := map[string]string{
+		"feat": "direct-feat-label",
+	}
+	labels := buildTypeLabels(vocab)
+	assert.Equal(t, "direct-feat-label", labels["feat"])
+}
