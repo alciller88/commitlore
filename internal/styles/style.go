@@ -12,21 +12,22 @@ var builtinFS embed.FS
 
 // Style represents a .shipstyle definition.
 type Style struct {
-	Name         string            `yaml:"name"`
-	Version      string            `yaml:"version"`
-	Description  string            `yaml:"description"`
-	Author       string            `yaml:"author"`
-	LLMPrompt    string            `yaml:"llm_prompt"`
-	Templates    Templates         `yaml:"templates"`
-	Vocabulary   map[string]string `yaml:"vocabulary"`
-	Theme        Theme             `yaml:"theme"`
-	Terminal     Terminal          `yaml:"terminal"`
-	Tags         []string          `yaml:"tags"`
-	PreviewURL   string            `yaml:"preview_url"`
-	Homepage     string            `yaml:"homepage"`
-	UILabels     UILabels          `yaml:"ui_labels"`
-	Icons        Icons             `yaml:"icons"`
-	HTMLTemplate string            `yaml:"html_template"`
+	Name                  string            `yaml:"name"`
+	Version               string            `yaml:"version"`
+	Description           string            `yaml:"description"`
+	Author                string            `yaml:"author"`
+	LLMPrompt             string            `yaml:"llm_prompt"`
+	Templates             Templates         `yaml:"templates"`
+	Vocabulary            map[string]string `yaml:"vocabulary"`
+	Theme                 Theme             `yaml:"theme"`
+	Terminal              Terminal          `yaml:"terminal"`
+	Tags                  []string          `yaml:"tags"`
+	PreviewURL            string            `yaml:"preview_url"`
+	Homepage              string            `yaml:"homepage"`
+	UILabels              UILabels          `yaml:"ui_labels"`
+	Icons                 Icons             `yaml:"icons"`
+	HTMLTemplateChangelog string            `yaml:"html_template_changelog"`
+	HTMLTemplateStory     string            `yaml:"html_template_story"`
 }
 
 // Icons holds per-style icon/emoji characters for commit types and decorators.

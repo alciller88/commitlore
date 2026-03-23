@@ -16,7 +16,7 @@ import (
 )
 
 func renderChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
-	if style.HTMLTemplate != "" {
+	if style.HTMLTemplateChangelog != "" {
 		return renderCustomChangelogHTML(content, cl, style)
 	}
 	return renderDefaultChangelogHTML(content, cl, style)
@@ -77,7 +77,7 @@ func writeCommitHTML(buf *bytes.Buffer, c changelog.ParsedCommit) {
 }
 
 func renderStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
-	if style.HTMLTemplate != "" {
+	if style.HTMLTemplateStory != "" {
 		return renderCustomStoryHTML(content, ch, style)
 	}
 	return renderDefaultStoryHTML(content, ch, style)

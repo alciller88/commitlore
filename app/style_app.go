@@ -201,21 +201,22 @@ func (s *StyleApp) CreateStyle(name, description, author string) error {
 
 // StyleDetail holds all .shipstyle fields for the editor UI.
 type StyleDetail struct {
-	Name         string            `json:"name"`
-	Version      string            `json:"version"`
-	Description  string            `json:"description"`
-	Author       string            `json:"author"`
-	LLMPrompt    string            `json:"llmPrompt"`
-	Tags         []string          `json:"tags"`
-	PreviewURL   string            `json:"previewUrl"`
-	Homepage     string            `json:"homepage"`
-	Templates    TemplatesDetail   `json:"templates"`
-	Vocabulary   map[string]string `json:"vocabulary"`
-	Theme        ThemeDetail       `json:"theme"`
-	Terminal     TerminalDetail    `json:"terminal"`
-	UILabels     UILabelsDetail    `json:"uiLabels"`
-	Icons        IconsDetail       `json:"icons"`
-	HTMLTemplate string            `json:"htmlTemplate"`
+	Name                  string            `json:"name"`
+	Version               string            `json:"version"`
+	Description           string            `json:"description"`
+	Author                string            `json:"author"`
+	LLMPrompt             string            `json:"llmPrompt"`
+	Tags                  []string          `json:"tags"`
+	PreviewURL            string            `json:"previewUrl"`
+	Homepage              string            `json:"homepage"`
+	Templates             TemplatesDetail   `json:"templates"`
+	Vocabulary            map[string]string `json:"vocabulary"`
+	Theme                 ThemeDetail       `json:"theme"`
+	Terminal              TerminalDetail    `json:"terminal"`
+	UILabels              UILabelsDetail    `json:"uiLabels"`
+	Icons                 IconsDetail       `json:"icons"`
+	HTMLTemplateChangelog string            `json:"htmlTemplateChangelog"`
+	HTMLTemplateStory     string            `json:"htmlTemplateStory"`
 }
 
 // TemplatesDetail holds all template strings.
@@ -323,13 +324,14 @@ func styleToDetail(st styles.Style) StyleDetail {
 		Name: st.Name, Version: st.Version, Description: st.Description,
 		Author: st.Author, LLMPrompt: st.LLMPrompt,
 		Tags: st.Tags, PreviewURL: st.PreviewURL, Homepage: st.Homepage,
-		Vocabulary:   st.Vocabulary,
-		Templates:    templatesToDetail(st.Templates),
-		Theme:        themeToDetail(st.Theme),
-		Terminal:     terminalToDetail(st.Terminal),
-		UILabels:     buildUILabels(st.UILabels),
-		Icons:        buildIcons(st.Icons),
-		HTMLTemplate: st.HTMLTemplate,
+		Vocabulary:            st.Vocabulary,
+		Templates:             templatesToDetail(st.Templates),
+		Theme:                 themeToDetail(st.Theme),
+		Terminal:              terminalToDetail(st.Terminal),
+		UILabels:              buildUILabels(st.UILabels),
+		Icons:                 buildIcons(st.Icons),
+		HTMLTemplateChangelog: st.HTMLTemplateChangelog,
+		HTMLTemplateStory:     st.HTMLTemplateStory,
 	}
 }
 
@@ -382,8 +384,9 @@ func detailToStyle(d StyleDetail) styles.Style {
 		Name: d.Name, Version: d.Version, Description: d.Description,
 		Author: d.Author, LLMPrompt: d.LLMPrompt,
 		Tags: d.Tags, PreviewURL: d.PreviewURL, Homepage: d.Homepage,
-		Vocabulary:   d.Vocabulary,
-		HTMLTemplate: d.HTMLTemplate,
+		Vocabulary:            d.Vocabulary,
+		HTMLTemplateChangelog: d.HTMLTemplateChangelog,
+		HTMLTemplateStory:     d.HTMLTemplateStory,
 		UILabels: styles.UILabels{
 			Dashboard: d.UILabels.Dashboard, Generate: d.UILabels.Generate,
 			Story: d.UILabels.Story, History: d.UILabels.History,

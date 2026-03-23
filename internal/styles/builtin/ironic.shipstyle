@@ -108,7 +108,7 @@ templates:
   story_contributor: "- {{.Name}} showed up on {{.Date}}."
   story_footer: "*the end. finally.*"
 
-html_template: |
+html_template_changelog: |
   <!DOCTYPE html>
   <html lang="en">
   <head>

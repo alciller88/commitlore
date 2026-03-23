@@ -107,7 +107,7 @@ templates:
   story_contributor: "- **{{.Name}}** — joined the fellowship on {{.Date}}"
   story_footer: "*Thus the saga continues — CommitLore*"
 
-html_template: |
+html_template_changelog: |
   <!DOCTYPE html>
   <html lang="en">
   <head>

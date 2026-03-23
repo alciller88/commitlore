@@ -109,7 +109,7 @@ templates:
   story_contributor: "- **{{.Name}}** — joined {{.Date}}"
   story_footer: "*End of dev diary — CommitLore*"
 
-html_template: |
+html_template_changelog: |
   <!DOCTYPE html>
   <html lang="en">
   <head>

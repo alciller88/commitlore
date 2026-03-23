@@ -71,12 +71,12 @@ type StoryContributor struct {
 
 func renderCustomChangelogHTML(content string, cl changelog.Changelog, style styles.Style) (string, error) {
 	ctx := buildChangelogContext(content, cl, style)
-	return executeHTMLTemplate(style.HTMLTemplate, ctx)
+	return executeHTMLTemplate(style.HTMLTemplateChangelog, ctx)
 }
 
 func renderCustomStoryHTML(content string, ch git.Chronology, style styles.Style) (string, error) {
 	ctx := buildStoryContext(content, ch, style)
-	return executeHTMLTemplate(style.HTMLTemplate, ctx)
+	return executeHTMLTemplate(style.HTMLTemplateStory, ctx)
 }
 
 func buildChangelogContext(content string, cl changelog.Changelog, style styles.Style) HTMLTemplateContext {
