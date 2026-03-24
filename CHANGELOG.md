@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Adeptus Mechanicus style v1.0.0**: Grimdark Warhammer 40k aesthetic with binary separators, servo-skull icons, Cinzel/Share Tech Mono/VT323 typography, sacred litany tone, red vignette overlay, binary rain animation, double-border cards, purity seal commit badges, and full changelog + story HTML templates with Chart.js visualizations.
 - **CI pipeline**: Lint, test, and build on push to dev and pull requests to main/dev
 - **Release pipeline**: CLI binary builds for linux/amd64, darwin/arm64, and windows/amd64 attached to GitHub Releases on tag push
+- **Release pipeline**: Wails desktop app builds for linux/amd64, darwin/arm64, and windows/amd64 attached to GitHub Releases
+- **Release pipeline**: CHANGELOG.md `[Unreleased]` section automatically versioned on tag push
+- **Release pipeline**: Release notes auto-extracted from CHANGELOG.md `[Unreleased]` content
 - **README**: Features overview, quick start guide, built-in styles table, LLM integration and desktop app sections, contributing guidelines
 
 ### Fixed

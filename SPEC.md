@@ -505,12 +505,10 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 9 | `internal/llm` — optional LLM integration (Anthropic + OpenAI) | Completed |
 | Phase 10 | Wails app — base structure + bindings | Completed |
 | Phase 11 | Wails app — screens and complete UI | Completed |
-| Phase 12 | Release pipeline + cross-platform binaries | In Progress |
+| Phase 12 | Release pipeline + cross-platform binaries | Completed |
 | Phase 13 | Polish, docs, README, examples | In Progress |
 | Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Completed |
 | Phase 15 | Internationalisation (i18n) — English/Spanish language support | Completed |
-
-> **Phase 12 — In Progress:** Release workflow includes CLI binary builds, Wails desktop app builds for 3 platforms, automatic CHANGELOG.md version heading on tag push, and release notes extracted from CHANGELOG.md.
 
 > **Phase 13 — In Progress:** README.md exists with features, quick start, styles table, LLM and desktop app sections, contributing guidelines. **Missing:** screenshots of each desktop app screen; license not yet defined.
 
@@ -523,14 +521,6 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 No P0 items at this time.
 
 ### P1 — Next planned phase
-
-**Phase 12: Release pipeline + cross-platform binaries** _(In Progress)_
-
-- ~~Build and release CLI binaries for linux/amd64, darwin/arm64, windows/amd64 on tag push.~~ ✅ Done
-- ~~Build and attach Wails desktop app binaries per platform to the GitHub Release.~~ ✅ Done
-  - _Acceptance:_ Release workflow builds Wails app for linux, darwin, windows and attaches all binaries alongside CLI builds.
-- ~~Automatic CHANGELOG.md update on release.~~ ✅ Done
-  - _Acceptance:_ Release workflow or tag-push hook updates CHANGELOG.md with the new version heading.
 
 **Phase 13: Polish, docs, README, examples** _(In Progress)_
 
