@@ -122,13 +122,13 @@
 
   .filters-row {
     display: flex;
-    gap: var(--space-2);
+    gap: 8px;
     align-items: center;
     height: 36px;
   }
 
   .author-input {
-    flex: 1;
+    flex: 2;
     min-width: 100px;
     height: 36px;
     box-sizing: border-box;
@@ -147,8 +147,8 @@
   }
 
   .date-input {
-    width: 100px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 80px;
     height: 36px;
     box-sizing: border-box;
     padding: 0 var(--space-2);
@@ -169,8 +169,8 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
-    width: 120px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 120px;
   }
   .limit-group input[type="range"] {
     flex: 1;
