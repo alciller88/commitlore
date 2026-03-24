@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/alcil/commitlore/actions/workflows/ci.yml/badge.svg)](https://github.com/alcil/commitlore/actions/workflows/ci.yml)
 ![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)
-![License](https://img.shields.io/badge/license-TBD-lightgrey)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > Your repo has a story. CommitLore tells it.
 
@@ -79,4 +79,4 @@ CommitLore is at v0.0.0 (pre-release). The specification lives in [SPEC.md](SPEC
 
 ## License
 
-<!-- License TBD -->
+MIT — see [LICENSE](LICENSE) for details.
