@@ -18,6 +18,29 @@ CommitLore is a cross-platform tool (CLI + desktop app) written in Go that analy
 - Export to terminal, Markdown, JSON, or standalone HTML with Chart.js visualizations
 - Analyze local repositories or public/private GitHub repos
 
+## Screenshots
+
+### Dashboard
+![Dashboard](assets/screenshots/dashboard.png)
+
+### Generate — Patchnotes style
+![Generate](assets/screenshots/generate.png)
+
+### Story — Epic style
+![Story](assets/screenshots/story.png)
+
+### Story — Cyberpunk style
+![Story Cyberpunk](assets/screenshots/story-cyberpunk.png)
+
+### History — Ironic style
+![History](assets/screenshots/history.png)
+
+### Marketplace
+![Marketplace](assets/screenshots/marketplace.png)
+
+### Settings
+![Settings](assets/screenshots/settings.png)
+
 ## Quick Start
 
 ### Install
