@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Release pipeline**: CHANGELOG.md `[Unreleased]` section automatically versioned on tag push
 - **Release pipeline**: Release notes auto-extracted from CHANGELOG.md `[Unreleased]` content
 - **README**: Features overview, quick start guide, built-in styles table, LLM integration and desktop app sections, contributing guidelines
+- **MIT LICENSE file**
+- **License badge and section in README.md**
+- **Screenshots section in README.md**: Dashboard, Generate (Patchnotes), Story (Epic + Cyberpunk), History (Ironic), Marketplace, Settings
 
 ### Fixed
 

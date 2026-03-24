@@ -506,11 +506,9 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 10 | Wails app — base structure + bindings | Completed |
 | Phase 11 | Wails app — screens and complete UI | Completed |
 | Phase 12 | Release pipeline + cross-platform binaries | Completed |
-| Phase 13 | Polish, docs, README, examples | In Progress |
+| Phase 13 | Polish, docs, README, examples | Completed |
 | Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Completed |
 | Phase 15 | Internationalisation (i18n) — English/Spanish language support | Completed |
-
-> **Phase 13 — In Progress:** README.md exists with features, quick start, styles table, LLM and desktop app sections, contributing guidelines. **Missing:** screenshots of each desktop app screen; license not yet defined.
 
 ---
 
@@ -522,13 +520,7 @@ No P0 items at this time.
 
 ### P1 — Next planned phase
 
-**Phase 13: Polish, docs, README, examples** _(In Progress)_
-
-- ~~Complete README with features, quick start, styles table, LLM and desktop app sections.~~ ✅ Done
-- Add screenshots of each desktop app screen to README.
-  - _Acceptance:_ At least one screenshot per screen (Dashboard, Generate, Story, History, Contributors, Styles, Settings).
-- Define and add project license.
-  - _Acceptance:_ LICENSE file in repo root; license badge in README links to it.
+No P1 items at this time. All planned phases are completed.
 
 ### P2 — Planned but not scheduled
 
