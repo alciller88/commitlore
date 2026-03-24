@@ -51,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Adeptus Mechanicus style**: Accent color changed to gold #B8860B so "Lore" in the sidebar wordmark is visually distinct from "Commit" in red
 - **Cyberpunk ES style**: Dashboard label restored to "NIGHT CITY" as it is a proper noun and should not be translated
 
+### Changed
+
+- **App icon**: Updated from default Wails icon to CommitLore logo across Windows, macOS, and Linux
+
 ### Removed
 
 - **`commitlore style create`, `import`, `export` subcommands**: Styles are now managed exclusively via the marketplace. Only `list`, `show`, and `delete` remain.
