@@ -37,6 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Adeptus Mechanicus style**: Logo replaced with approved cog design in #C41E2A red, legible at 32x32px
 - **Commit type distribution chart**: Legend and tooltip labels now use per-style vocabulary substitutions instead of raw type strings (feat, fix, chore, etc.) across all styles with donut/type charts — patchnotes, epic, cyberpunk, adeptus-mechanicus. Added `Vocabulary` field to `HTMLTemplateContext` in renderer.
 - **History screen**: Limit slider no longer overlaps Fetch button — Author field width reduced, flex proportions rebalanced across all controls
+- **Adeptus Mechanicus style**: Accent color changed to gold #B8860B so "Lore" in the sidebar wordmark is visually distinct from "Commit" in red
+- **Cyberpunk ES style**: Dashboard label restored to "NIGHT CITY" as it is a proper noun and should not be translated
 
 ### Removed
 
