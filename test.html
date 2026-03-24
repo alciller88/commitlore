@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog — commitlore</title>
+<style>
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; margin: 0; padding: 0; background: #F8FAFC; color: #1E293B; }
+.content { max-width: 800px; margin: 0 auto; padding: 2rem; }
+.site-header { width: 100%; padding: 1rem 2rem; box-sizing: border-box; display: flex; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #E2E8F0; }
+.site-header .logo-svg { display: inline-block; width: 100px; height: 100px; flex-shrink: 0; }
+.site-header .logo-svg svg { width: 100px !important; height: 100px !important; }
+h1 { color: #2563EB; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5rem; font-size: 24px; }
+h2 { color: #1E40AF; margin-top: 1.5rem; }
+ul { list-style: none; padding-left: 0; }
+li { padding: 0.3rem 0; border-bottom: 1px solid #FFFFFF; }
+.type-badge { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.75em; font-weight: bold; margin-right: 0.3rem; }
+.type-feat { background: #3B82F633; color: #2563EB; }
+.type-fix { background: #3fb95033; color: #3fb950; }
+.type-breaking { background: #f8514933; color: #f85149; }
+.type-other { background: #FFFFFF; color: #1E293B; }
+.hash { color: #1E40AF; font-family: monospace; font-size: 13px; }
+.author { color: #3fb950; }
+.date { color: #1E293B; font-size: 0.85em; }
+.footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #E2E8F0; color: #1E293B; font-size: 0.85em; }
+.peak-bar { display: inline-block; background: #3B82F6; height: 0.8em; border-radius: 2px; margin-right: 0.5rem; vertical-align: middle; }
+.logo { height: 100px; width: 100px; margin-right: 1rem; }
+.header-image { width: 100%%; max-height: 200px; object-fit: cover; margin-bottom: 1rem; }
+body { line-height: 1.6; }
+h1 { font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-weight: 600; }
+li { font-size: 0.95em; }
+.hash { background: #F1F5F9; padding: 0.1em 0.3em; border-radius: 3px; }
+* { animation: none !important; transition: none !important; }
+
+</style>
+</head>
+<body>
+<header class="site-header">
+<div class="logo-svg"><svg width="100" height="100" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+<style>
+  @media (prefers-color-scheme: dark) {
+    .scroll-body { fill: #2A2218; stroke: #C4A35A; }
+    .scroll-end { fill: #3A2E18; stroke: #C4A35A; }
+    .scroll-shadow { fill: #1A1209; }
+    .ct { fill: #C4A35A; }
+  }
+  @media (prefers-color-scheme: light) {
+    .scroll-body { fill: #FDF6E3; stroke: #8B6914; }
+    .scroll-end { fill: #F0D99A; stroke: #8B6914; }
+    .scroll-shadow { fill: #E8D090; }
+    .ct { fill: #8B6914; }
+  }
+</style>
+<defs>
+  <clipPath id="c">
+    <rect x="110" y="100" width="180" height="182"/>
+  </clipPath>
+</defs>
+<rect class="scroll-shadow" x="108" y="92" width="192" height="220" rx="4"/>
+<rect class="scroll-body" x="100" y="86" width="200" height="220" rx="4" stroke-width="6"/>
+<rect class="scroll-end" x="80" y="64" width="240" height="40" rx="20" stroke-width="5"/>
+<rect class="scroll-shadow" x="96" y="72" width="208" height="12" rx="6" style="opacity:0.15"/>
+<rect class="scroll-end" x="80" y="292" width="240" height="40" rx="20" stroke-width="5"/>
+<rect class="scroll-shadow" x="96" y="300" width="208" height="12" rx="6" style="opacity:0.15"/>
+<g clip-path="url(#c)" font-family="'Courier New', monospace" text-anchor="middle">
+  <text class="ct" x="200" y="132" font-size="16" opacity="0.95">a3f9c2e</text>
+  <text class="ct" x="200" y="158" font-size="16" opacity="0.75">7b1d4f8</text>
+  <text class="ct" x="200" y="184" font-size="16" opacity="0.50">2c8e6a1</text>
+  <text class="ct" x="200" y="210" font-size="16" opacity="0.28">f1e8b3d</text>
+  <text class="ct" x="200" y="236" font-size="16" opacity="0.12">9d2a7c5</text>
+</g>
+</svg>
+</div>
+</header>
+<div class="content">
+<h1>Changelog</h1>
+<h2>Features</h2>
+<ul>
+<li><span class="type-badge type-feat">feat</span> feat: new square scroll icon and icon-only HTML header (#13) <span class="hash">179b098</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: add official logo, integrate in HTML renderer, translate docs to English (#12) <span class="hash">8da1fb7</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: Phase 6.5 — rich style schema with theme, terminal, vocabulary (#9) <span class="hash">2f12fa3</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: Phase 6 — HTML and PDF renderers (#8) <span class="hash">1958451</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: Phase 5 — story command with chronology narrative (#7) <span class="hash">700b9c4</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: phase 4 — generate command with template-based rendering (#4) <span class="hash">75fa21e</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: phase 3 — internal/changelog and contributors command (#3) <span class="hash">15a800b</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-feat">feat</span> feat: phase 2 — internal/git package and history command (#2) <span class="hash">f5b7983</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-feat">feat</span> ci: add CI and release GitHub Actions workflows <span class="hash">f7d4e96</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Bug Fixes</h2>
+<ul>
+<li><span class="type-badge type-fix">fix</span> fix: full-width header with logo left-aligned outside body container <span class="hash">6a6cf64</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: replace SVG width=100% with fixed dimensions at inject time <span class="hash">c1a10bf</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: constrain logo size and left-align in HTML header <span class="hash">add16a7</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: logo left-aligned and correct size in HTML header <span class="hash">6b7dc7b</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: commit subject, animations gate, terminal features, vocabulary word boundaries (#11) <span class="hash">8f8f30f</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: enrich built-in styles with full visual identity and creative templates (#10) <span class="hash">38b8bd6</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: UTF-8 encoding and word wrap in PDF renderer <span class="hash">a1a0838</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: remove not-implemented guards for html and pdf formats <span class="hash">cc528fd</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-fix">fix</span> fix: improve built-in style templates for clearer tone differentiation (#6) <span class="hash">5123ea7</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+</ul>
+<h2>Refactoring</h2>
+<ul>
+<li><span class="type-badge type-other">refactor</span> refactor: Phase 4 corrections — styles, renderer, narrative separation (#5) <span class="hash">d3b3c6f</span> — <span class="author">alciller88</span> <span class="date">2026-03-21</span></li>
+</ul>
+<h2>Documentation</h2>
+<ul>
+<li><span class="type-badge type-other">docs</span> docs: add pending design decisions for Phase 11 Wails UI <span class="hash">84d8411</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">docs</span> docs: add security rules — read-only policy and prompt injection protection <span class="hash">e28229f</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">docs</span> docs: require agent to ask before making architecture decisions <span class="hash">7a30d1d</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">docs</span> docs: add Git workflow section for agents to CONTEXT.md <span class="hash">0ea9da6</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Tests</h2>
+<ul>
+<li><span class="type-badge type-other">test</span> Create SPEC.md <span class="hash">67f594d</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Chores</h2>
+<ul>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — icon and header fix completed <span class="hash">2101289</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — logo and translations completed <span class="hash">28c05c6</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — renderer features fix applied <span class="hash">6e3242b</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — enriched built-in styles <span class="hash">af849c1</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 6.5 completed <span class="hash">74238ef</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: remove PDF format in favor of HTML <span class="hash">7e37561</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 6 completed <span class="hash">a6a96ca</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 5 completed <span class="hash">f5d64a8</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — built-in styles improved <span class="hash">c9bdcaf</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 4 corrections completed <span class="hash">d1127db</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-21</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 4 completed <span class="hash">5d93d38</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> ci: run CI on pull requests to dev branch <span class="hash">4013e24</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md — phase 3 completed <span class="hash">00b0ab8</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: mark Phase 1 as completed in CONTEXT.md <span class="hash">037796e</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: add golangci-lint configuration <span class="hash">ee98559</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: scaffold project structure and initialize Go module <span class="hash">d6a83b3</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">chore</span> chore: update CONTEXT.md to Phase 1 — In progress <span class="hash">669eb94</span> — <span class="author">Su Nombre</span> <span class="date">2026-03-20</span></li>
+</ul>
+<h2>Other</h2>
+<ul>
+<li><span class="type-badge type-other">other</span> Create CHANGELOG.md <span class="hash">adfd70e</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">other</span> Create CONTEXT.md <span class="hash">7508002</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+<li><span class="type-badge type-other">other</span> Initial commit <span class="hash">db33f62</span> — <span class="author">alciller88</span> <span class="date">2026-03-20</span></li>
+</ul>
+<div class="footer"></div>
+</div>
+</body>
+</html>

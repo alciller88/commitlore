@@ -1,0 +1,322 @@
+package styles
+
+import (
+	"bytes"
+	"embed"
+	"fmt"
+	"path/filepath"
+
+	"gopkg.in/yaml.v3"
+)
+
+//go:embed builtin/*.shipstyle
+var builtinFS embed.FS
+
+// Style represents a .shipstyle definition.
+type Style struct {
+	Name                  string            `yaml:"name"`
+	Version               string            `yaml:"version"`
+	Description           string            `yaml:"description"`
+	Author                string            `yaml:"author"`
+	Language              string            `yaml:"language"`
+	LLMPrompt             string            `yaml:"llm_prompt"`
+	Templates             Templates         `yaml:"templates"`
+	Vocabulary            map[string]string `yaml:"vocabulary"`
+	Theme                 Theme             `yaml:"theme"`
+	Terminal              Terminal          `yaml:"terminal"`
+	Tags                  []string          `yaml:"tags"`
+	PreviewURL            string            `yaml:"preview_url"`
+	Homepage              string            `yaml:"homepage"`
+	UILabels              UILabels          `yaml:"ui_labels"`
+	Icons                 Icons             `yaml:"icons"`
+	HTMLTemplateChangelog string            `yaml:"html_template_changelog"`
+	HTMLTemplateStory     string            `yaml:"html_template_story"`
+}
+
+// Icons holds per-style icon/emoji characters for commit types and decorators.
+type Icons struct {
+	Feature   string `yaml:"feature"`
+	Fix       string `yaml:"fix"`
+	Breaking  string `yaml:"breaking"`
+	Chore     string `yaml:"chore"`
+	Docs      string `yaml:"docs"`
+	Test      string `yaml:"test"`
+	StoryPeak string `yaml:"story_peak"`
+	Bullet    string `yaml:"bullet"`
+	Separator string `yaml:"separator"`
+}
+
+// Templates holds the template strings for each commit type and story sections.
+type Templates struct {
+	Header   string `yaml:"header"`
+	Feature  string `yaml:"feature"`
+	Fix      string `yaml:"fix"`
+	Breaking string `yaml:"breaking"`
+	Footer   string `yaml:"footer"`
+
+	StoryIntro       string `yaml:"story_intro"`
+	StoryMilestone   string `yaml:"story_milestone"`
+	StoryPeak        string `yaml:"story_peak"`
+	StoryContributor string `yaml:"story_contributor"`
+	StoryFooter      string `yaml:"story_footer"`
+}
+
+// Theme defines the visual identity for HTML output.
+type Theme struct {
+	Mode           string         `yaml:"mode"`
+	Colors         Colors         `yaml:"colors"`
+	Typography     Typography     `yaml:"typography"`
+	HeaderImage    string         `yaml:"header_image"`
+	Logo           string         `yaml:"logo"`
+	CardStyle      string         `yaml:"card_style"`
+	Animations     bool           `yaml:"animations"`
+	CustomCSS      string         `yaml:"custom_css"`
+	WindowControls WindowControls `yaml:"window_controls"`
+}
+
+// WindowControls holds colors for the custom titlebar buttons.
+type WindowControls struct {
+	Default  string `yaml:"default"`
+	Close    string `yaml:"close"`
+	Minimize string `yaml:"minimize"`
+	Maximize string `yaml:"maximize"`
+}
+
+// Colors holds the color palette for a theme.
+type Colors struct {
+	Primary    string `yaml:"primary"`
+	Secondary  string `yaml:"secondary"`
+	Background string `yaml:"background"`
+	Surface    string `yaml:"surface"`
+	Text       string `yaml:"text"`
+	Accent     string `yaml:"accent"`
+	Border     string `yaml:"border"`
+}
+
+// Typography holds font settings for a theme.
+type Typography struct {
+	FontFamily   string `yaml:"font_family"`
+	FontSizeBase string `yaml:"font_size_base"`
+	FontSizeH    string `yaml:"font_size_header"`
+	FontSizeCode string `yaml:"font_size_code"`
+}
+
+// UILabels holds optional navigation label overrides per style.
+type UILabels struct {
+	Dashboard      string `yaml:"dashboard"`
+	Generate       string `yaml:"generate"`
+	Story          string `yaml:"story"`
+	History        string `yaml:"history"`
+	Contributors   string `yaml:"contributors"`
+	Styles         string `yaml:"styles"`
+	Marketplace    string `yaml:"marketplace"`
+	Settings       string `yaml:"settings"`
+	GenerateButton string `yaml:"generate_button"`
+	StoryButton    string `yaml:"story_button"`
+}
+
+// Terminal defines the visual identity for terminal output.
+type Terminal struct {
+	Colors     TerminalColors     `yaml:"colors"`
+	Decorators TerminalDecorators `yaml:"decorators"`
+	Density    string             `yaml:"density"`
+}
+
+// TerminalColors maps commit types to ANSI color names.
+type TerminalColors struct {
+	Header   string `yaml:"header"`
+	Feature  string `yaml:"feature"`
+	Fix      string `yaml:"fix"`
+	Breaking string `yaml:"breaking"`
+	Footer   string `yaml:"footer"`
+}
+
+// TerminalDecorators defines separator, bullet and indent strings.
+type TerminalDecorators struct {
+	Separator string `yaml:"separator"`
+	Bullet    string `yaml:"bullet"`
+	Indent    string `yaml:"indent"`
+}
+
+var builtinNames = []string{"formal", "patchnotes", "ironic", "epic"}
+
+// Load returns a style by name. Looks up built-in styles first, then user styles.
+func Load(name string) (Style, error) {
+	if name == "" {
+		name = "formal"
+	}
+	s, err := loadBuiltin(name)
+	if err == nil {
+		return s, nil
+	}
+	return LoadUser(name)
+}
+
+func loadBuiltin(name string) (Style, error) {
+	path := "builtin/" + name + ".shipstyle"
+	data, err := builtinFS.ReadFile(path)
+	if err != nil {
+		return Style{}, fmt.Errorf("style %q not found: %w", name, err)
+	}
+	return parseStyle(data)
+}
+
+func parseStyle(data []byte) (Style, error) {
+	var s Style
+	if err := yaml.Unmarshal(data, &s); err != nil {
+		return Style{}, fmt.Errorf("parsing style: %w", err)
+	}
+	if err := validate(s); err != nil {
+		return Style{}, err
+	}
+	return s, nil
+}
+
+// ParseStyleStrict parses a .shipstyle rejecting unknown fields.
+func ParseStyleStrict(data []byte) (Style, error) {
+	dec := yaml.NewDecoder(bytes.NewReader(data))
+	dec.KnownFields(true)
+	var s Style
+	if err := dec.Decode(&s); err != nil {
+		return Style{}, fmt.Errorf("parsing style: %w", err)
+	}
+	if err := validate(s); err != nil {
+		return Style{}, err
+	}
+	return s, nil
+}
+
+func validate(s Style) error {
+	if s.Name == "" {
+		return fmt.Errorf("style missing required field: name")
+	}
+	if s.Templates.Header == "" && s.Templates.Feature == "" {
+		return fmt.Errorf("style %q has no templates defined", s.Name)
+	}
+	if err := validateLanguage(s); err != nil {
+		return err
+	}
+	if err := validateCardStyle(s); err != nil {
+		return err
+	}
+	if err := validateDensity(s); err != nil {
+		return err
+	}
+	return validateMode(s)
+}
+
+func validateLanguage(s Style) error {
+	v := s.Language
+	if v == "" {
+		return nil
+	}
+	valid := map[string]bool{"en": true, "es": true}
+	if !valid[v] {
+		return fmt.Errorf("style %q: invalid language %q (use en or es)", s.Name, v)
+	}
+	return nil
+}
+
+func validateCardStyle(s Style) error {
+	v := s.Theme.CardStyle
+	if v == "" {
+		return nil
+	}
+	valid := map[string]bool{"minimal": true, "bordered": true, "glassmorphism": true}
+	if !valid[v] {
+		return fmt.Errorf("style %q: invalid card_style %q (use minimal, bordered, or glassmorphism)", s.Name, v)
+	}
+	return nil
+}
+
+func validateDensity(s Style) error {
+	v := s.Terminal.Density
+	if v == "" {
+		return nil
+	}
+	valid := map[string]bool{"compact": true, "normal": true, "verbose": true}
+	if !valid[v] {
+		return fmt.Errorf("style %q: invalid density %q (use compact, normal, or verbose)", s.Name, v)
+	}
+	return nil
+}
+
+func validateMode(s Style) error {
+	v := s.Theme.Mode
+	if v == "" {
+		return nil
+	}
+	valid := map[string]bool{"dark": true, "light": true}
+	if !valid[v] {
+		return fmt.Errorf("style %q: invalid mode %q (use dark or light)", s.Name, v)
+	}
+	return nil
+}
+
+// ResolveStyleForLanguage loads the correct language variant of a style.
+// For "en" or empty language, it loads the base file.
+// For other languages, it looks for <name>.<lang>.shipstyle and verifies
+// the language field matches.
+func ResolveStyleForLanguage(name, lang string) (Style, error) {
+	if lang == "" || lang == "en" {
+		return Load(name)
+	}
+	s, err := loadLanguageVariant(name, lang)
+	if err != nil {
+		return Style{}, fmt.Errorf(
+			"Style '%s' is not available in Spanish.\n"+
+				"Switch styles or install a Spanish version from the marketplace.",
+			name)
+	}
+	if s.Language != lang {
+		return Style{}, fmt.Errorf(
+			"Style '%s' is not available in Spanish.\n"+
+				"Switch styles or install a Spanish version from the marketplace.",
+			name)
+	}
+	return s, nil
+}
+
+func loadLanguageVariant(name, lang string) (Style, error) {
+	variantName := name + "." + lang
+	path := "builtin/" + variantName + ".shipstyle"
+	data, err := builtinFS.ReadFile(path)
+	if err == nil {
+		return parseStyle(data)
+	}
+	return loadUserLanguageVariant(name, lang)
+}
+
+func loadUserLanguageVariant(name, lang string) (Style, error) {
+	dir, err := UserStylesDir()
+	if err != nil {
+		return Style{}, err
+	}
+	path := filepath.Join(dir, name+"."+lang+".shipstyle")
+	return LoadFromFile(path)
+}
+
+// GetAvailableLanguagesForStyle returns which languages are available
+// for a given style name.
+func GetAvailableLanguagesForStyle(name string) []string {
+	langs := []string{"en"}
+	if _, err := loadLanguageVariant(name, "es"); err == nil {
+		langs = append(langs, "es")
+	}
+	return langs
+}
+
+// ListBuiltin returns the names of all built-in styles.
+func ListBuiltin() []string {
+	return append([]string{}, builtinNames...)
+}
+
+// IsBuiltin returns true if the given name is a built-in style.
+func IsBuiltin(name string) bool {
+	for _, n := range builtinNames {
+		if n == name {
+			return true
+		}
+	}
+	return false
+}

@@ -1,235 +1,552 @@
-SPEC.md — shiplog
+# SPEC.md — CommitLore
 
-Fuente de verdad del proyecto. Cualquier cambio en funcionalidad debe
-reflejarse aquí antes de implementarse. No se implementa nada que no
-esté especificado en este documento.
+Source of truth for what the product does and what comes next.
+Contains the full functional specification and the prioritized backlog.
 
+---
 
-1. Visión
-shiplog es una herramienta multiplataforma (CLI + app de escritorio) escrita
-en Go que analiza repositorios git —locales y de GitHub— y genera changelogs,
-narrativas e informes sobre la historia del código, con tono y formato
-configurables mediante un sistema de estilos modular.
-Tagline: Your repo has a story. shiplog tells it.
+## 1. Vision
 
-2. Principios de diseño
+CommitLore is a cross-platform tool (CLI + desktop app) written in Go
+that analyzes git repositories — local and GitHub — and generates
+changelogs, narratives, and reports about code history, with tone and
+format configurable through a modular style system.
 
-Sin dependencias obligatorias — funciona offline, sin API key, sin cuenta.
-LLM opcional — si el usuario configura una API key, el output mejora; sin ella, funciona igualmente mediante plantillas.
-Multiplataforma — binario nativo CLI y app de escritorio para Linux, macOS y Windows.
-Composable — múltiples formatos de output para integrarse en pipelines existentes.
-Estilos modulares — los tonos no están hardcodeados; son archivos cargables, exportables e importables.
-Explícito sobre mágico — toda configuración es visible vía flags o UI.
-Código sostenible — funciones pequeñas, responsabilidad única, sin atajos.
+**Tagline:** Your repo has a story. CommitLore tells it.
 
+---
 
-3. Stack técnico
-Backend / CLI
-CapaTecnologíaLenguajeGo 1.22+CLI frameworkCobraConfig/flagsViperGitHub APIgo-githubGit localgo-gitPDFgofpdfHTMLhtml/template (stdlib)LLM (opcional)Anthropic API / OpenAI API (configurable)Lintergolangci-lintTeststesting (stdlib) + testify
-App de escritorio
-CapaTecnologíaFrameworkWails v2FrontendSvelte + TypeScriptEstilosTailwind CSS + shadcn-svelte (base componentes)BuildWails CLI (binarios nativos por plataforma)
+## 2. Design Principles
 
-El backend de la app de escritorio reutiliza íntegramente los paquetes
-de internal/. No hay lógica duplicada.
+- **No mandatory dependencies** — works offline, no API key, no account required.
+- **Optional LLM** — if the user configures an API key, output improves; without it, works equally well via templates.
+- **Cross-platform** — native CLI binary and desktop app for Linux, macOS, and Windows.
+- **Composable** — multiple output formats for integration into existing pipelines.
+- **Modular styles** — tones are not hardcoded; they are loadable, exportable, and importable files.
+- **Explicit over magic** — all configuration is visible via flags or UI.
+- **Sustainable code** — small functions, single responsibility, no shortcuts.
 
+---
 
-4. Fuentes de datos (v1)
+## 3. Data Sources
 
-Repositorio git local — via go-git, sin autenticación.
-GitHub — via API REST. Token opcional (sin token: solo repos públicos).
+- **Local git repository** — via go-git, no authentication.
+- **GitHub** — via REST API. Optional token (without token: public repos only).
 
+GitLab and other providers are out of scope for v1.
 
-GitLab y otros proveedores quedan fuera de scope en v1.
+---
 
+## 4. CLI Commands
 
-5. Comandos CLI
-Todos los comandos comparten los flags globales siguientes.
-Flags globales
-FlagValoresDefaultDescripción--formatterminal, md, json, html, pdfterminalFormato del output--stylenombre de estilo cargadoformalTono del texto generado--outputruta de archivostdoutArchivo de destino--llmanthropic, openai, nonenoneLLM a usar para enriquecer el output
+All commands share the following global flags.
 
-5.1 shiplog generate
-Genera un changelog a partir de commits y/o PRs.
-shiplog generate [flags]
-FlagDescripción--sinceDesde tag, commit SHA o fecha (e.g. v1.2.0, 2024-01-01)--untilHasta tag o commit SHA (default: HEAD)--repoRuta local o URL de GitHub (owner/repo)--include-prsIncluye información de PRs (requiere token GitHub)
+### Global Flags
 
-5.2 shiplog story
-Genera una narrativa completa de la historia del repositorio.
-shiplog story [flags]
-FlagDescripción--repoRuta local o URL de GitHub (owner/repo)--fromCommit o tag de inicio (default: primer commit)
+| Flag | Values | Default | Description |
+|------|--------|---------|-------------|
+| `--format` | `terminal`, `md`, `json`, `html` | `terminal` | Output format |
+| `--style` | name of loaded style | `formal` | Text tone |
+| `--output` | file path | stdout | Destination file |
+| `--llm` | `anthropic`, `openai`, `none` | `none` | LLM to use for enriching output |
+| `--llm-base-url` | URL | `""` | Override API base URL (OpenAI-compatible endpoints) |
+| `--llm-model` | model name | `""` | Override LLM model (default per provider) |
 
-5.3 shiplog history
-Explora commits filtrados por autor, fecha o rango.
-shiplog history [flags]
-FlagDescripción--repoRuta local o URL de GitHub--authorFiltra por autor (nombre o email)--sinceDesde fecha o tag--untilHasta fecha o tag--limitNúmero máximo de commits (default: 50)
+### 4.1 commitlore generate
 
-5.4 shiplog contributors
-Mapa de quién ha tocado qué partes del código.
-shiplog contributors [flags]
-FlagDescripción--repoRuta local o URL de GitHub--sincePeríodo de análisis--topNúmero de contributors a mostrar (default: 10)
+Generates a changelog from commits and/or PRs.
 
-5.5 shiplog style
-Gestión del sistema de estilos modular.
-shiplog style <subcommand> [flags]
-SubcomandoDescripciónlistLista los estilos disponibles (built-in + instalados)showMuestra la definición de un estilocreateCrea un nuevo estilo (wizard interactivo o flags)importImporta un estilo desde URL o ruta localexportExporta un estilo a archivo .shipstyledeleteElimina un estilo instalado (no elimina built-ins)
+```
+commitlore generate [flags]
+```
 
-6. Sistema de estilos modular
-Los estilos son archivos .shipstyle en formato YAML que definen el tono
-y las plantillas de texto. Se almacenan en ~/.config/shiplog/styles/.
-Estructura de un archivo .shipstyle
-yamlname: patchnotes
-version: 1.0.0
-description: "Estilo patch notes de videojuego"
-author: "shiplog"
-llm_prompt: |
-  Escribe el changelog como si fuera las patch notes de un videojuego.
-  Usa términos como "fixed", "nerfed", "buffed", "added to the game".
-  Sé épico pero conciso.
-templates:
-  header: "⚔️  PATCH {{.Version}} — {{.Title}}"
-  feature: "  ✨ Unlocked: {{.Message}}"
-  fix: "  🛡️  Patched: {{.Message}}"
-  breaking: "  💀 Removed from the game: {{.Message}}"
-  footer: "  — End of patch notes —"
-Estilos built-in (v1)
+| Flag | Description |
+|------|-------------|
+| `--since` | Since tag, commit SHA, or date (e.g. `v1.2.0`, `2024-01-01`) |
+| `--until` | Until tag or commit SHA (default: HEAD) |
+| `--repo` | Local path or GitHub URL (`owner/repo`) |
+| `--include-prs` | Include PR info (requires GitHub token) |
 
-formal — técnico y profesional
-patchnotes — estilo videojuego
-ironic — humor seco
-epic — narrativo y grandilocuente
+### 4.2 commitlore story
 
-Comportamiento
+Generates a complete narrative of the repository history.
 
-Sin LLM: se usan los campos templates del .shipstyle.
-Con LLM: se usa el campo llm_prompt para instruir al modelo; templates como fallback.
-Los estilos built-in no son modificables ni eliminables.
+```
+commitlore story [flags]
+```
 
+| Flag | Description |
+|------|-------------|
+| `--repo` | Local path or GitHub URL (`owner/repo`) |
+| `--from` | Starting commit or tag (default: first commit) |
 
-7. Formatos de output
-FormatoDescripciónterminalTexto con color ANSI directo a stdoutmdMarkdown estándar, compatible con GitHubjsonEstructura de datos completa, apta para pipelineshtmlInforme HTML autocontenido con estilos inlinepdfInforme PDF generado desde la plantilla HTML
+### 4.3 commitlore history
 
-8. LLM opcional
+Explore commits filtered by author, date, or range.
 
-La herramienta funciona completamente sin LLM usando plantillas del estilo activo.
-Variables de entorno: SHIPLOG_LLM_PROVIDER y SHIPLOG_LLM_API_KEY.
-El flag --llm sobreescribe la variable de entorno por comando.
-Proveedores soportados en v1: anthropic, openai.
+```
+commitlore history [flags]
+```
 
+| Flag | Description |
+|------|-------------|
+| `--repo` | Local path or GitHub URL |
+| `--author` | Filter by author (name or email) |
+| `--since` | Since date or tag |
+| `--until` | Until date or tag |
+| `--limit` | Max number of commits (default: 50) |
 
-9. App de escritorio (Wails)
-La app comparte toda la lógica de internal/. Solo añade una capa de UI encima.
-Pantallas principales (v1)
+### 4.4 commitlore contributors
 
-Dashboard — resumen del repo activo: última actividad, contributors, tags.
-Generate — formulario para configurar y generar un changelog.
-Story — visualización narrativa de la historia del repo.
-History — explorador de commits con filtros.
-Contributors — mapa visual de contribuciones.
-Styles — gestor visual: crear, importar, exportar, previsualizar estilos.
+Map of who has touched which parts of the code.
 
-Identidad visual
+```
+commitlore contributors [flags]
+```
 
-Paleta oscura por defecto, con opción de tema claro.
-Tipografía monoespaciada para outputs; sans-serif para navegación.
-Estilo propio construido sobre shadcn-svelte como base de componentes.
-Sin dependencia de librerías de UI genéricas (no Material, no Bootstrap).
+| Flag | Description |
+|------|-------------|
+| `--repo` | Local path or GitHub URL |
+| `--since` | Analysis period |
+| `--top` | Number of contributors to show (default: 10) |
 
+### 4.5 commitlore style
 
-10. Estructura del proyecto
-shiplog/
-├── cmd/                      # Comandos Cobra
-│   ├── generate.go
-│   ├── story.go
-│   ├── history.go
-│   ├── contributors.go
-│   └── style/
-│       ├── list.go
-│       ├── create.go
-│       ├── import.go
-│       ├── export.go
-│       └── delete.go
-├── internal/
-│   ├── git/                  # Acceso a repos locales (go-git)
-│   ├── github/               # Acceso a GitHub API
-│   ├── changelog/            # Parsing y agrupación de commits
-│   ├── narrative/            # Generación de texto
-│   ├── renderer/             # Renderizado (terminal, md, json, html, pdf)
-│   ├── llm/                  # Adaptadores LLM (Anthropic, OpenAI)
-│   └── styles/               # Carga, validación y gestión de .shipstyle
-├── app/                      # App Wails
-│   ├── frontend/             # Svelte + Tailwind + shadcn-svelte
-│   └── app.go                # Bindings Wails → internal/
-├── styles/                   # Estilos built-in (.shipstyle)
-├── templates/                # Plantillas HTML/texto
-├── .github/
-│   └── workflows/
-│       ├── ci.yml            # Lint + tests en push/PR
-│       └── release.yml       # Binarios multiplataforma en tag v*
-├── CHANGELOG.md
-├── SPEC.md
-├── CONTEXT.md
-├── main.go
-└── README.md
+Management of the modular style system.
 
-Regla: ningún paquete en internal/ importa de cmd/ ni de app/.
-El flujo de dependencias es siempre hacia adentro.
+```
+commitlore style <subcommand> [flags]
+```
 
+| Subcommand | Description |
+|------------|-------------|
+| `list` | List available styles (built-in + marketplace-installed) |
+| `show` | Show a style definition |
+| `delete` | Delete a marketplace-installed style (does not affect built-ins) |
 
-11. Reglas de código
+---
 
-Funciones de máximo 40 líneas. Si crece, se extrae.
-Una responsabilidad por función/struct.
-Sin comentarios obvios — los comentarios explican el porqué, no el qué.
-Errores explícitos — nunca ignorar un error con _.
-Tests unitarios obligatorios para todo el código en internal/.
-Cobertura mínima objetivo: 70% por paquete.
-Antes de cada PR: golangci-lint run ./... debe pasar sin errores.
+## 5. Modular Style System
 
+Styles are `.shipstyle` files in YAML format that define tone, text
+templates, and the full visual identity of the output.
 
-12. CI/CD
-Estrategia de ramas
-RamaPropósitomainProducción. Solo recibe merges desde dev via PR.devIntegración. Rama base para features.feat/*Feature branches. Se abren desde dev.fix/*Bugfix branches. Se abren desde dev.
-Pipeline CI — .github/workflows/ci.yml
-Trigger: push a dev, PR hacia main.
+Stored in `~/.config/commitlore/styles/` (on Windows: `%APPDATA%\commitlore\styles\`).
 
-golangci-lint run ./...
-go test ./... -race -coverprofile=coverage.out
-go build ./...
+### Complete `.shipstyle` Schema
 
-Pipeline Release — .github/workflows/release.yml
-Trigger: tag v* pusheado a main.
+```yaml
+name: "name"
+version: "1.0.0"
+description: "description"
+author: "author"
+language: ""                # language code: "en" (default), "es". Empty = "en".
+tags: []                    # marketplace metadata
+preview_url: ""             # preview URL
+homepage: ""                # project URL
 
-CI completo (lint + tests)
-Build binarios CLI:
+llm_prompt: |               # LLM prompt (optional)
+  ...
 
-GOOS=linux GOARCH=amd64
-GOOS=darwin GOARCH=arm64
-GOOS=windows GOARCH=amd64
+templates:                  # text templates
+  header, feature, fix, breaking, footer
+  story_intro, story_milestone, story_peak, story_contributor, story_footer
 
+vocabulary:                 # substitutions without LLM (map[string]string)
+  bug: "heresy"
+  fix: "purge"
 
-Build app Wails por plataforma
-Creación de GitHub Release con todos los artefactos adjuntos
-Actualización automática de CHANGELOG.md
+theme:                      # HTML visual identity
+  mode: "dark"              # dark | light
+  colors:
+    primary, secondary, background, surface, text, accent, border
+  typography:
+    font_family, font_size_base, font_size_header, font_size_code
+  header_image: ""          # URL or base64
+  logo: ""                  # URL, base64, or inline SVG string
+  card_style: "bordered"    # minimal | bordered | glassmorphism
+  animations: true
+  custom_css: ""            # additional CSS injected at end
+  window_controls:          # custom titlebar button colors
+    default, close, minimize, maximize
 
+terminal:                   # terminal visual identity
+  colors:
+    header, feature, fix, breaking, footer   # ANSI color names
+  decorators:
+    separator, bullet, indent
+  density: "normal"         # compact | normal | verbose
 
-13. Versionado semántico
-Formato de tag: vMAJOR.MINOR.PATCH (e.g. v1.2.0)
+ui_labels:                  # navigation and button label overrides (optional)
+  dashboard: "Dashboard"
+  generate: "Generate"
+  generate_button: "Generate"
+  story: "Story"
+  story_button: "Tell the story"
+  history: "History"
+  contributors: "Contributors"
+  styles: "Styles"
+  marketplace: "Marketplace"
+  settings: "Settings"
 
-MAJOR — cambios incompatibles (flags eliminados, comportamiento roto).
-MINOR — nuevos comandos, flags o pantallas, compatibles hacia atrás.
-PATCH — bugfixes y mejoras internas sin cambio de interfaz.
+icons:                      # per-style icon/emoji characters (optional)
+  feature: "✦"
+  fix: "✔"
+  breaking: "⚠"
+  chore: "⚙"
+  docs: "📄"
+  test: "🧪"
+  story_peak: "🔥"
+  bullet: "•"
+  separator: "────────────────────────────────────────"
 
+html_template_changelog: |  # custom HTML template for changelogs (optional)
+  <!DOCTYPE html>...        # complete self-contained HTML document
+                            # receives HTMLTemplateContext with all style fields:
+                            # {{.Theme.Colors.Primary}}, {{.Icons.Feature}}, etc.
+                            # When empty, the default renderer is used.
 
-14. Fases de desarrollo
-FaseScopeFase 1Setup del proyecto, estructura base, CI pipeline, ramasFase 2internal/git — acceso a repos locales + comando historyFase 3internal/changelog — parsing de commits + comando contributorsFase 4Comando generate (sin LLM, plantillas)Fase 5Comando story (sin LLM, plantillas)Fase 6internal/renderer — formatos md, json, html, pdfFase 7internal/styles — sistema modular + comando styleFase 8internal/github — integración GitHub APIFase 9internal/llm — integración LLM opcional (Anthropic + OpenAI)Fase 10App Wails — estructura base + bindingsFase 11App Wails — pantallas y UI completaFase 12Pipeline release + binarios multiplataformaFase 13Pulido, docs, README, ejemplos
+html_template_story: |      # custom HTML template for stories (optional)
+  <!DOCTYPE html>...        # same context struct as changelog, but story fields
+                            # (.Peaks, .Contributors, .Tags, .TotalCommits) populated
+                            # When empty, the default renderer is used.
+```
 
-Cada fase termina con tests pasando y lint limpio antes de mergear a dev.
-Solo se mergea a main cuando una fase completa está estable en dev.
+All `vocabulary`, `theme`, `terminal`, `ui_labels`, `icons`, `window_controls`,
+`html_template_changelog`, and `html_template_story` fields are optional with
+sensible zero-value defaults.
 
+### Built-in Styles
 
-15. Roadmap (fuera de scope v1)
+| Style | Character |
+|-------|-----------|
+| **formal** | Technical and professional, neutral colors, Inter font |
+| **patchnotes** | Video game style, purple/gold, Rajdhani font, animations |
+| **ironic** | Dry humor, coral/teal palette, Comic Sans, Clippy |
+| **epic** | Grand medieval narrative, gold/dark, Cinzel font, ornate |
 
-Marketplace de estilos — repositorio público de .shipstyle de la comunidad.
-Soporte GitLab.
-Plugin para VS Code / Cursor.
-Integración Slack / Discord para publicar changelogs automáticamente.
-shiplog watch — modo daemon que genera changelog automáticamente al crear un tag.
+### Behavior
+
+- **Without LLM:** templates and vocabulary fields from the `.shipstyle` are used.
+- **With LLM:** the `llm_prompt` field is used to instruct the model; templates serve as fallback.
+- Built-in styles are not modifiable or deletable.
+
+---
+
+## 6. Output Formats
+
+| Format | Description |
+|--------|-------------|
+| `terminal` | Text with ANSI color direct to stdout |
+| `md` | Standard Markdown, GitHub-compatible |
+| `json` | Complete data structure, suitable for pipelines |
+| `html` | Self-contained HTML report with inline styles |
+
+PDF was removed in favor of HTML. The generated HTML can be printed to PDF from any browser.
+
+When a style defines `html_template_changelog` or `html_template_story`, the HTML
+output uses that custom template instead of the default renderer. Custom templates
+receive an `HTMLTemplateContext` containing all style fields (theme, icons, ui_labels)
+plus the report data. Template helper functions available: `upper`, `lower`, `initials`,
+`add`, `mul`, `divf`, `divi`, `safeHTML`.
+
+All four built-in styles include unique HTML templates with Chart.js visualizations,
+style-appropriate typography and layout, and colors driven by `.shipstyle` theme values.
+
+---
+
+## 7. LLM Integration
+
+The tool works completely without LLM using templates from the active style.
+
+### Configuration
+
+| Method | Detail |
+|--------|--------|
+| Environment variable | `COMMITLORE_LLM_PROVIDER` — `anthropic`, `openai`, `ollama`, `groq` |
+| Environment variable | `COMMITLORE_LLM_API_KEY` — provider API key |
+| Environment variable | `COMMITLORE_LLM_BASE_URL` — override API base URL |
+| CLI flag | `--llm` overrides the environment variable per command |
+| CLI flag | `--llm-base-url` overrides the API endpoint |
+| CLI flag | `--llm-model` overrides the default model |
+| Desktop app | Settings screen with OS keychain storage for API key |
+
+### Supported Providers
+
+| Provider | Default Model | Notes |
+|----------|---------------|-------|
+| `anthropic` | claude-haiku-4-5-20251001 | Native adapter |
+| `openai` | gpt-4o-mini | Native adapter |
+
+### Convenience Aliases
+
+Aliases map to the `openai` adapter with a preset base URL:
+
+| Alias | Base URL |
+|-------|----------|
+| `ollama` | `http://localhost:11434/v1` |
+| `groq` | `https://api.groq.com/openai/v1` |
+
+Any OpenAI-compatible provider works via `--llm openai --llm-base-url <endpoint>`.
+
+### Anti-Hallucination
+
+All built-in style `llm_prompt` fields include an explicit instruction requiring the LLM
+to base output exclusively on the provided commit data and never fabricate content.
+
+---
+
+## 8. Desktop App
+
+The app shares all logic from `internal/`. It only adds a UI layer on top.
+
+### Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Framework | Wails v3 alpha |
+| Frontend | Svelte + TypeScript |
+| UI styles | Tailwind CSS + shadcn-svelte (component base) |
+| Build | wails3 CLI (native binaries per platform) |
+
+### Screens
+
+| Screen | Description |
+|--------|-------------|
+| **Dashboard** | Summary of the active repo: latest activity, contributors, tags. Three entry points: native folder picker, drag & drop, GitHub owner/repo input. |
+| **Generate** | Form to configure and generate a changelog. Two-column layout: filter sidebar + HTML preview iframe. |
+| **Story** | Narrative visualization of the repo history. Same two-column layout as Generate. |
+| **History** | Commit explorer with filters. Dense table rows with click-to-copy hash. |
+| **Contributors** | Visual contribution map with avatar initials and activity bars. |
+| **Styles** | Read-only browser: preview styles, install from marketplace, delete, set active. No in-app editing. |
+| **Marketplace** | Browse and install community styles from the official commitlore-styles repository. Requires internet connection. Built-in styles are always available offline regardless of connectivity. |
+| **Settings** | LLM provider configuration, API key management via OS keychain, app style selection, language selector (English / Spanish). |
+
+### Repo Picker
+
+- Empty state with three entry points: native folder picker, drag & drop, GitHub owner/repo input.
+- GitHub connection via modal dialog with owner/repo input and optional token (session-only, not persisted to disk).
+- Recent repos list persisted in `~/.config/commitlore/config.yml` (max 10 entries, MRU order).
+- Global repo store: all screens read the active repo from a shared Svelte store; only Dashboard writes to it.
+
+### Output Display (Generate, Story)
+
+- HTML preview rendered inline in iframe + Copy button + Save as file button.
+- Narrative content rendered via goldmark (markdown to HTML with XSS protection).
+- In-memory commit cache avoids re-fetching from GitHub API when switching styles on the same repo.
+
+### Style Selection (Settings screen)
+
+- Active app style selected from dropdown (built-in + user styles).
+- Persisted in `~/.config/commitlore/config.yml` as `active_style` field.
+- Theme colors, typography, logo, and ui_labels injected as CSS variables across the entire UI.
+- Default style: `formal`.
+
+### Language Selector (Settings screen)
+
+- Two options: English / Español, rendered as radio buttons.
+- Persisted in `~/.config/commitlore/config.yml` as `language` field.
+- On change: validates that the active style has a variant for the selected language.
+  - If not available: shows inline error, does not change the selection.
+  - If available: saves language, reloads theme and ui_labels from the language variant.
+- Language variants are separate `.shipstyle` files with `<name>.<lang>.shipstyle` naming.
+- Default language: `"en"`.
+- All 4 built-in styles have Spanish variants. Marketplace styles may optionally provide them.
+
+### Styles Screen
+
+- Two-column layout: style card list + read-only detail panel.
+- Detail panel shows: logo, name/version/author, description, theme color circles, font preview, mode badge, UI labels (if custom), icons (if custom), collapsible LLM prompt.
+- Actions available:
+  - **Set as active** — applies the style to the entire app immediately.
+  - **Delete** — marketplace-installed styles only, with confirmation dialog. Built-in styles cannot be deleted.
+  - **Browse marketplace** — opens the in-app marketplace screen.
+- Styles are installed exclusively from the marketplace. Import and export are not supported.
+
+### Marketplace Architecture
+
+The marketplace is backed by a private GitHub repository (`commitlore-styles`)
+controlled by the CommitLore team. The app fetches a catalog file directly
+from the repository — no backend or additional infrastructure required.
+
+**Repository structure:**
+```
+commitlore-styles/
+├── index.json          # catalog with metadata for all available styles
+├── <style-name>/
+│   ├── style.shipstyle
+│   └── preview.png
+└── ...
+```
+
+**index.json format:**
+```json
+[
+  {
+    "name": "style-name",
+    "description": "One-line description",
+    "author": "author",
+    "version": "1.0.0",
+    "tags": ["dark", "colorful"],
+    "preview": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/preview.png",
+    "download": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/style.shipstyle",
+    "downloads": {
+      "es": "https://raw.githubusercontent.com/alciller88/commitlore-styles/main/<name>/<name>.es.shipstyle"
+    }
+  }
+]
+```
+
+The `downloads` field is a map of language code to download URL for language variants.
+One catalog entry per style — language variants are not listed as separate entries.
+
+**App behavior:**
+- On opening the Marketplace screen, the app fetches `index.json` and displays
+  the catalog with name, description, author, tags, and preview image.
+- Installing a style fetches the base `.shipstyle` from `download` URL and all
+  language variants from the `downloads` map, validates each, and saves them to
+  `~/.config/commitlore/styles/`. Variants are saved as `<name>.<lang>.shipstyle`.
+- If the fetch fails (no connection, rate limit), the screen shows an error with
+  a retry option. Already-installed styles remain available offline.
+- The four built-in styles are always embedded in the binary and are never
+  fetched from the marketplace.
+
+**Security:**
+- Only `.shipstyle` files from the official `commitlore-styles` repository are
+  installable via the marketplace UI.
+- The app validates the full `.shipstyle` schema after download before saving,
+  rejecting unknown fields.
+- The `llm_prompt` field in marketplace styles triggers the existing warning
+  to the user before the style is activated with an LLM.
+
+### LLM Configuration (Settings screen)
+
+- API key stored in OS keychain via go-keyring (Windows Credential Manager, macOS Keychain, Linux Secret Service).
+- Key never written to disk in plaintext.
+- UI shows key status: configured / not configured.
+- LLM settings auto-read by Generate and Story screens — no redundant selectors.
+
+### Visual Identity
+
+- Frameless window with custom titlebar — macOS-style window controls (close/minimize/maximize circles) in sidebar header.
+- Per-style window control colors via `window_controls` in `.shipstyle`.
+- Dark palette by default, with light theme option via active style.
+- Design system tokens for spacing, typography, radius, transitions.
+- Compact sidebar (220px) with VIEWS/SYSTEM nav sections, 32px row height.
+- Per-style navigation labels via `ui_labels`.
+- Per-style logo in sidebar header (inline SVG or image URL, fallback to CommitLore wordmark).
+- Repo indicator in content topbar (always visible, all screens).
+- Monospaced typography for outputs; sans-serif for navigation.
+- Custom style built on shadcn-svelte as component base. No dependency on generic UI libraries.
+
+---
+
+## 9. Security Model
+
+### Read-Only Guarantee
+
+CommitLore is a read-only tool. It never performs write operations on any repository, local or remote.
+
+**Permitted operations:**
+- Reading commits, tags, branches, diffs (go-git, read-only).
+- GET calls to GitHub API (public and private repos with token).
+- Writing output files only to paths explicitly specified by the user via `--output`.
+- Writing to `~/.config/commitlore/` (app's own configuration and styles).
+
+**Prohibited operations (never implement):**
+- `git push`, `git commit`, `git add`, `git rm` on user repos.
+- Writing files inside analyzed repo directories.
+- Modifying git configuration (`.git/config`, hooks, etc.).
+- Creating or modifying branches, tags, or refs in user repos.
+- GitHub API calls with POST/PUT/PATCH/DELETE methods on user repos.
+- Executing arbitrary shell commands.
+
+### Prompt Injection Protection
+
+- Commit messages, file names, author names, and any data from a repository are untrusted content.
+- Never execute or evaluate commit content as code or instructions.
+- Never pass commit content directly to an LLM without prior sanitization.
+- Mandatory sanitization before passing repo data to an LLM:
+  - Truncate commit messages to 500 characters maximum.
+  - Escape control characters.
+  - Add explicit delimiters in the LLM prompt to separate instructions from data (`---DATA START---` / `---DATA END---`).
+- The `llm_prompt` from an imported `.shipstyle` is potentially untrusted content — warn the user before using it with an LLM.
+- Basic pattern detection for known injection patterns ("ignore previous", "exfiltrate", "reveal system prompt", etc.) rejects prompts with clear error before sending to LLM.
+
+### Credentials
+
+- `COMMITLORE_LLM_API_KEY` and `GITHUB_TOKEN` are never logged, never appear in output, never included in reports.
+- Tokens are read only from environment variables or OS keychain, never from analyzed repo files.
+- If an imported `.shipstyle` contains fields that look like credentials, ignore them and warn the user.
+- GitHub token from the connection modal is session-only — not persisted to disk.
+
+### Input Validation
+
+- Repository paths: validate they exist and are git directories before operating.
+- GitHub URLs: validate format before calling the API.
+- `--output` flags: validate that the destination path is outside any `.git/` directory.
+- Imported `.shipstyle` files: validate complete schema before loading, reject unknown fields.
+- Style names: validated on creation to prevent filesystem issues.
+
+---
+
+## 10. Development Phases
+
+| Phase | Scope | Status |
+|-------|-------|--------|
+| Phase 1 | Project setup, base structure, CI pipeline, branches | Completed |
+| Phase 2 | `internal/git` — local repo access + `history` command | Completed |
+| Phase 3 | `internal/changelog` — commit parsing + `contributors` command | Completed |
+| Phase 4 | `generate` command (no LLM, templates) | Completed |
+| Phase 5 | `story` command (no LLM, templates) | Completed |
+| Phase 6 | `internal/renderer` — md, json, html formats | Completed |
+| Phase 7 | `internal/styles` — modular system + `style` command | Completed |
+| Phase 8 | `internal/github` — GitHub API integration | Completed |
+| Phase 9 | `internal/llm` — optional LLM integration (Anthropic + OpenAI) | Completed |
+| Phase 10 | Wails app — base structure + bindings | Completed |
+| Phase 11 | Wails app — screens and complete UI | Completed |
+| Phase 12 | Release pipeline + cross-platform binaries | Completed |
+| Phase 13 | Polish, docs, README, examples | Completed |
+| Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Completed |
+| Phase 15 | Internationalisation (i18n) — English/Spanish language support | Completed |
+
+---
+
+## 11. Backlog
+
+### P0 — Must fix before next release
+
+No P0 items at this time.
+
+### P1 — Next planned phase
+
+No P1 items at this time. All planned phases are completed.
+
+### P2 — Planned but not scheduled
+
+**Per-style navigation icons**
+
+- Styles control sidebar navigation icons via inline SVG strings.
+  - _Acceptance:_ New `ui_icons` block in `.shipstyle` with fields for each nav item (`dashboard`, `generate`, `story`, `history`, `contributors`, `styles`, `settings`, `local_repo`, `github_repo`). Icons are inline SVG strings. Falls back to current default icons when not defined.
+
+**`contributors --with-files` for remote repos**
+
+- For remote repos, the `--with-files` flag makes an additional API call per commit to obtain file diffs.
+  - _Acceptance:_ Disabled by default due to rate limit cost. Without the flag, the TOP FILES column remains empty for remote repos. With the flag, file-level contribution data appears.
+
+**Story: richer content**
+
+- More milestones, activity metrics per period in story output.
+  - _Acceptance:_ Story output includes additional temporal breakdowns and milestone detection beyond current implementation.
+
+**Generate: style-influenced structure**
+
+- Active style influences output structure, not just colors.
+  - _Acceptance:_ Different styles produce structurally different changelogs (e.g., grouped differently, different section ordering) beyond template text and visual theming.
+
+### Future — Roadmap / out of scope v1
+
+- **GitLab support** — GitLab API integration as an additional data source.
+- **VS Code / Cursor plugin** — editor extension for generating changelogs from within the IDE.
+- **Slack / Discord integration** — publish changelogs automatically to messaging platforms.
+- **`commitlore watch`** — daemon mode that generates changelog automatically when a tag is created.

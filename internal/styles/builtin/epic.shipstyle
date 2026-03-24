@@ -1,0 +1,1531 @@
+name: "epic"
+version: "2.0.0"
+description: "Medieval fantasy chronicle. Swords, dragons and ancient scrolls."
+author: "CommitLore"
+tags: ["fantasy", "narrative", "medieval", "chronicle", "dramatic", "immersive"]
+preview_url: ""
+homepage: ""
+
+theme:
+  mode: "dark"
+  colors:
+    primary: "#C9A84C"
+    secondary: "#7A6545"
+    background: "#0F0A05"
+    surface: "#1C1208"
+    text: "#E8D5A3"
+    accent: "#8B1A1A"
+    border: "#3D2B0F"
+  typography:
+    font_family: "'Cinzel', 'Palatino Linotype', serif"
+    font_size_base: "13px"
+    font_size_header: "22px"
+    font_size_code: "12px"
+  logo: |
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H152a8,8,0,0,0-6.34,3.12l-64,83.21L72,108.69a16,16,0,0,0-22.64,0l-12.69,12.7a16,16,0,0,0,0,22.63l20,20-28,28a16,16,0,0,0,0,22.63l12.69,12.68a16,16,0,0,0,22.62,0l28-28,20,20a16,16,0,0,0,22.64,0l12.69-12.7a16,16,0,0,0,0-22.63l-9.64-9.64,83.21-64A8,8,0,0,0,224,104V40A8,8,0,0,0,216,32ZM52.69,216,40,203.32l28-28L80.68,188Zm70.61-8L48,132.71,60.7,120,136,195.31ZM208,100.06l-81.74,62.88L115.32,152l50.34-50.34a8,8,0,0,0-11.32-11.31L104,140.68,93.07,129.74,155.94,48H208Z"/></svg>
+  header_image: ""
+  card_style: "bordered"
+  animations: true
+  custom_css: ""
+  window_controls:
+    default: "#3D2B0F"
+    close: "#8B1A1A"
+    minimize: "#C9A84C"
+    maximize: "#7A6545"
+
+terminal:
+  colors:
+    header: "yellow"
+    feature: "white"
+    fix: "green"
+    breaking: "red"
+    footer: "yellow"
+  decorators:
+    separator: "⚔═══════════════════════════════════════⚔"
+    bullet: "⚜"
+    indent: "  "
+  density: "normal"
+
+llm_prompt: |
+  You are a medieval chronicler writing in a fantasy epic style.
+  Describe code changes as heroic deeds, quests and battles.
+  Features are gifts bestowed upon the realm, fixes are curses lifted,
+  breaking changes are great upheavals that shake the foundations.
+  Use archaic but readable language. Reference taverns, dragons, swords
+  and ancient scrolls naturally. Keep it epic but not unreadable.
+  IMPORTANT: Base your output EXCLUSIVELY on the commits provided in the
+  data section. Do not invent features, fixes, or changes that are not
+  present in the commit data. Adapt the tone, never fabricate content.
+
+vocabulary:
+  bug: "curse"
+  fix: "mended"
+  feature: "gift"
+  breaking: "GREAT UPHEAVAL"
+  error: "dark omen"
+  deploy: "proclaimed"
+  merge: "united"
+
+ui_labels:
+  dashboard: "The Keep"
+  generate: "The Chronicle"
+  story: "The Saga"
+  history: "The Scrolls"
+  contributors: "The Fellowship"
+  styles: "The Wardrobe"
+  settings: "The Forge"
+  generate_button: "Inscribe the Chronicle"
+  story_button: "Begin the Saga"
+
+icons:
+  feature: "⚜"
+  fix: "⚔"
+  breaking: "☠"
+  chore: "⚙"
+  docs: "📜"
+  test: "⚗"
+  story_peak: "🔥"
+  bullet: "⚜"
+  separator: "⚔═══════════════════════════════════════⚔"
+
+templates:
+  header: |
+    # The Chronicle — {{.Version}}
+    *Inscribed on {{.Date}}*
+  feature: "- ⚜ **Gift bestowed:** {{.Message}}"
+  fix: "- ⚔ **Curse lifted:** {{.Message}}"
+  breaking: "- ⚠ **GREAT UPHEAVAL:** {{.Message}}"
+  footer: |
+    ---
+    *Thus the chronicle is sealed — CommitLore*
+  story_intro: |
+    ## The Saga of {{.FirstAuthor}}
+    In the age of {{.FirstCommitDate}}, brave heroes began their quest.
+    {{.TotalContributors}} champions answered the call.
+  story_milestone: "- ⚜ {{.Name}} (`{{.Hash | short}}`) — {{.Date}}"
+  story_peak: "The forge burned brightest in {{.Month}} — {{.Count}} deeds inscribed"
+  story_contributor: "- **{{.Name}}** — joined the fellowship on {{.Date}}"
+  story_footer: "*Thus the saga continues — CommitLore*"
+
+html_template_changelog: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.RepoName}} — The Chronicle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: {{.Theme.Typography.FontSizeBase}}; }
+
+      body {
+        font-family: 'Cinzel', 'Palatino Linotype', serif;
+        background: {{.Theme.Colors.Background}};
+        background-image:
+          repeating-linear-gradient(
+            135deg,
+            color-mix(in srgb, {{.Theme.Colors.Primary}} 3%, transparent) 0px,
+            transparent 2px,
+            transparent 60px
+          ),
+          repeating-linear-gradient(
+            45deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 3%, transparent) 0px,
+            transparent 2px,
+            transparent 80px
+          );
+        color: {{.Theme.Colors.Text}};
+        line-height: 2;
+        min-height: 100vh;
+      }
+
+      {{if .Theme.Animations}}
+      @keyframes cl-fade-in {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .cl-animated {
+        animation: cl-fade-in 0.7s ease both;
+      }
+      .cl-animated:nth-child(2) { animation-delay: 0.1s; }
+      .cl-animated:nth-child(3) { animation-delay: 0.2s; }
+      .cl-animated:nth-child(4) { animation-delay: 0.3s; }
+      .cl-animated:nth-child(5) { animation-delay: 0.4s; }
+      .cl-animated:nth-child(6) { animation-delay: 0.5s; }
+      {{end}}
+
+      a { color: {{.Theme.Colors.Primary}}; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* Page wrapper */
+      .cl-page {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 48px 32px 80px;
+      }
+
+      /* Separator */
+      .cl-sep {
+        text-align: center;
+        color: {{.Theme.Colors.Primary}};
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        margin: 32px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      /* Header */
+      .cl-header {
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      .cl-header-repo {
+        font-family: 'Cinzel', serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+      .cl-header-date {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.12em;
+        margin-top: 10px;
+      }
+      .cl-header-version {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 4px 14px;
+        border: 1px solid {{.Theme.Colors.Primary}};
+        color: {{.Theme.Colors.Primary}};
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      /* Section title */
+      .cl-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 15px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      /* Narrative / content */
+      .cl-narrative {
+        max-width: 720px;
+        margin: 0 auto 8px;
+        font-family: 'Cinzel', serif;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2;
+      }
+      .cl-narrative p:first-of-type::first-letter {
+        font-size: 4em;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        float: left;
+        line-height: 0.75;
+        margin: 8px 10px 0 0;
+        font-family: 'Cinzel', serif;
+      }
+      .cl-narrative p {
+        margin-bottom: 16px;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2;
+      }
+      .cl-narrative h1, .cl-narrative h2, .cl-narrative h3 {
+        font-family: 'Cinzel', serif;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.08em;
+        margin: 28px 0 12px;
+        text-transform: uppercase;
+      }
+      .cl-narrative h1 { font-size: 22px; }
+      .cl-narrative h2 { font-size: 17px; }
+      .cl-narrative h3 { font-size: 14px; }
+      .cl-narrative strong { color: {{.Theme.Colors.Primary}}; font-weight: 700; }
+      .cl-narrative em { color: {{.Theme.Colors.Secondary}}; font-style: italic; }
+      .cl-narrative ul, .cl-narrative ol {
+        padding-left: 24px;
+        margin-bottom: 16px;
+      }
+      .cl-narrative li { margin-bottom: 6px; line-height: 2; }
+      .cl-narrative code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: {{.Theme.Typography.FontSizeCode}};
+        color: {{.Theme.Colors.Primary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, transparent);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+      .cl-narrative blockquote {
+        border-left: 3px solid {{.Theme.Colors.Primary}};
+        padding-left: 16px;
+        color: {{.Theme.Colors.Secondary}};
+        margin: 0 0 14px;
+      }
+      .cl-narrative hr {
+        border: none;
+        border-top: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        margin: 24px 0;
+      }
+
+      /* Stats row */
+      .cl-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+      .cl-stat-card {
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 6%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 35%, transparent);
+        padding: 20px 24px;
+        text-align: center;
+      }
+      .cl-stat-value {
+        font-family: 'Cinzel', serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-bottom: 8px;
+      }
+      .cl-stat-label {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      /* Decree scroll — commits list */
+      .cl-decrees {
+        margin-bottom: 8px;
+      }
+      .cl-decree {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 18%, transparent);
+      }
+      .cl-decree:last-child { border-bottom: none; }
+      .cl-decree-icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        color: {{.Theme.Colors.Primary}};
+        width: 20px;
+        text-align: center;
+      }
+      .cl-decree-msg {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        color: {{.Theme.Colors.Text}};
+        flex: 1;
+        line-height: 1.7;
+      }
+      .cl-decree-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        flex-shrink: 0;
+      }
+
+      /* Activity chart */
+      .cl-chart-card {
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 4%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        padding: 28px 24px;
+        margin-bottom: 8px;
+      }
+      .cl-chart-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .cl-chart-wrap {
+        position: relative;
+        height: 220px;
+      }
+
+      /* Milestones */
+      .cl-milestones {
+        margin-bottom: 8px;
+      }
+      .cl-milestone-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 18%, transparent);
+        font-size: 13px;
+      }
+      .cl-milestone-row:last-child { border-bottom: none; }
+      .cl-milestone-name {
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        min-width: 100px;
+        letter-spacing: 0.04em;
+      }
+      .cl-milestone-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 8%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 22%, transparent);
+        padding: 1px 6px;
+      }
+      .cl-milestone-date {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-left: auto;
+      }
+
+      /* Fellowship / contributors */
+      .cl-fellowship {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 8px;
+      }
+      .cl-fellow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        min-width: 100px;
+      }
+      .cl-fellow-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 2px solid {{.Theme.Colors.Primary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, {{.Theme.Colors.Background}});
+        color: {{.Theme.Colors.Primary}};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+        font-size: 18px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+      .cl-fellow-name {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        color: {{.Theme.Colors.Text}};
+        letter-spacing: 0.06em;
+        text-align: center;
+        max-width: 110px;
+        word-break: break-word;
+      }
+      .cl-fellow-deeds {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.08em;
+        text-align: center;
+      }
+
+      /* Footer */
+      .cl-footer {
+        margin-top: 16px;
+        text-align: center;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.08em;
+        padding-top: 24px;
+      }
+      .cl-footer-sep {
+        display: block;
+        color: {{.Theme.Colors.Primary}};
+        margin: 10px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="cl-page">
+
+      {{/* ── Top separator ── */}}
+      <div class="cl-sep">{{.Icons.Separator}}</div>
+
+      {{/* ── Header ── */}}
+      <header class="cl-header cl-animated">
+        <div class="cl-header-repo">{{.RepoName}}</div>
+        {{if .Version}}<div class="cl-header-version">{{.Version}}</div>{{end}}
+        <div class="cl-header-date">
+          {{if .Generated}}{{.Generated}}{{else if .FirstDate}}{{.FirstDate}}{{end}}
+        </div>
+      </header>
+
+      {{/* ── Separator ── */}}
+      <div class="cl-sep">{{.Icons.Separator}}</div>
+
+      {{/* ── Narrative content ── */}}
+      {{- if .Content}}
+      <section class="cl-animated">
+        <div class="cl-narrative">{{.Content}}</div>
+      </section>
+      <div class="cl-sep">{{.Icons.Separator}}</div>
+      {{- end}}
+      {{- if .Items}}
+      {{/* ════════ CHANGELOG MODE ════════ */}}
+
+      {{/* Stats */}}
+      <section class="cl-animated">
+        <div class="cl-stats">
+          <div class="cl-stat-card">
+            <div class="cl-stat-value">{{len .Items}}</div>
+            <div class="cl-stat-label">Decrees Issued</div>
+          </div>
+          <div class="cl-stat-card">
+            <div class="cl-stat-value" id="feat-count">—</div>
+            <div class="cl-stat-label">Gifts Bestowed</div>
+          </div>
+          <div class="cl-stat-card">
+            <div class="cl-stat-value" id="fix-count">—</div>
+            <div class="cl-stat-label">Curses Lifted</div>
+          </div>
+        </div>
+      </section>
+
+      {{/* Decree scroll */}}
+      <section class="cl-animated">
+        <div class="cl-section-title">The Decrees of this Chronicle</div>
+        <div class="cl-decrees">
+          {{range .Items}}
+          <div class="cl-decree">
+            <span class="cl-decree-icon">{{.Icon}}</span>
+            <span class="cl-decree-msg">{{.Message}}</span>
+            <span class="cl-decree-hash">{{.Hash}}</span>
+          </div>
+          {{end}}
+        </div>
+      </section>
+
+      {{/* Activity chart */}}
+      <section class="cl-animated">
+        <div class="cl-chart-card">
+          <div class="cl-chart-title">Chronicles of Activity</div>
+          <div class="cl-chart-wrap">
+            <canvas id="epic-cl-type-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <script>
+      (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+        var items = [
+          {{range .Items}}
+          { type: "{{lower .Type}}" },
+          {{end}}
+        ];
+        var counts = {};
+        items.forEach(function(i) { counts[i.type] = (counts[i.type] || 0) + 1; });
+        var el1 = document.getElementById("feat-count");
+        var el2 = document.getElementById("fix-count");
+        if (el1) el1.textContent = counts["feat"] || counts["feature"] || 0;
+        if (el2) el2.textContent = counts["fix"] || 0;
+
+        var vocabMap = { {{range $k, $v := .Vocabulary}}"{{$k}}": "{{$v}}", {{end}} };
+        var rawLabels = Object.keys(counts);
+        var labels = rawLabels.map(function(k) { return vocabMap[k] || k; });
+        var data = rawLabels.map(function(k) { return counts[k]; });
+        var ctx = document.getElementById("epic-cl-type-chart");
+        if (ctx) {
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "Decrees",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    },
+                    y: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    }
+                  }
+                }
+              });
+            } catch(e) { console.error("Chart error:", e); }
+          }, 100);
+        }
+      })();
+      </script>
+
+      {{- end}}{{/* end .Items */}}
+      {{- if .Peaks}}
+      {{/* ════════ STORY MODE ════════ */}}
+
+      {{/* Stats */}}
+      <section class="cl-animated">
+        <div class="cl-stats">
+          <div class="cl-stat-card">
+            <div class="cl-stat-value">{{.TotalCommits}}</div>
+            <div class="cl-stat-label">Heroic Deeds</div>
+          </div>
+          <div class="cl-stat-card">
+            <div class="cl-stat-value">{{len .Contributors}}</div>
+            <div class="cl-stat-label">The Fellowship</div>
+          </div>
+          <div class="cl-stat-card">
+            <div class="cl-stat-value">{{len .Tags}}</div>
+            <div class="cl-stat-label">Milestones</div>
+          </div>
+        </div>
+      </section>
+
+      {{/* Activity chart */}}
+      <section class="cl-animated">
+        <div class="cl-chart-card">
+          <div class="cl-chart-title">Chronicles of Activity</div>
+          <div class="cl-chart-wrap">
+            <canvas id="epic-cl-activity-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <script>
+      (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+        var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+        var data   = [{{range .Peaks}}{{.Count}},{{end}}];
+        var ctx = document.getElementById("epic-cl-activity-chart");
+        if (ctx) {
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: "Deeds",
+                    data: data,
+                    backgroundColor: "{{.Theme.Colors.Primary}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    },
+                    y: {
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    }
+                  }
+                }
+              });
+            } catch(e) { console.error("Chart error:", e); }
+          }, 100);
+        }
+      })();
+      </script>
+
+      {{if .Tags}}
+      <div class="cl-sep">{{.Icons.Separator}}</div>
+      <section class="cl-animated">
+        <div class="cl-section-title">Milestones of the Realm</div>
+        <div class="cl-milestones">
+          {{range .Tags}}
+          <div class="cl-milestone-row">
+            <span class="cl-milestone-name">{{.Name}}</span>
+            <span class="cl-milestone-hash">{{.Hash}}</span>
+            <span class="cl-milestone-date">{{.Date}}</span>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{if .Contributors}}
+      <div class="cl-sep">{{.Icons.Separator}}</div>
+      <section class="cl-animated">
+        <div class="cl-section-title">The Fellowship</div>
+        <div class="cl-fellowship">
+          {{range .Contributors}}
+          <div class="cl-fellow">
+            <div class="cl-fellow-avatar">{{initials .Name}}</div>
+            <div class="cl-fellow-name">{{.Name}}</div>
+            <div class="cl-fellow-deeds">contributor</div>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{- end}}{{/* end .Peaks */}}
+
+      {{/* ── Footer ── */}}
+      <footer class="cl-footer">
+        <span class="cl-footer-sep">{{.Icons.Separator}}</span>
+        {{.Icons.Bullet}} Thus the chronicle is sealed — CommitLore {{.Icons.Bullet}}
+        <span class="cl-footer-sep">{{.Icons.Separator}}</span>
+      </footer>
+
+    </main>
+  </body>
+  </html>
+
+html_template_story: |
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Saga of {{upper .RepoName}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { font-size: {{.Theme.Typography.FontSizeBase}}; }
+
+      body {
+        font-family: {{safeCSS .Theme.Typography.FontFamily}};
+        background-color: {{.Theme.Colors.Background}};
+        background-image:
+          repeating-linear-gradient(
+            0deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 4%, transparent) 0px,
+            transparent 1px,
+            transparent 48px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 2%, transparent) 0px,
+            transparent 1px,
+            transparent 72px
+          ),
+          repeating-linear-gradient(
+            135deg,
+            color-mix(in srgb, {{.Theme.Colors.Primary}} 3%, transparent) 0px,
+            transparent 2px,
+            transparent 80px
+          ),
+          repeating-linear-gradient(
+            45deg,
+            color-mix(in srgb, {{.Theme.Colors.Secondary}} 3%, transparent) 0px,
+            transparent 2px,
+            transparent 100px
+          );
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.2;
+        min-height: 100vh;
+      }
+
+      {{if .Theme.Animations}}
+      @keyframes sg-fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes sg-glow {
+        0%, 100% { text-shadow: 0 0 8px color-mix(in srgb, {{.Theme.Colors.Primary}} 40%, transparent); }
+        50%       { text-shadow: 0 0 24px color-mix(in srgb, {{.Theme.Colors.Primary}} 80%, transparent); }
+      }
+      .sg-animated {
+        animation: sg-fade-in 0.8s ease both;
+      }
+      .sg-animated:nth-child(2)  { animation-delay: 0.10s; }
+      .sg-animated:nth-child(3)  { animation-delay: 0.20s; }
+      .sg-animated:nth-child(4)  { animation-delay: 0.30s; }
+      .sg-animated:nth-child(5)  { animation-delay: 0.40s; }
+      .sg-animated:nth-child(6)  { animation-delay: 0.50s; }
+      .sg-animated:nth-child(7)  { animation-delay: 0.60s; }
+      .sg-animated:nth-child(8)  { animation-delay: 0.70s; }
+      .sg-title-glow {
+        animation: sg-glow 3s ease-in-out infinite;
+      }
+      {{end}}
+
+      a { color: {{.Theme.Colors.Primary}}; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      /* ── Page wrapper ── */
+      .sg-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 56px 40px 96px;
+      }
+
+      /* ── Ornamental separator ── */
+      .sg-sep {
+        text-align: center;
+        color: {{.Theme.Colors.Primary}};
+        font-size: 14px;
+        letter-spacing: 0.04em;
+        margin: 36px 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      /* ── Grand header ── */
+      .sg-header {
+        text-align: center;
+        padding: 16px 0 8px;
+      }
+      .sg-header-eyebrow {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+      }
+      .sg-header-title {
+        font-family: 'Cinzel', serif;
+        font-size: 40px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1.15;
+        margin-bottom: 18px;
+      }
+      .sg-header-date {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.16em;
+        font-style: italic;
+        margin-bottom: 20px;
+      }
+      .sg-header-ornament {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        margin: 20px 0 0;
+      }
+      .sg-header-ornament-line {
+        flex: 1;
+        max-width: 180px;
+        height: 1px;
+        background: linear-gradient(
+          to var(--dir, right),
+          transparent,
+          {{.Theme.Colors.Primary}},
+          transparent
+        );
+      }
+      .sg-header-ornament-icon {
+        color: {{.Theme.Colors.Primary}};
+        font-size: 20px;
+      }
+
+      /* ── Prologue box ── */
+      .sg-prologue {
+        background: {{.Theme.Colors.Surface}};
+        border: 1px solid {{.Theme.Colors.Border}};
+        border-top: 3px solid {{.Theme.Colors.Primary}};
+        padding: 28px 32px;
+        margin: 0 auto;
+        max-width: 760px;
+        position: relative;
+      }
+      .sg-prologue::before {
+        content: '✦';
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: {{.Theme.Colors.Surface}};
+        color: {{.Theme.Colors.Primary}};
+        font-size: 18px;
+        padding: 0 10px;
+      }
+      .sg-prologue-label {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+      .sg-prologue-text {
+        font-family: 'Cinzel', serif;
+        font-size: 14px;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.0;
+        font-style: italic;
+      }
+
+      /* ── Stats triumvirate ── */
+      .sg-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 20px;
+      }
+      .sg-stat-card {
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 6%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 35%, transparent);
+        border-top: 2px solid {{.Theme.Colors.Primary}};
+        padding: 24px 20px;
+        text-align: center;
+      }
+      .sg-stat-value {
+        font-family: 'Cinzel', serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: -0.02em;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+      .sg-stat-label {
+        font-family: 'Cinzel', serif;
+        font-size: 9px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      /* ── Narrative ── */
+      .sg-narrative {
+        max-width: 760px;
+        margin: 0 auto;
+        font-family: 'Cinzel', serif;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.2;
+        font-size: 14px;
+      }
+      .sg-narrative p:first-of-type::first-letter {
+        font-size: 4em;
+        font-weight: 700;
+        color: {{.Theme.Colors.Primary}};
+        float: left;
+        line-height: 0.72;
+        margin: 10px 12px 0 0;
+        font-family: 'Cinzel', serif;
+      }
+      .sg-narrative p {
+        margin-bottom: 20px;
+        color: {{.Theme.Colors.Text}};
+        line-height: 2.2;
+      }
+      .sg-narrative h1, .sg-narrative h2, .sg-narrative h3 {
+        font-family: 'Cinzel', serif;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.10em;
+        margin: 32px 0 14px;
+        text-transform: uppercase;
+      }
+      .sg-narrative h1 { font-size: 22px; }
+      .sg-narrative h2 { font-size: 17px; }
+      .sg-narrative h3 { font-size: 14px; }
+      .sg-narrative strong { color: {{.Theme.Colors.Primary}}; font-weight: 700; }
+      .sg-narrative em    { color: {{.Theme.Colors.Secondary}}; font-style: italic; }
+      .sg-narrative ul, .sg-narrative ol {
+        padding-left: 28px;
+        margin-bottom: 20px;
+      }
+      .sg-narrative li { margin-bottom: 8px; line-height: 2.2; }
+      .sg-narrative code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: {{.Theme.Typography.FontSizeCode}};
+        color: {{.Theme.Colors.Primary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, transparent);
+        padding: 1px 6px;
+        border-radius: 3px;
+      }
+      .sg-narrative blockquote {
+        border-left: 3px solid {{.Theme.Colors.Primary}};
+        padding: 8px 0 8px 18px;
+        color: {{.Theme.Colors.Secondary}};
+        margin: 0 0 16px;
+        font-style: italic;
+      }
+      .sg-narrative hr {
+        border: none;
+        border-top: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        margin: 28px 0;
+      }
+
+      /* ── Section title ── */
+      .sg-section-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.20em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 28px;
+        position: relative;
+      }
+      .sg-section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 1px;
+        background: {{.Theme.Colors.Primary}};
+        margin: 10px auto 0;
+      }
+
+      /* ── Chapters (peaks) ── */
+      .sg-chapters {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .sg-chapter {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 0 24px;
+        padding: 20px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Border}} 60%, transparent);
+        align-items: start;
+      }
+      .sg-chapter:last-child { border-bottom: none; }
+      .sg-chapter-numeral {
+        font-family: 'Cinzel', serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: color-mix(in srgb, {{.Theme.Colors.Primary}} 40%, transparent);
+        line-height: 1;
+        text-align: right;
+        padding-top: 4px;
+        letter-spacing: -0.02em;
+        user-select: none;
+      }
+      .sg-chapter-body {}
+      .sg-chapter-title {
+        font-family: 'Cinzel', serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.10em;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .sg-chapter-deeds {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.06em;
+        font-style: italic;
+      }
+      .sg-chapter-bar-wrap {
+        margin-top: 10px;
+        height: 4px;
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, transparent);
+        border-radius: 2px;
+        overflow: hidden;
+        max-width: 320px;
+      }
+      .sg-chapter-bar {
+        height: 100%;
+        background: {{.Theme.Colors.Primary}};
+        border-radius: 2px;
+      }
+
+      /* ── Activity chart ── */
+      .sg-chart-card {
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 4%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 30%, transparent);
+        border-top: 2px solid {{.Theme.Colors.Primary}};
+        padding: 32px 28px;
+      }
+      .sg-chart-title {
+        font-family: 'Cinzel', serif;
+        font-size: 13px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .sg-chart-wrap {
+        position: relative;
+        height: 240px;
+      }
+
+      /* ── Tags / Milestones ── */
+      .sg-milestones {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .sg-milestone-row {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 0;
+        border-bottom: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 18%, transparent);
+        font-size: 13px;
+      }
+      .sg-milestone-row:last-child { border-bottom: none; }
+      .sg-milestone-icon {
+        color: {{.Theme.Colors.Primary}};
+        font-size: 15px;
+        flex-shrink: 0;
+        width: 22px;
+        text-align: center;
+      }
+      .sg-milestone-name {
+        font-family: 'Cinzel', serif;
+        font-weight: 600;
+        color: {{.Theme.Colors.Primary}};
+        letter-spacing: 0.06em;
+        min-width: 120px;
+      }
+      .sg-milestone-hash {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 8%, {{.Theme.Colors.Background}});
+        border: 1px solid color-mix(in srgb, {{.Theme.Colors.Primary}} 22%, transparent);
+        padding: 1px 7px;
+        letter-spacing: 0.04em;
+      }
+      .sg-milestone-date {
+        font-family: 'Cinzel', serif;
+        font-size: 11px;
+        color: {{.Theme.Colors.Secondary}};
+        margin-left: auto;
+        letter-spacing: 0.06em;
+      }
+
+      /* ── Fellowship / contributors ── */
+      .sg-fellowship {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 28px;
+        justify-content: center;
+      }
+      .sg-fellow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        min-width: 110px;
+        max-width: 130px;
+      }
+      .sg-fellow-crest {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid {{.Theme.Colors.Primary}};
+        box-shadow:
+          0 0 0 4px color-mix(in srgb, {{.Theme.Colors.Primary}} 12%, transparent),
+          0 0 16px color-mix(in srgb, {{.Theme.Colors.Primary}} 20%, transparent);
+        background: color-mix(in srgb, {{.Theme.Colors.Primary}} 10%, {{.Theme.Colors.Surface}});
+        color: {{.Theme.Colors.Primary}};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Cinzel', serif;
+        font-size: 22px;
+        font-weight: 700;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .sg-fellow-name {
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: {{.Theme.Colors.Text}};
+        letter-spacing: 0.08em;
+        text-align: center;
+        word-break: break-word;
+      }
+      .sg-fellow-deeds {
+        font-family: 'Cinzel', serif;
+        font-size: 10px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.10em;
+        text-align: center;
+        font-style: italic;
+      }
+
+      /* ── Footer ── */
+      .sg-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-family: 'Cinzel', serif;
+        font-size: 12px;
+        color: {{.Theme.Colors.Secondary}};
+        letter-spacing: 0.10em;
+        padding-top: 28px;
+      }
+      .sg-footer-sep {
+        display: block;
+        color: {{.Theme.Colors.Primary}};
+        margin-bottom: 12px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+      .sg-footer-text {
+        font-style: italic;
+        letter-spacing: 0.14em;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="sg-page">
+
+      {{/* ════ TOP ORNAMENTAL SEPARATOR ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+
+      {{/* ════ GRAND HEADER ════ */}}
+      <header class="sg-header sg-animated">
+        <div class="sg-header-eyebrow">A Chronicle of the Realm</div>
+        <div class="sg-header-title sg-title-glow">The Saga of {{upper .RepoName}}</div>
+        <div class="sg-header-date">
+          {{if .Generated}}In the age of {{.Generated}}{{else if .FirstDate}}In the age of {{.FirstDate}}{{end}}
+        </div>
+        <div class="sg-header-ornament">
+          <div class="sg-header-ornament-line" style="--dir: right;"></div>
+          <span class="sg-header-ornament-icon">{{.Icons.Bullet}}</span>
+          <div class="sg-header-ornament-line" style="--dir: left;"></div>
+        </div>
+      </header>
+
+      {{/* ════ SEPARATOR ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+
+      {{/* ════ PROLOGUE ════ */}}
+      <section class="sg-animated">
+        <div class="sg-prologue">
+          <div class="sg-prologue-label">Prologue</div>
+          <div class="sg-prologue-text">
+            In the age of {{.FirstDate}}, {{.FirstAuthor}} began the great work.
+            {{len .Contributors}} champions answered the call.
+            {{.TotalCommits}} deeds were inscribed upon the eternal scrolls.
+          </div>
+        </div>
+      </section>
+
+      {{/* ════ SEPARATOR ════ */}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+
+      {{/* ════ STATS ════ */}}
+      <section class="sg-animated">
+        <div class="sg-stats">
+          <div class="sg-stat-card">
+            <div class="sg-stat-value">{{.TotalCommits}}</div>
+            <div class="sg-stat-label">Heroic Deeds</div>
+          </div>
+          <div class="sg-stat-card">
+            <div class="sg-stat-value">{{len .Contributors}}</div>
+            <div class="sg-stat-label">The Fellowship</div>
+          </div>
+          <div class="sg-stat-card">
+            <div class="sg-stat-value">{{len .Tags}}</div>
+            <div class="sg-stat-label">Milestones</div>
+          </div>
+          <div class="sg-stat-card">
+            {{if .FirstDate}}
+            <div class="sg-stat-value" style="font-size:15px;padding-top:6px;line-height:1.2;">{{.FirstDate}}</div>
+            {{else}}
+            <div class="sg-stat-value">&mdash;</div>
+            {{end}}
+            <div class="sg-stat-label">The First Stone</div>
+          </div>
+          <div class="sg-stat-card">
+            {{if .Peaks}}
+            <div class="sg-stat-value" style="font-size:15px;padding-top:6px;line-height:1.2;">{{(index .Peaks 0).Month}}</div>
+            {{else}}
+            <div class="sg-stat-value">&mdash;</div>
+            {{end}}
+            <div class="sg-stat-label">The Forge Burns Brightest</div>
+          </div>
+        </div>
+      </section>
+
+      {{/* ════ NARRATIVE CONTENT ════ */}}
+      {{if .Content}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-narrative">{{.Content}}</div>
+      </section>
+      {{end}}
+
+      {{/* ════ CHAPTERS OF THE SAGA (PEAKS) ════ */}}
+      {{if .Peaks}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">The Chapters of the Saga</div>
+        <div class="sg-chapters" id="sg-chapters-list">
+          {{range $i, $p := .Peaks}}
+          <div class="sg-chapter">
+            <div class="sg-chapter-numeral">{{add $i 1}}</div>
+            <div class="sg-chapter-body">
+              <div class="sg-chapter-title">{{$p.Month}}</div>
+              <div class="sg-chapter-deeds">{{$p.Count}} deeds inscribed</div>
+              <div class="sg-chapter-bar-wrap">
+                <div class="sg-chapter-bar" style="width: 0%" data-count="{{$p.Count}}"></div>
+              </div>
+            </div>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{/* ════ CHRONICLES OF ACTIVITY (CHART) ════ */}}
+      {{if .Peaks}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-chart-card">
+          <div class="sg-chart-title">Chronicles of Activity</div>
+          <div class="sg-chart-wrap">
+            <canvas id="sg-activity-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <script>
+      (function() {
+        /* Chapter bar widths */
+        try {
+          var bars = document.querySelectorAll('.sg-chapter-bar');
+          if (bars.length > 0) {
+            var maxCount = 0;
+            bars.forEach(function(b) {
+              var c = parseInt(b.getAttribute('data-count'), 10) || 0;
+              if (c > maxCount) maxCount = c;
+            });
+            if (maxCount > 0) {
+              bars.forEach(function(b) {
+                var c = parseInt(b.getAttribute('data-count'), 10) || 0;
+                b.style.width = Math.round((c / maxCount) * 100) + '%';
+              });
+            }
+          }
+        } catch(e) {}
+
+        /* Activity chart */
+        if (typeof Chart === 'undefined') return;
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+        var labels = [{{range .Peaks}}"{{.Month}}",{{end}}];
+        var data   = [{{range .Peaks}}{{.Count}},{{end}}];
+        var ctx = document.getElementById('sg-activity-chart');
+        if (!ctx) return;
+        setTimeout(function() {
+          try {
+            new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Deeds',
+                data: data,
+                backgroundColor: '{{.Theme.Colors.Primary}}',
+                borderRadius: 4,
+                borderSkipped: false
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: {
+                  grid: { color: hexToRgba('{{.Theme.Colors.Primary}}', 0.15) },
+                  ticks: {
+                    color: '{{.Theme.Colors.Secondary}}',
+                    font: { family: "'Cinzel', serif", size: 10 }
+                  }
+                },
+                y: {
+                  grid: { color: hexToRgba('{{.Theme.Colors.Primary}}', 0.15) },
+                  ticks: {
+                    color: '{{.Theme.Colors.Secondary}}',
+                    font: { family: "'Cinzel', serif", size: 10 }
+                  }
+                }
+              }
+            }
+          });
+          } catch(e) { console.error('Chart error:', e); }
+        }, 100);
+      })();
+      </script>
+      {{end}}
+
+      {{/* ════ MILESTONES ════ */}}
+      {{if .Tags}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">Milestones of the Realm</div>
+        <div class="sg-milestones">
+          {{range .Tags}}
+          <div class="sg-milestone-row">
+            <span class="sg-milestone-icon">{{$.Icons.Bullet}}</span>
+            <span class="sg-milestone-name">{{.Name}}</span>
+            <span class="sg-milestone-hash">{{.Hash}}</span>
+            <span class="sg-milestone-date">{{.Date}}</span>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{/* ════ THE FELLOWSHIP ════ */}}
+      {{if .Contributors}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">The Fellowship</div>
+        <div class="sg-fellowship">
+          {{range .Contributors}}
+          <div class="sg-fellow">
+            <div class="sg-fellow-crest">{{initials .Name}}</div>
+            <div class="sg-fellow-name">{{.Name}}</div>
+            <div class="sg-fellow-deeds">{{.Count}} heroic deeds</div>
+          </div>
+          {{end}}
+        </div>
+      </section>
+      {{end}}
+
+      {{if .Contributors}}
+      <div class="sg-sep sg-animated">{{.Icons.Separator}}</div>
+      <section class="sg-animated">
+        <div class="sg-section-title">Fellowship Ranking</div>
+        <div class="sg-chart-card">
+          <div style="position: relative; height: 220px;">
+            <canvas id="epic-contrib-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <script>
+      (function() {
+        function hexToRgba(hex, alpha) {
+          hex = hex.replace('#', '');
+          if (hex.length === 3) hex = hex.split('').map(function(c){return c+c;}).join('');
+          var r = parseInt(hex.substring(0,2),16);
+          var g = parseInt(hex.substring(2,4),16);
+          var b = parseInt(hex.substring(4,6),16);
+          return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+        }
+        var contribNames  = [{{range .Contributors}}"{{.Name}}",{{end}}];
+        var contribCounts = [{{range .Contributors}}{{.Count}},{{end}}];
+        var ctx = document.getElementById("epic-contrib-chart");
+        if (ctx && contribNames.length > 0 && typeof Chart !== "undefined") {
+          setTimeout(function() {
+            try {
+              new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: contribNames,
+                  datasets: [{
+                    label: "Heroic Deeds",
+                    data: contribCounts,
+                    backgroundColor: "{{.Theme.Colors.Accent}}",
+                    borderRadius: 3,
+                    borderSkipped: false
+                  }]
+                },
+                options: {
+                  indexAxis: "y",
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: { legend: { display: false } },
+                  scales: {
+                    x: {
+                      beginAtZero: true,
+                      grid: { color: hexToRgba("{{.Theme.Colors.Primary}}", 0.15) },
+                      ticks: { color: "{{.Theme.Colors.Secondary}}", font: { family: "'Cinzel', serif", size: 10 } }
+                    },
+                    y: {
+                      grid: { display: false },
+                      ticks: { color: "{{.Theme.Colors.Text}}", font: { family: "'Cinzel', serif", size: 11 } }
+                    }
+                  }
+                }
+              });
+            } catch(e) { console.error("Contrib chart error:", e); }
+          }, 100);
+        }
+      })();
+      </script>
+      {{end}}
+
+      {{/* ════ FOOTER ════ */}}
+      <footer class="sg-footer sg-animated">
+        <span class="sg-footer-sep">{{.Icons.Separator}}</span>
+        <span class="sg-footer-text">Thus the saga is sealed — CommitLore</span>
+        <span class="sg-footer-sep" style="margin-top: 10px;">{{.Icons.Separator}}</span>
+      </footer>
+
+    </main>
+  </body>
+  </html>
