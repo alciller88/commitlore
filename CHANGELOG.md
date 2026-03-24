@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Cyberpunk style**: Logo replaced with approved wireframe triangle design, legible at 32x32px
 - **Adeptus Mechanicus style**: Logo replaced with approved cog design in #C41E2A red, legible at 32x32px
 - **Commit type distribution chart**: Legend and tooltip labels now use per-style vocabulary substitutions instead of raw type strings (feat, fix, chore, etc.) across all styles with donut/type charts — patchnotes, epic, cyberpunk, adeptus-mechanicus. Added `Vocabulary` field to `HTMLTemplateContext` in renderer.
+- **History screen**: Limit slider no longer overlaps Fetch button — Author field width reduced, flex proportions rebalanced across all controls
 
 ### Removed
 
