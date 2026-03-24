@@ -30,10 +30,25 @@ jobs:
       - name: Run tests
         run: go test ./... -race -coverprofile=coverage.out
 
-  release:
-    name: Build & Release
-    runs-on: ubuntu-latest
+  build-app:
+    name: Build Desktop App (${{ matrix.goos }}/${{ matrix.goarch }})
     needs: ci
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            artifact: commitlore-app-linux-amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            artifact: commitlore-app-darwin-arm64
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            artifact: commitlore-app-windows-amd64.exe
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -44,29 +59,127 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Build linux/amd64
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Linux dependencies
+        if: matrix.goos == 'linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+
+      - name: Install Wails v3 CLI
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@latest
+
+      - name: Install frontend dependencies
+        working-directory: app/frontend
+        run: npm install
+
+      - name: Build Wails app
+        working-directory: app
+        run: wails3 build
+
+      - name: Rename binary (Linux/macOS)
+        if: matrix.goos != 'windows'
+        run: mv app/bin/commitlore ${{ matrix.artifact }}
+
+      - name: Rename binary (Windows)
+        if: matrix.goos == 'windows'
+        shell: bash
+        run: mv app/bin/commitlore.exe ${{ matrix.artifact }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+
+  release:
+    name: Build CLI & Create Release
+    needs: build-app
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build CLI linux/amd64
         env:
           GOOS: linux
           GOARCH: amd64
         run: go build -o shiplog-linux-amd64 .
 
-      - name: Build darwin/arm64
+      - name: Build CLI darwin/arm64
         env:
           GOOS: darwin
           GOARCH: arm64
         run: go build -o shiplog-darwin-arm64 .
 
-      - name: Build windows/amd64
+      - name: Build CLI windows/amd64
         env:
           GOOS: windows
           GOARCH: amd64
         run: go build -o shiplog-windows-amd64.exe .
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Download all app artifacts
+        uses: actions/download-artifact@v4
         with:
-          generate_release_notes: true
-          files: |
-            shiplog-linux-amd64
-            shiplog-darwin-arm64
-            shiplog-windows-amd64.exe
+          merge-multiple: true
+
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          awk '/^## \[Unreleased\]/{found=1; next} found && /^## \[/{exit} found{print}' \
+            CHANGELOG.md > release-notes.txt
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --title "CommitLore ${{ github.ref_name }}" \
+            --notes-file release-notes.txt \
+            shiplog-linux-amd64 \
+            shiplog-darwin-arm64 \
+            shiplog-windows-amd64.exe \
+            commitlore-app-linux-amd64 \
+            commitlore-app-darwin-arm64 \
+            commitlore-app-windows-amd64.exe
+
+  update-changelog:
+    name: Update CHANGELOG.md
+    needs: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update CHANGELOG.md with version heading
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          DATE=$(date +%Y-%m-%d)
+          awk -v ver="$VERSION" -v date="$DATE" '
+            /^## \[Unreleased\]/ {
+              print "## [Unreleased]"
+              print ""
+              print "## [" ver "] - " date
+              next
+            }
+            {print}
+          ' CHANGELOG.md > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore(release): update CHANGELOG.md for ${{ github.ref_name }}"
+          git push origin main
