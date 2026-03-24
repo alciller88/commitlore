@@ -20,8 +20,8 @@
               }
             }
           ],
-          "image-name" : "wails_icon_vector.svg",
-          "name" : "wails_icon_vector",
+          "image-name" : "commitlore_icon.svg",
+          "name" : "commitlore_icon",
           "position" : {
             "scale" : 1.25,
             "translation-in-points" : [
