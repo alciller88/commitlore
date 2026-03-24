@@ -1,6 +1,6 @@
 <!-- logo placeholder -->
 
-[![CI](https://github.com/alcil/commitlore/actions/workflows/ci.yml/badge.svg)](https://github.com/alcil/commitlore/actions/workflows/ci.yml)
+[![CI](https://github.com/alciller88/commitlore/actions/workflows/ci.yml/badge.svg)](https://github.com/alciller88/commitlore/actions/workflows/ci.yml)
 ![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -13,7 +13,7 @@ CommitLore is a cross-platform tool (CLI + desktop app) written in Go that analy
 - Generate changelogs and repo narratives without an API key or internet connection
 - Explore commit history filtered by author, date range, or tag
 - Map contributor activity across the codebase with per-file breakdowns
-- Switch between four built-in styles (formal, patchnotes, ironic, epic) or create your own
+- Switch between four built-in styles (formal, patchnotes, ironic, epic) or install community styles from the marketplace
 - Optionally enrich output with LLM providers (Anthropic, OpenAI, Ollama, Groq) -- always off by default
 - Export to terminal, Markdown, JSON, or standalone HTML with Chart.js visualizations
 - Analyze local repositories or public/private GitHub repos
@@ -45,7 +45,7 @@ CommitLore is a cross-platform tool (CLI + desktop app) written in Go that analy
 
 ### Install
 
-> See [Releases](https://github.com/alcil/commitlore/releases).
+> See [Releases](https://github.com/alciller88/commitlore/releases).
 
 ### Usage
 
@@ -88,17 +88,15 @@ LLM support is entirely optional. Without it, CommitLore uses templates and voca
 
 CommitLore includes a native desktop app (Wails v3 + Svelte) with screens for dashboard, changelog generation, story narrative, commit history, contributor mapping, style browsing, and LLM settings. API keys are stored in the OS keychain and never written to disk in plaintext.
 
-> Download from [Releases](https://github.com/alcil/commitlore/releases).
+> Download from [Releases](https://github.com/alciller88/commitlore/releases).
 
 ## Style System
 
-Styles are `.shipstyle` files in YAML format that define tone, text templates, vocabulary, theme colors, typography, terminal decorators, and full HTML templates. They are stored in `~/.config/commitlore/styles/` (Windows: `%APPDATA%\commitlore\styles\`) and managed via `commitlore style list|show|create|import|export|delete`. Custom styles can be shared as standalone files.
-
-<!-- Link to style authoring docs: TBD -->
+Styles are `.shipstyle` files in YAML format that define tone, text templates, vocabulary, theme colors, typography, terminal decorators, and full HTML templates. They are stored in `~/.config/commitlore/styles/` (Windows: `%APPDATA%\commitlore\styles\`) and managed via `commitlore style list|show|delete` or the in-app marketplace.
 
 ## Contributing
 
-CommitLore is at v0.0.0 (pre-release). The specification lives in [SPEC.md](SPEC.md) and project context in [CONTEXT.md](CONTEXT.md) -- read both before contributing. File issues for bugs or proposals; PRs should align with the current development phase described in SPEC.md.
+CommitLore is pre-release — see [Releases](https://github.com/alciller88/commitlore/releases) for the latest version. The specification lives in [SPEC.md](SPEC.md) and project context in [CONTEXT.md](CONTEXT.md) -- read both before contributing. File issues for bugs or proposals; PRs should align with the current development phase described in SPEC.md.
 
 ## License
 
