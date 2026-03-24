@@ -510,9 +510,9 @@ CommitLore is a read-only tool. It never performs write operations on any reposi
 | Phase 14 | Marketplace — style catalog, in-app browser, install/delete | Completed |
 | Phase 15 | Internationalisation (i18n) — English/Spanish language support | Completed |
 
-> **Phase 12 — In Progress, UNDOCUMENTED:** Release workflow exists (`.github/workflows/release.yml`) with CLI binary builds for 3 platforms on `v*` tag push. **Missing:** Wails desktop app builds per platform; automatic CHANGELOG.md update on release. Not yet documented in CHANGELOG.md.
+> **Phase 12 — In Progress:** Release workflow includes CLI binary builds, Wails desktop app builds for 3 platforms, automatic CHANGELOG.md version heading on tag push, and release notes extracted from CHANGELOG.md.
 
-> **Phase 13 — In Progress, UNDOCUMENTED:** README.md exists with features, quick start, styles table, LLM and desktop app sections, contributing guidelines. **Missing:** screenshots of each desktop app screen; license not yet defined. Not yet documented in CHANGELOG.md.
+> **Phase 13 — In Progress:** README.md exists with features, quick start, styles table, LLM and desktop app sections, contributing guidelines. **Missing:** screenshots of each desktop app screen; license not yet defined.
 
 ---
 
@@ -527,9 +527,9 @@ No P0 items at this time.
 **Phase 12: Release pipeline + cross-platform binaries** _(In Progress)_
 
 - ~~Build and release CLI binaries for linux/amd64, darwin/arm64, windows/amd64 on tag push.~~ ✅ Done
-- Build and attach Wails desktop app binaries per platform to the GitHub Release.
+- ~~Build and attach Wails desktop app binaries per platform to the GitHub Release.~~ ✅ Done
   - _Acceptance:_ Release workflow builds Wails app for linux, darwin, windows and attaches all binaries alongside CLI builds.
-- Automatic CHANGELOG.md update on release.
+- ~~Automatic CHANGELOG.md update on release.~~ ✅ Done
   - _Acceptance:_ Release workflow or tag-push hook updates CHANGELOG.md with the new version heading.
 
 **Phase 13: Polish, docs, README, examples** _(In Progress)_
